@@ -4,12 +4,7 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Badge } from '@renderer/components/ui/badge'
-import {
-    CheckIcon,
-    CreditCardIcon,
-    Link2Icon,
-    CopyIcon
-} from 'lucide-vue-next'
+import { CheckIcon, CreditCardIcon, Link2Icon, CopyIcon } from 'lucide-vue-next'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@components/ui/input-group'
 import { ButtonGroup, ButtonGroupText } from '@components/ui/button-group'
 
@@ -26,7 +21,7 @@ const publicApis = [
                 <CardTitle>Card details</CardTitle>
                 <CardDescription>View and update your card details here.</CardDescription>
             </CardHeader>
-            <div class="grid w-full max-w-sm gap-6  px-6 pb-6">
+            <div class="grid w-full max-w-sm gap-6 px-6 pb-6">
                 <InputGroup>
                     <InputGroupInput placeholder="Card number" />
                     <InputGroupAddon>
@@ -40,15 +35,15 @@ const publicApis = [
                     <ButtonGroupText as-child>
                         <Label for="url">
                             <Link2Icon />
-                          </Label>
+                        </Label>
                     </ButtonGroupText>
                     <InputGroup>
-                        <InputGroupInput id="url"  />
+                        <InputGroupInput id="url" />
                         <InputGroupAddon align="inline-end">
                             <Link2Icon />
                         </InputGroupAddon>
                     </InputGroup>
-                    <ButtonGroupText class="px-0 border-green-700" >
+                    <ButtonGroupText class="px-0 border-green-700">
                         <Button variant="ghost" size="sm">
                             <CopyIcon />
                         </Button>

@@ -273,9 +273,9 @@ export const useSettingsStore = defineStore('settings', () => {
         formIsSaving.value = true
 
         try {
-            const toCheckRar = form.value.commands.rar !== settings.value?.commands.rar;
-            const toCheckPar = form.value.commands.par !== settings.value?.commands.par;
-            const toCheckNyuu = form.value.commands.nyuu !== settings.value?.commands.nyuu;
+            const toCheckRar = form.value.commands.rar !== settings.value?.commands.rar
+            const toCheckPar = form.value.commands.par !== settings.value?.commands.par
+            const toCheckNyuu = form.value.commands.nyuu !== settings.value?.commands.nyuu
 
             await saveSettings(form.value)
             if (toCheckRar) {

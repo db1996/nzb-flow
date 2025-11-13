@@ -91,18 +91,14 @@ export default class TaskManager {
 
         const uploadRunning = this.uploadQueue.filter(
             (t) =>
-                t.currentlyRunning &&
-                t.taskConfig &&
-                t.taskConfig.currentStep === CommandStep.POST
+                t.currentlyRunning && t.taskConfig && t.taskConfig.currentStep === CommandStep.POST
         ).length
 
         const uploadRunningSettings = this.uploadQueue
             .filter((t) => t.currentlyRunning && t.taskConfig)
             .map((t) => t.taskConfig) as TaskConfig[]
 
-        const compressionQueued = this.compressionQueue.filter(
-            (t) => !t.taskConfig?.started
-        ).length
+        const compressionQueued = this.compressionQueue.filter((t) => !t.taskConfig?.started).length
 
         const compressionQueuedSettings = this.compressionQueue
             .filter((t) => !t.taskConfig?.started)
@@ -141,21 +137,19 @@ export default class TaskManager {
 
     public getFreshTask(profileId: string, files?: string[]): Task {
         const taskSettings = Settings.getNewTaskSettings(profileId)
-        if( files && files.length > 0 ) {
+        if (files && files.length > 0) {
             taskSettings.postingSettings.files = files
         }
-        const config = Settings.getNewTaskConfig(taskSettings);
+        const config = Settings.getNewTaskConfig(taskSettings)
         config.used_profile = profileId
 
         return this.configToTask(config)
     }
 
-
     public async queueTaskSettings(taskSettings: TaskSettings, profileId?: string): Promise<void> {
         const newTask = this.settingsToTask(taskSettings)
 
-        if(newTask.taskConfig)
-          newTask.taskConfig.used_profile = profileId || ''
+        if (newTask.taskConfig) newTask.taskConfig.used_profile = profileId || ''
 
         await this.addTaskToCompressionQueue(newTask)
     }
@@ -167,11 +161,13 @@ export default class TaskManager {
         // console.log(JSON.stringify(newTask));
 
         // check if id already exists in either queue
-        const existsInCompressionQueue = this.compressionQueue.some(t => t.taskConfig?.id === newTask.taskConfig?.id)
+        const existsInCompressionQueue = this.compressionQueue.some(
+            (t) => t.taskConfig?.id === newTask.taskConfig?.id
+        )
         if (existsInCompressionQueue) {
-            this.compressionQueue = this.compressionQueue.map(t => {
+            this.compressionQueue = this.compressionQueue.map((t) => {
                 if (t.taskConfig?.id === newTask.taskConfig?.id) {
-                    if( newTask.taskConfig && t.taskConfig ) {
+                    if (newTask.taskConfig && t.taskConfig) {
                         newTask.taskConfig.nyuuCommandOutput = t.taskConfig.nyuuCommandOutput
                         newTask.taskConfig.parCommandOutput = t.taskConfig.parCommandOutput
                         newTask.taskConfig.rarCommandOutput = t.taskConfig.rarCommandOutput
@@ -182,16 +178,17 @@ export default class TaskManager {
                     return newTask
                 }
                 return t
-
             })
             return
         }
 
-        const existsInUploadQueue = this.uploadQueue.some(t => t.taskConfig?.id === newTask.taskConfig?.id)
+        const existsInUploadQueue = this.uploadQueue.some(
+            (t) => t.taskConfig?.id === newTask.taskConfig?.id
+        )
         if (existsInUploadQueue) {
-            this.uploadQueue = this.uploadQueue.map(t => {
+            this.uploadQueue = this.uploadQueue.map((t) => {
                 if (t.taskConfig?.id === newTask.taskConfig?.id) {
-                    if( newTask.taskConfig && t.taskConfig ) {
+                    if (newTask.taskConfig && t.taskConfig) {
                         newTask.taskConfig.nyuuCommandOutput = t.taskConfig.nyuuCommandOutput
                         newTask.taskConfig.parCommandOutput = t.taskConfig.parCommandOutput
                         newTask.taskConfig.rarCommandOutput = t.taskConfig.rarCommandOutput
@@ -225,7 +222,8 @@ export default class TaskManager {
         const uploadQueueSize = this.uploadQueue.filter((t) => !t.taskConfig?.started).length
         if (
             this.compressionAutoPaused &&
-            (uploadQueueSize < config.maxUploadQueueBeforePause || config.maxUploadQueueBeforePause === 0)
+            (uploadQueueSize < config.maxUploadQueueBeforePause ||
+                config.maxUploadQueueBeforePause === 0)
         ) {
             this.compressionAutoPaused = false
             console.log(
@@ -233,14 +231,18 @@ export default class TaskManager {
             )
         }
 
-        if( this.compressionAutoPaused ) {
+        if (this.compressionAutoPaused) {
             return
         }
 
-        if (uploadQueueSize >= config.maxUploadQueueBeforePause && config.maxUploadQueueBeforePause > 0) {
+        if (
+            uploadQueueSize >= config.maxUploadQueueBeforePause &&
+            config.maxUploadQueueBeforePause > 0
+        ) {
             this.compressionAutoPaused = true
             console.log(
-                `Compression auto-paused: Upload queue has ${uploadQueueSize} tasks waiting`, config
+                `Compression auto-paused: Upload queue has ${uploadQueueSize} tasks waiting`,
+                config
             )
             return
         }
@@ -296,9 +298,7 @@ export default class TaskManager {
         const config = this.getQueueConfig()
         const runningWorkers = this.uploadQueue.filter(
             (t) =>
-                t.currentlyRunning &&
-                t.taskConfig &&
-                t.taskConfig.currentStep === CommandStep.POST
+                t.currentlyRunning && t.taskConfig && t.taskConfig.currentStep === CommandStep.POST
         ).length
 
         if (runningWorkers >= config.maxUploadWorkers) {
@@ -358,7 +358,6 @@ export default class TaskManager {
                 // Move task to upload queue
                 this.moveTaskToUploadQueue(task)
             }
-
         } catch (error) {
             console.error('Error running compression step:', error)
             this.finishTask(task, true)

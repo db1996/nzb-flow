@@ -49,7 +49,13 @@ onMounted(async () => {
                                 {{ timestampToLocale(task.created_at || 0) }}
                             </TableCell>
                             <TableCell>
-                                <Button size="sm" variant="outline" @click="tasksStore.activeTaskLog = task"> <Logs /> </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    @click="tasksStore.activeTaskLog = task"
+                                >
+                                    <Logs />
+                                </Button>
                             </TableCell>
                         </TableRow>
                     </template>

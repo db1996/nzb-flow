@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@renderer/lib/utils'
-import { BadgeVariants, Badge } from '../ui/badge';
+import { BadgeVariants, Badge } from '../ui/badge'
 
 defineProps({
     section: {
@@ -33,11 +33,7 @@ defineProps({
         "
     >
         {{ section.label }}
-        <Badge
-            v-if="badge"
-            :variant="badge_variant"
-            class="ml-2"
-        >
+        <Badge v-if="badge" :variant="badge_variant" class="ml-2">
             <slot name="badge" />
         </Badge>
     </button>

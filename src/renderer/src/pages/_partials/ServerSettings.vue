@@ -29,10 +29,10 @@ const props = defineProps({
 const settingsStore = useSettingsStore()
 
 function updateModelValue(value: any) {
-  console.log("updating server", value);
+    console.log('updating server', value)
 
     const newServer = settingsStore.settings?.servers.find(server => server.id === value)
-    console.log(newServer);
+    console.log(newServer)
 
     props.form.connections = newServer?.connections || 1
     props.form.server = newServer?.server || ''
@@ -42,13 +42,22 @@ function updateModelValue(value: any) {
     props.form.password = newServer?.password || ''
     props.form.id = newServer?.id || ''
 }
-
-
 </script>
 <template>
     <CardForm>
         <template #body>
-            <SelectInput v-if="use_dropdown && settingsStore.settings" v-model="form.id" :options="settingsStore.settings.servers.map(server => ({ label: server.server, value: server.id }))" :disable-clear="true"  @update:model-value="updateModelValue($event)"/>
+            <SelectInput
+                v-if="use_dropdown && settingsStore.settings"
+                v-model="form.id"
+                :options="
+                    settingsStore.settings.servers.map(server => ({
+                        label: server.server,
+                        value: server.id
+                    }))
+                "
+                :disable-clear="true"
+                @update:model-value="updateModelValue($event)"
+            />
 
             <div class="grid grid-cols-[2fr_2fr_1fr] gap-4 items-center">
                 <TextInput

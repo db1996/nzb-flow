@@ -31,16 +31,16 @@ const props = defineProps({
     },
     heightClass: {
         type: String,
-        default: '',
+        default: ''
     },
     labelHeightClass: {
         type: String,
-        default: '',
+        default: ''
     },
     helpClass: {
         type: String,
-        default: '',
-    },
+        default: ''
+    }
 })
 
 const flashCopied = ref(false)
@@ -80,7 +80,11 @@ async function copyToClipboard(str: string) {
                 </Button>
             </ButtonGroupText>
             <InputGroup>
-                <InputGroupInput :model-value="modelValue" @update:modelValue="$emit('update:modelValue', $event)" :disabled="disabled" />
+                <InputGroupInput
+                    :model-value="modelValue"
+                    @update:modelValue="$emit('update:modelValue', $event)"
+                    :disabled="disabled"
+                />
             </InputGroup>
         </ButtonGroup>
         <span class="ms-1 mt-0 text-xs text-gray-500 italic" :class="helpClass">{{ help }}</span>

@@ -25,8 +25,12 @@ export default class Migrator {
             changed: string[]
         }
     ): ProfileSettings {
-        if(diff.added.includes('taskSettings.rarSettings.recursion') && diff.removed.includes('taskSettings.postingSettings.recursion')){
-            validatedConfig.taskSettings.rarSettings.recursion = _oldConfig.taskSettings.postingSettings.recursion
+        if (
+            diff.added.includes('taskSettings.rarSettings.recursion') &&
+            diff.removed.includes('taskSettings.postingSettings.recursion')
+        ) {
+            validatedConfig.taskSettings.rarSettings.recursion =
+                _oldConfig.taskSettings.postingSettings.recursion
         }
         return validatedConfig
     }
@@ -40,8 +44,12 @@ export default class Migrator {
             changed: string[]
         }
     ): TaskConfig {
-        if(_diff.added.includes('taskSettings.rarSettings.recursion') && _diff.removed.includes('taskSettings.postingSettings.recursion')){
-            validatedConfig.taskSettings.rarSettings.recursion = _oldConfig.taskSettings.postingSettings.recursion
+        if (
+            _diff.added.includes('taskSettings.rarSettings.recursion') &&
+            _diff.removed.includes('taskSettings.postingSettings.recursion')
+        ) {
+            validatedConfig.taskSettings.rarSettings.recursion =
+                _oldConfig.taskSettings.postingSettings.recursion
         }
 
         return validatedConfig
@@ -57,5 +65,5 @@ export default class Migrator {
         }
     ): FolderSettings {
         return validatedConfig
-    } 
+    }
 }

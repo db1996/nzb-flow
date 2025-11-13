@@ -6,11 +6,10 @@ import TaskConfigEdit from './TaskConfigEdit.vue'
 
 const tasksStore = useTasksStore()
 
-
 async function generateNewWithProfile(profileId: string) {
     if (tasksStore.activeTaskConfig === null) return
 
-    console.log(" Generating new task with profile:", profileId);
+    console.log(' Generating new task with profile:', profileId)
 
     const oldId = tasksStore.activeTaskConfig.id
 
@@ -21,7 +20,6 @@ async function generateNewWithProfile(profileId: string) {
     newTask.id = oldId // Keep the same ID so it updates correctly
     tasksStore.activeTaskConfig = newTask
 }
-
 </script>
 
 <template>
@@ -35,16 +33,13 @@ async function generateNewWithProfile(profileId: string) {
     >
         <template #header>
             <div class="flex justify-between mr-8">
-                    <DialogTitle>Edit Upload task</DialogTitle>
-                    <div class="flex gap-4 align-items-center">
-                        <Button
-                            variant="default"
-                            @click="tasksStore.queueActiveTask()"
-                        >
-                            Save changes and close
-                        </Button>
-                    </div>
+                <DialogTitle>Edit Upload task</DialogTitle>
+                <div class="flex gap-4 align-items-center">
+                    <Button variant="default" @click="tasksStore.queueActiveTask()">
+                        Save changes and close
+                    </Button>
                 </div>
+            </div>
         </template>
     </TaskConfigEdit>
 </template>

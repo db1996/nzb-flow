@@ -13,5 +13,5 @@ export const ThemeYupSchema: yup.Schema<ThemeSettings> = yup.object({
     sidebarOpen: yup.boolean().default(true),
     showTrayIcon: yup.boolean().default(false),
     minimizeToTray: yup.boolean().default(false),
-    datesLocale: yup.string().oneOf(['nl-NL', 'us-US']).default('nl-NL'),
+    datesLocale: yup.string().oneOf(['nl-NL', 'us-US']).default('nl-NL')
 })

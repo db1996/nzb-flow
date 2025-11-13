@@ -17,8 +17,8 @@ import Checkbox from '@renderer/components/ui/checkbox/Checkbox.vue'
 import { ref } from 'vue'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
 import UploadEditApprovalDialog from './dialogs/UploadEditApprovalDialog.vue'
-import { TaskConfig } from '@main/types/settings/commands/taskSettings';
-import { useSettingsStore } from '@renderer/composables/settingsStore';
+import { TaskConfig } from '@main/types/settings/commands/taskSettings'
+import { useSettingsStore } from '@renderer/composables/settingsStore'
 
 const tasksStore = useTasksStore()
 const settingsStore = useSettingsStore()
@@ -88,8 +88,14 @@ function getAddedBy(task: TaskConfig): string {
                 <CardContent>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button class="mr-1 text-green-600 hover:text-green-600" size="sm" :variant="selectedTasks.length === 0 ? 'outline' : 'outline_success'
-                                " @click="tasksStore.queueMultipleApprovalTasks(selectedTasks)">
+                            <Button
+                                class="mr-1 text-green-600 hover:text-green-600"
+                                size="sm"
+                                :variant="
+                                    selectedTasks.length === 0 ? 'outline' : 'outline_success'
+                                "
+                                @click="tasksStore.queueMultipleApprovalTasks(selectedTasks)"
+                            >
                                 <CheckCheck />
                             </Button>
                         </TooltipTrigger>
@@ -99,15 +105,21 @@ function getAddedBy(task: TaskConfig): string {
                     </Tooltip>
                     <Tooltip>
                         <TooltipTrigger as-child>
-                            <Button class="mr-1 text-red-600 hover:text-red-600" size="sm" :variant="selectedTasks.length === 0 ? 'outline' : 'outline_destructive'
-                                " @click="tasksStore.removeMultipleApprovalTasks(selectedTasks)">
+                            <Button
+                                class="mr-1 text-red-600 hover:text-red-600"
+                                size="sm"
+                                :variant="
+                                    selectedTasks.length === 0 ? 'outline' : 'outline_destructive'
+                                "
+                                @click="tasksStore.removeMultipleApprovalTasks(selectedTasks)"
+                            >
                                 <Trash2 />
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
                             <p>
-                                Delete selected queued uploads (may come back later if you don't delete the
-                                files)
+                                Delete selected queued uploads (may come back later if you don't
+                                delete the files)
                             </p>
                         </TooltipContent>
                     </Tooltip>
@@ -116,7 +128,10 @@ function getAddedBy(task: TaskConfig): string {
                     <Table :columns="4">
                         <template #head>
                             <TableHead class="w-[90px]">
-                                <Checkbox v-model="selectAll" @update:modelValue="toggleSelectAll" />
+                                <Checkbox
+                                    v-model="selectAll"
+                                    @update:modelValue="toggleSelectAll"
+                                />
                             </TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Password</TableHead>
@@ -126,12 +141,18 @@ function getAddedBy(task: TaskConfig): string {
                             <TableHead class="w-[140px] min-w-[140px]">Actions</TableHead>
                         </template>
                         <template #body>
-                            <TableRow v-for="(task, index) in tasksStore.approvalTasks" :key="index">
+                            <TableRow
+                                v-for="(task, index) in tasksStore.approvalTasks"
+                                :key="index"
+                            >
                                 <TableCell>
-                                    <Checkbox :model-value="selectedTasks.includes(task.id)" :value="task.id"
+                                    <Checkbox
+                                        :model-value="selectedTasks.includes(task.id)"
+                                        :value="task.id"
                                         @update:model-value="
                                             handleChange(task.id, $event as boolean)
-                                            " />
+                                        "
+                                    />
                                 </TableCell>
                                 <TableCell>{{ task.name }}</TableCell>
                                 <TableCellHidden :value="task.password" />
@@ -143,9 +164,14 @@ function getAddedBy(task: TaskConfig): string {
                                 <TableCell>
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <Button class="mr-1" size="sm" variant="outline" @click="
-                                                tasksStore.activeTaskApprovalSettings = task
-                                                ">
+                                            <Button
+                                                class="mr-1"
+                                                size="sm"
+                                                variant="outline"
+                                                @click="
+                                                    tasksStore.activeTaskApprovalSettings = task
+                                                "
+                                            >
                                                 <Pencil />
                                             </Button>
                                         </TooltipTrigger>
@@ -155,8 +181,12 @@ function getAddedBy(task: TaskConfig): string {
                                     </Tooltip>
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <Button class="mr-1" size="sm" variant="outline_success"
-                                                @click="tasksStore.queueApprovalTask(task.id)">
+                                            <Button
+                                                class="mr-1"
+                                                size="sm"
+                                                variant="outline_success"
+                                                @click="tasksStore.queueApprovalTask(task.id)"
+                                            >
                                                 <CheckCheck />
                                             </Button>
                                         </TooltipTrigger>
@@ -166,8 +196,11 @@ function getAddedBy(task: TaskConfig): string {
                                     </Tooltip>
                                     <Tooltip>
                                         <TooltipTrigger as-child>
-                                            <Button size="sm" variant="outline_destructive"
-                                                @click="tasksStore.removeApprovalTask(task.id)">
+                                            <Button
+                                                size="sm"
+                                                variant="outline_destructive"
+                                                @click="tasksStore.removeApprovalTask(task.id)"
+                                            >
                                                 <Trash2 />
                                             </Button>
                                         </TooltipTrigger>

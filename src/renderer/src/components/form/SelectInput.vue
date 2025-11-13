@@ -1,199 +1,226 @@
 <script lang="ts" setup>
-import { Badge } from '@ui/badge';
-import { Button } from '@ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@ui/command';
-import Label from '@ui/label/Label.vue';
-import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover';
-import { Check, ChevronDown, CircleCheck, CircleX } from 'lucide-vue-next';
-import { computed, nextTick, ref, useId, watch } from 'vue';
+import { Badge } from '@ui/badge'
+import { Button } from '@ui/button'
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator
+} from '@ui/command'
+import Label from '@ui/label/Label.vue'
+import { Popover, PopoverContent, PopoverTrigger } from '@ui/popover'
+import { Check, ChevronDown, CircleCheck, CircleX } from 'lucide-vue-next'
+import { computed, nextTick, ref, useId, watch } from 'vue'
 
 export interface Option {
-    value: string | number;
-    label: string;
-    disabled?: boolean;
+    value: string | number
+    label: string
+    disabled?: boolean
 }
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: string | number | Array<string | number> | null): void;
-    (e: 'change', value: string | number | Array<string | number> | null): void;
-    (e: 'open-change', open: boolean): void;
-}>();
+    (e: 'update:modelValue', value: string | number | Array<string | number> | null): void
+    (e: 'change', value: string | number | Array<string | number> | null): void
+    (e: 'open-change', open: boolean): void
+}>()
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string | number | Array<string | number> | null;
-        label?: string;
-        required?: boolean;
-        placeholder?: string;
-        error?: string;
-        options?: Option[];
-        disabled?: boolean;
-        help?: string;
-        withActions?: boolean;
-        searchable?: boolean;
-        maxSelected?: number;
-        triggerText?: string; // e.g. "Selected {count}"
-        multiple?: boolean;
-        disableClear?: boolean;
+        modelValue: string | number | Array<string | number> | null
+        label?: string
+        required?: boolean
+        placeholder?: string
+        error?: string
+        options?: Option[]
+        disabled?: boolean
+        help?: string
+        withActions?: boolean
+        searchable?: boolean
+        maxSelected?: number
+        triggerText?: string // e.g. "Selected {count}"
+        multiple?: boolean
+        disableClear?: boolean
     }>(),
     {
         withActions: true,
         searchable: true,
-        disableClear: false,
-    },
-);
+        disableClear: false
+    }
+)
 
-const open = ref(false);
-const proxyId = useId();
+const open = ref(false)
+const proxyId = useId()
 
 const internal = ref<string | number | null | (string | number)[]>(
-    props.multiple ? (Array.isArray(props.modelValue) ? [...props.modelValue] : []) : ((props.modelValue as string | number | null) ?? null),
-);
+    props.multiple
+        ? Array.isArray(props.modelValue)
+            ? [...props.modelValue]
+            : []
+        : (props.modelValue as string | number | null) ?? null
+)
 
 watch(
     () => props.modelValue,
-    (v) => {
+    v => {
         if (props.multiple) {
-            if (!arraysEqual(internal.value as (string | number)[], (v as (string | number)[]) ?? [])) {
-                internal.value = Array.isArray(v) ? [...(v as (string | number)[])] : [];
+            if (
+                !arraysEqual(
+                    internal.value as (string | number)[],
+                    (v as (string | number)[]) ?? []
+                )
+            ) {
+                internal.value = Array.isArray(v) ? [...(v as (string | number)[])] : []
             }
         } else {
-            internal.value = (v as string | number | null) ?? null;
+            internal.value = (v as string | number | null) ?? null
         }
     },
-    { immediate: true },
-);
+    { immediate: true }
+)
 
 function arraysEqual(a: (string | number)[], b: (string | number)[]) {
-    if (a.length !== b.length) return false;
-    const as = new Set(a);
-    for (const x of b) if (!as.has(x)) return false;
-    return true;
+    if (a.length !== b.length) return false
+    const as = new Set(a)
+    for (const x of b) if (!as.has(x)) return false
+    return true
 }
 
-const allOptions = computed<Option[]>(() => props.options?.map((o) => ({ ...o })) ?? []);
-const disabled = computed(() => props.disabled);
-const isAtMax = computed(() => props.multiple && !!props.maxSelected && (internal.value as (string | number)[]).length >= (props.maxSelected ?? 0));
+const allOptions = computed<Option[]>(() => props.options?.map(o => ({ ...o })) ?? [])
+const disabled = computed(() => props.disabled)
+const isAtMax = computed(
+    () =>
+        props.multiple &&
+        !!props.maxSelected &&
+        (internal.value as (string | number)[]).length >= (props.maxSelected ?? 0)
+)
 
 const selectedSet = computed(() => {
     if (Array.isArray(internal.value)) {
-        return new Set(internal.value.filter((v) => v != null));
+        return new Set(internal.value.filter(v => v != null))
     }
-    return internal.value != null ? new Set([internal.value]) : new Set();
-});
+    return internal.value != null ? new Set([internal.value]) : new Set()
+})
 
 function updateModel(v: string | number | (string | number)[] | null) {
-    internal.value = v as any;
-    emit('update:modelValue', v);
-    emit('change', v);
+    internal.value = v as any
+    emit('update:modelValue', v)
+    emit('change', v)
 }
 
 function toggleValue(val: string | number) {
     if (props.multiple) {
-        const set = new Set(internal.value as (string | number)[]);
+        const set = new Set(internal.value as (string | number)[])
         if (set.has(val)) {
-            set.delete(val);
+            set.delete(val)
         } else if (!isAtMax.value) {
-            set.add(val);
+            set.add(val)
         }
-        updateModel(Array.from(set));
+        updateModel(Array.from(set))
     } else {
         if (internal.value === val) {
-            updateModel(null);
+            updateModel(null)
         } else {
-            updateModel(val);
+            updateModel(val)
         }
-        open.value = false;
+        open.value = false
     }
 }
 
 const canSelect = (option: Option) => {
-    if (disabled.value) return false;
-    if (option.disabled) return false;
-    if (props.multiple && isAtMax.value && !selectedSet.value.has(option.value)) return false;
-    return true;
-};
+    if (disabled.value) return false
+    if (option.disabled) return false
+    if (props.multiple && isAtMax.value && !selectedSet.value.has(option.value)) return false
+    return true
+}
 
 function onSelectOption(option: Option) {
-    if (!canSelect(option)) return; // stop selection
-    toggleValue(option.value);
+    if (!canSelect(option)) return // stop selection
+    toggleValue(option.value)
 }
 
 function clearAll() {
-    updateModel(props.multiple ? [] : null);
+    updateModel(props.multiple ? [] : null)
 }
 
 function selectAll() {
-    if (!props.multiple || !allOptions.value.length) return;
-    const selectable = allOptions.value.filter((o) => !o.disabled).map((o) => o.value);
-    const limit = props.maxSelected ?? 0;
-    const final = limit > 0 ? selectable.slice(0, limit) : selectable;
-    updateModel(final);
+    if (!props.multiple || !allOptions.value.length) return
+    const selectable = allOptions.value.filter(o => !o.disabled).map(o => o.value)
+    const limit = props.maxSelected ?? 0
+    const final = limit > 0 ? selectable.slice(0, limit) : selectable
+    updateModel(final)
 }
 
 function onOpenChange(next: boolean) {
-    if (disabled.value) return;
-    open.value = next;
-    emit('open-change', next);
-    if (next) nextTick(() => {});
+    if (disabled.value) return
+    open.value = next
+    emit('open-change', next)
+    if (next) nextTick(() => {})
 }
 
 function onTriggerKeydown(e: KeyboardEvent) {
-    if (props.multiple && e.key === 'Backspace' && Array.isArray(internal.value) && internal.value.length) {
-        e.preventDefault();
-        const next = [...internal.value];
-        next.pop();
-        updateModel(next);
+    if (
+        props.multiple &&
+        e.key === 'Backspace' &&
+        Array.isArray(internal.value) &&
+        internal.value.length
+    ) {
+        e.preventDefault()
+        const next = [...internal.value]
+        next.pop()
+        updateModel(next)
     }
 }
 
-const showClear = computed(() => (selectedSet.value.size > 0 && !props.disableClear));
+const showClear = computed(() => selectedSet.value.size > 0 && !props.disableClear)
 
 const showSelectAll = computed(() => {
-    if (!props.multiple) return false;
-    if (!allOptions.value.length) return false;
-    return selectedSet.value.size < allOptions.value.filter((o) => !o.disabled).length;
-});
+    if (!props.multiple) return false
+    if (!allOptions.value.length) return false
+    return selectedSet.value.size < allOptions.value.filter(o => !o.disabled).length
+})
 
 /** ---------- Trigger display (badges, counts) ---------- **/
-const maxInlineBadges = 3;
+const maxInlineBadges = 3
 
 const selectedValuesArray = computed<(string | number)[]>(() => {
-    if (Array.isArray(internal.value)) return internal.value as (string | number)[];
-    return internal.value != null ? [internal.value as string | number] : [];
-});
+    if (Array.isArray(internal.value)) return internal.value as (string | number)[]
+    return internal.value != null ? [internal.value as string | number] : []
+})
 
-const selectedCount = computed(() => selectedValuesArray.value.length);
+const selectedCount = computed(() => selectedValuesArray.value.length)
 
 const displayedPairs = computed(() => {
-    const lookup = new Map(allOptions.value.map((o) => [o.value, o.label]));
-    return selectedValuesArray.value.slice(0, maxInlineBadges).map((v) => ({
+    const lookup = new Map(allOptions.value.map(o => [o.value, o.label]))
+    return selectedValuesArray.value.slice(0, maxInlineBadges).map(v => ({
         value: v,
-        label: lookup.get(v) ?? String(v),
-    }));
-});
+        label: lookup.get(v) ?? String(v)
+    }))
+})
 
 const manySelectedText = computed(() => {
     if (props.triggerText?.includes('{count}')) {
-        return props.triggerText.replace('{count}', String(selectedCount.value));
+        return props.triggerText.replace('{count}', String(selectedCount.value))
     }
-    return 'Selected {count} items';
-});
+    return 'Selected {count} items'
+})
 
 /** ---------- Auto-clear if selected becomes disabled ---------- **/
 watch([allOptions, selectedSet], () => {
     // Single
     if (!props.multiple && internal.value != null) {
-        const opt = allOptions.value.find((o) => o.value === internal.value);
-        if (opt && opt.disabled) updateModel(null);
+        const opt = allOptions.value.find(o => o.value === internal.value)
+        if (opt && opt.disabled) updateModel(null)
     }
     // Multiple
     if (props.multiple && Array.isArray(internal.value)) {
-        const allowed = new Set(allOptions.value.filter((o) => !o.disabled).map((o) => o.value));
-        const next = (internal.value as (string | number)[]).filter((v) => allowed.has(v));
-        if (!arraysEqual(next, internal.value as (string | number)[])) updateModel(next);
+        const allowed = new Set(allOptions.value.filter(o => !o.disabled).map(o => o.value))
+        const next = (internal.value as (string | number)[]).filter(v => allowed.has(v))
+        if (!arraysEqual(next, internal.value as (string | number)[])) updateModel(next)
     }
-});
+})
 </script>
 
 <template>
@@ -205,7 +232,12 @@ watch([allOptions, selectedSet], () => {
 
         <Popover :open="open" @update:open="onOpenChange">
             <PopoverTrigger as-child :id="proxyId">
-                <Button variant="outline" class="mt-1 w-full justify-between overflow-hidden" :disabled="disabled" @keydown="onTriggerKeydown">
+                <Button
+                    variant="outline"
+                    class="mt-1 w-full justify-between overflow-hidden"
+                    :disabled="disabled"
+                    @keydown="onTriggerKeydown"
+                >
                     <div class="flex flex-wrap items-center gap-1 truncate font-normal">
                         <!-- Multiple mode -->
                         <template v-if="props.multiple && Array.isArray(internal)">
@@ -214,12 +246,19 @@ watch([allOptions, selectedSet], () => {
                             </span>
 
                             <template v-else>
-                                <Badge variant="secondary" class="rounded-sm px-1 font-normal lg:hidden">
+                                <Badge
+                                    variant="secondary"
+                                    class="rounded-sm px-1 font-normal lg:hidden"
+                                >
                                     {{ selectedCount }}
                                 </Badge>
 
                                 <div class="hidden space-x-1 lg:flex">
-                                    <Badge v-if="selectedCount > maxInlineBadges" variant="secondary" class="rounded-sm px-1 font-normal">
+                                    <Badge
+                                        v-if="selectedCount > maxInlineBadges"
+                                        variant="secondary"
+                                        class="rounded-sm px-1 font-normal"
+                                    >
                                         {{ manySelectedText }}
                                     </Badge>
 
@@ -242,7 +281,7 @@ watch([allOptions, selectedSet], () => {
                         <!-- Single mode -->
                         <template v-else-if="!props.multiple && internal != null">
                             <span class="truncate">
-                                {{ allOptions.find((o) => o.value === internal)?.label ?? internal }}
+                                {{ allOptions.find(o => o.value === internal)?.label ?? internal }}
                             </span>
                         </template>
 
@@ -271,18 +310,36 @@ watch([allOptions, selectedSet], () => {
                                 <CommandItem
                                     v-for="option in options"
                                     :key="option.value"
-                                    :disabled="disabled || option.disabled || (isAtMax && !selectedSet.has(option.value))"
+                                    :disabled="
+                                        disabled ||
+                                        option.disabled ||
+                                        (isAtMax && !selectedSet.has(option.value))
+                                    "
                                     :value="String(option.label)"
                                     @select="onSelectOption(option)"
-                                    :class="['cursor-pointer', disabled || option.disabled ? 'pointer-events-none opacity-50 select-none' : '']"
+                                    :class="[
+                                        'cursor-pointer',
+                                        disabled || option.disabled
+                                            ? 'pointer-events-none opacity-50 select-none'
+                                            : ''
+                                    ]"
                                 >
-                                    <Check class="h-4 w-4" :class="selectedSet.has(option.value) ? 'opacity-100' : 'opacity-0'" />
+                                    <Check
+                                        class="h-4 w-4"
+                                        :class="
+                                            selectedSet.has(option.value)
+                                                ? 'opacity-100'
+                                                : 'opacity-0'
+                                        "
+                                    />
                                     <span class="truncate">{{ option.label }}</span>
                                 </CommandItem>
                             </template>
 
                             <template v-else>
-                                <div class="text-muted-foreground py-4 text-center align-middle text-sm">
+                                <div
+                                    class="text-muted-foreground py-4 text-center align-middle text-sm"
+                                >
                                     {{ 'No options available' }}
                                 </div>
                             </template>
@@ -291,12 +348,22 @@ watch([allOptions, selectedSet], () => {
                         <template v-if="withActions && (showSelectAll || showClear)">
                             <CommandSeparator />
                             <CommandGroup class="flex items-center">
-                                <CommandItem v-if="showSelectAll" value="select" @select="selectAll" class="flex flex-1 items-center justify-center">
+                                <CommandItem
+                                    v-if="showSelectAll"
+                                    value="select"
+                                    @select="selectAll"
+                                    class="flex flex-1 items-center justify-center"
+                                >
                                     <CircleCheck class="h-4 w-4" />
                                     <span>{{ 'Select All' }}</span>
                                 </CommandItem>
 
-                                <CommandItem v-if="showClear" value="clear" @select="clearAll" class="flex flex-1 items-center justify-center">
+                                <CommandItem
+                                    v-if="showClear"
+                                    value="clear"
+                                    @select="clearAll"
+                                    class="flex flex-1 items-center justify-center"
+                                >
                                     <CircleX class="h-4 w-4" />
                                     <span>{{ 'Clear' }}</span>
                                 </CommandItem>
@@ -313,30 +380,60 @@ watch([allOptions, selectedSet], () => {
                                 <CommandItem
                                     v-for="option in options"
                                     :key="option.value"
-                                    :disabled="disabled || option.disabled || (isAtMax && !selectedSet.has(option.value))"
+                                    :disabled="
+                                        disabled ||
+                                        option.disabled ||
+                                        (isAtMax && !selectedSet.has(option.value))
+                                    "
                                     :value="String(option.label)"
                                     @select="onSelectOption(option)"
-                                    :class="['cursor-pointer', disabled || option.disabled ? 'pointer-events-none opacity-50 select-none' : '']"
+                                    :class="[
+                                        'cursor-pointer',
+                                        disabled || option.disabled
+                                            ? 'pointer-events-none opacity-50 select-none'
+                                            : ''
+                                    ]"
                                 >
-                                    <Check class="h-4 w-4" :class="selectedSet.has(option.value) ? 'opacity-100' : 'opacity-0'" />
+                                    <Check
+                                        class="h-4 w-4"
+                                        :class="
+                                            selectedSet.has(option.value)
+                                                ? 'opacity-100'
+                                                : 'opacity-0'
+                                        "
+                                    />
                                     <span class="truncate">{{ option.label }}</span>
                                 </CommandItem>
                             </template>
 
                             <template v-else>
-                                <slot name="options" :selected="selectedSet" :toggle="toggleValue" />
+                                <slot
+                                    name="options"
+                                    :selected="selectedSet"
+                                    :toggle="toggleValue"
+                                />
                             </template>
                         </CommandGroup>
 
                         <template v-if="withActions && (showSelectAll || showClear)">
                             <CommandSeparator />
                             <CommandGroup class="flex items-center">
-                                <CommandItem v-if="showSelectAll" value="select" @select="selectAll" class="flex flex-1 items-center justify-center">
+                                <CommandItem
+                                    v-if="showSelectAll"
+                                    value="select"
+                                    @select="selectAll"
+                                    class="flex flex-1 items-center justify-center"
+                                >
                                     <CircleCheck class="h-4 w-4" />
                                     <span>{{ 'Select All' }}</span>
                                 </CommandItem>
 
-                                <CommandItem v-if="showClear" value="clear" @select="clearAll" class="flex flex-1 items-center justify-center">
+                                <CommandItem
+                                    v-if="showClear"
+                                    value="clear"
+                                    @select="clearAll"
+                                    class="flex flex-1 items-center justify-center"
+                                >
                                     <CircleX class="h-4 w-4" />
                                     <span>{{ 'Clear' }}</span>
                                 </CommandItem>

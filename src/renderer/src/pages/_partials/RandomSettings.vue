@@ -42,7 +42,7 @@ defineProps({
     disabled: {
         type: Boolean,
         default: false
-  },
+    },
     isName: {
         type: Boolean,
         default: false
@@ -52,10 +52,7 @@ defineProps({
 <template>
     <CardForm :title="title" :description="description" description_class="min-h-[2.5rem]">
         <template #body>
-            <Alert
-                v-if="disabled"
-                variant="info"
-            >
+            <Alert v-if="disabled" variant="info">
                 <AlertTitle>RAR disabled</AlertTitle>
                 <AlertDescription>
                     RAR creation is disabled, so a password will not be applied.
@@ -109,13 +106,11 @@ defineProps({
                         <label
                             for="0-9"
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-
                         >
                             0-9
                         </label>
                     </div>
-                    <div class="flex items-center space-x-2"
-                            v-if="useSpecialChars">
+                    <div class="flex items-center space-x-2" v-if="useSpecialChars">
                         <Checkbox
                             :disabled="!form.useSpecialCharacters || disabled"
                             id="0-9"
@@ -124,7 +119,6 @@ defineProps({
                         <label
                             for="0-9"
                             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-
                         >
                             !@#$%^&*
                         </label>
@@ -133,26 +127,25 @@ defineProps({
             </div>
             <div class="grid gap-2 grid-cols-3" v-if="form.randomNameMode">
                 <TextInput
-                    :disabled="!form.randomNameMode || disabled "
+                    :disabled="!form.randomNameMode || disabled"
                     label="Default Length"
                     :help="`Length of the random ${labelType}`"
                     v-model="form.randomNameLength"
                 />
                 <TextInput
-                    :disabled="disabled "
+                    :disabled="disabled"
                     label="Prefix"
                     :help="`Always used when generating ${labelType}s`"
                     v-model="form.prefix"
                 />
                 <TextInput
-                    :disabled="disabled "
+                    :disabled="disabled"
                     label="Suffix"
                     :help="`Always used when generating ${labelType}s`"
                     v-model="form.suffix"
                 />
             </div>
-                        <p v-if="isName">Use {fname} to use the filename/foldername of the first file/folder</p>
-
+            <p v-if="isName">Use {fname} to use the filename/foldername of the first file/folder</p>
         </template>
     </CardForm>
 </template>

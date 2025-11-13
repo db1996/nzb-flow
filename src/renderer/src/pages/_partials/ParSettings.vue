@@ -38,7 +38,8 @@ defineProps({
             />
 
             <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
-                <SwitchInput :disabled="disabled || form.skipParCreation"
+                <SwitchInput
+                    :disabled="disabled || form.skipParCreation"
                     label="Automatic redundancy"
                     description="Automatically determine redundancy level for PAR files. Based on file size"
                     v-model="form.automaticRedundancy"
@@ -52,7 +53,8 @@ defineProps({
             </div>
 
             <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
-                <SwitchInput :disabled="disabled || form.skipParCreation"
+                <SwitchInput
+                    :disabled="disabled || form.skipParCreation"
                     label="Automatic slices"
                     description="Automatically determine number of slices for PAR files. Based on file size"
                     v-model="form.automaticSlices"

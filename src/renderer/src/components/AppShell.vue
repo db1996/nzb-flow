@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { initializeTheme } from '@renderer/composables/useAppearance';
-import { SidebarProvider } from '@ui/sidebar';
-import { ref } from 'vue';
+import { initializeTheme } from '@renderer/composables/useAppearance'
+import { SidebarProvider } from '@ui/sidebar'
+import { ref } from 'vue'
 
 interface Props {
-    variant?: 'header' | 'sidebar';
+    variant?: 'header' | 'sidebar'
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
-const isOpen = ref<boolean>(true);
+const isOpen = ref<boolean>(true)
 
-initializeTheme();
-
+initializeTheme()
 </script>
 
 <template>

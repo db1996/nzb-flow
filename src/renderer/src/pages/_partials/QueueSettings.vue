@@ -13,7 +13,10 @@ const props = defineProps({
 </script>
 
 <template>
-    <CardForm title="Queue Settings" description="Configure queue behavior and limits. There are effectively 2 seperate queues. One for processing uploads (compression, parring, etc) and one for uploading to usenet. These settings allow you to control how many uploads can be processed and uploaded at once, as well as pausing compression when the upload queue gets too full.">
+    <CardForm
+        title="Queue Settings"
+        description="Configure queue behavior and limits. There are effectively 2 seperate queues. One for processing uploads (compression, parring, etc) and one for uploading to usenet. These settings allow you to control how many uploads can be processed and uploaded at once, as well as pausing compression when the upload queue gets too full."
+    >
         <template #body>
             <TextInput
                 id="max-compression-workers"

@@ -48,7 +48,7 @@ const emit = defineEmits<{
 }>()
 
 async function selectFolder() {
-  const result = await window.api.chooseFolder()
+    const result = await window.api.chooseFolder()
 
     if (result) {
         emit('update:modelValue', result.path)
@@ -61,13 +61,21 @@ async function selectFolder() {
         <Label v-if="label" :class="labelHeightClass">{{ label }}</Label>
         <ButtonGroup class="!gap-0 w-full" :class="heightClass">
             <ButtonGroupText as-child>
-                <Button :disabled="disableCopyButton" size="lg" variant="secondary" @click="selectFolder()">
+                <Button
+                    :disabled="disableCopyButton"
+                    size="lg"
+                    variant="secondary"
+                    @click="selectFolder()"
+                >
                     <FolderOpen />
                 </Button>
             </ButtonGroupText>
             <InputGroup>
-                <InputGroupInput :model-value="modelValue" @update:modelValue="$emit('update:modelValue', $event)"
-                    :disabled="disabled" />
+                <InputGroupInput
+                    :model-value="modelValue"
+                    @update:modelValue="$emit('update:modelValue', $event)"
+                    :disabled="disabled"
+                />
             </InputGroup>
         </ButtonGroup>
         <span class="ms-1 mt-0 text-xs text-gray-500 italic" :class="helpClass">{{ help }}</span>

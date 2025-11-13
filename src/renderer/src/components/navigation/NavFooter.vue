@@ -44,12 +44,11 @@ watch(
 )
 
 watch(
-    () => [
-        settingsStore.commands,
-    ],
+    () => [settingsStore.commands],
     _newItems => {
         setSettingsBadge()
-    },{ deep: true }
+    },
+    { deep: true }
 )
 
 function setSettingsBadge() {

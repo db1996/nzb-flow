@@ -7,7 +7,7 @@ import { useUpdateStore } from '@renderer/composables/useUpdateStore'
 import UploadNewDialog from '@renderer/pages/dialogs/UploadNewDialog.vue'
 import { BreadcrumbItem } from '@renderer/types/navigation'
 import { PlusCircle } from 'lucide-vue-next'
-import { onMounted,  useSlots } from 'vue'
+import { onMounted, useSlots } from 'vue'
 import { Toaster } from 'vue-sonner'
 import { Theme } from 'vue-sonner/src/packages/types.js'
 import 'vue-sonner/style.css' // vue-sonner v2 requires this import
@@ -24,15 +24,12 @@ const appearanceStore = useAppearance()
 const taskStore = useTasksStore()
 const slots = useSlots()
 
-
 onMounted(() => {
     const updateStore = useUpdateStore()
     updateStore.checkUpdateOnStartup()
 
     taskStore.loadApprovalTasks()
     taskStore.loadQueueStatus()
-
-
 })
 </script>
 

@@ -24,7 +24,7 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: false
-  },
+    },
     removeCopyButton: {
         type: Boolean,
         required: false,

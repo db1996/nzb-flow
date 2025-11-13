@@ -41,12 +41,12 @@ const props = defineProps({
     },
     heightClass: {
         type: String,
-        default: '',
+        default: ''
     },
     labelHeightClass: {
         type: String,
-        default: '',
-    },
+        default: ''
+    }
 })
 
 defineEmits(['update:modelValue'])

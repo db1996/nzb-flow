@@ -12,7 +12,7 @@ import CommandData from '@main/types/settings/commands/commandData'
 import SelectInput from '@renderer/components/form/SelectInput.vue'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 import Button from '@renderer/components/ui/button/Button.vue'
-import CopyExplorerInput from '@renderer/components/form/CopyExplorerInput.vue';
+import CopyExplorerInput from '@renderer/components/form/CopyExplorerInput.vue'
 
 const settingsStore = useSettingsStore()
 
@@ -35,7 +35,7 @@ function updateModelValue(value: any) {
     emits('profile-change', value)
 }
 
-function addFiles(){
+function addFiles() {
     window.api.chooseFiles().then((filePaths: string[]) => {
         if (filePaths.length === 0) {
             return
@@ -44,7 +44,7 @@ function addFiles(){
     })
 }
 
-function addFolders(){
+function addFolders() {
     window.api.chooseFolders().then((folderPaths: string[]) => {
         if (folderPaths.length === 0) {
             return
@@ -125,7 +125,7 @@ function addFolders(){
                             class="w-full"
                         />
                     </div>
-                    <div class="grid grid-cols-[1fr_100px] gap-4 ">
+                    <div class="grid grid-cols-[1fr_100px] gap-4">
                         <TextareaInput
                             label="Files/folders to upload (one per line)"
                             :model-value="form.taskSettings.postingSettings.files"
@@ -142,11 +142,7 @@ function addFolders(){
                             >
                                 Add files
                             </Button>
-                            <Button
-                                variant="default"
-                                :disabled="disabled"
-                                @click="addFolders()"
-                            >
+                            <Button variant="default" :disabled="disabled" @click="addFolders()">
                                 Add folders
                             </Button>
                             <Button

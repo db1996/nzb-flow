@@ -79,63 +79,65 @@ const editServerSetting = (index: number) => {
 </script>
 <template>
     <CardForm title="Server Settings" description="Manage your Usenet server settings">
-      <template #body>
-          <Table :columns="3">
-              <template #head>
-                  <TableHead>Host</TableHead>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Password</TableHead>
-                  <TableHead>Connections</TableHead>
-                  <TableHead>SSL</TableHead>
-                  <TableHead>Default</TableHead>
-                  <TableHead># <Button class="w-8" @click="newServerSetting"><Plus/></Button></TableHead>
-              </template>
-              <template #body>
-                  <TableRow v-for="(server, index) in form" :key="index">
-                      <TableCell>{{ server.server }}:{{ server.port }}</TableCell>
-                      <TableCell>{{ server.username }}</TableCell>
-                      <TableCellHidden :value="server.password" />
-                      <TableCell>{{ server.connections }}</TableCell>
-                      <TableCell>{{ server.ssl ? 'Enabled' : 'Disabled' }}</TableCell>
-                      <TableCell>
-                          <SwitchInput
-                              v-model="server.isDefault"
-                              @update:model-value="settingsStore.setServerDefault(index, $event)"
-                          />
-                      </TableCell>
-                      <TableCell>
-                          <Button
-                              variant="outline_default"
-                              size="xs"
-                              class="mr-2"
-                              @click="editServerSetting(index)"
-                          >
-                              <Pencil />
-                          </Button>
-                          <TooltipProvider>
-                              <Tooltip>
-                                  <TooltipTrigger as-child>
-                                      <Button
-                                          variant="outline_destructive"
-                                          size="xs"
-                                          @click="form.splice(index, 1)"
-                                          ><Trash
-                                      /></Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                      <p>
-                                          Remove from the serverlist, is not saved until you save the
-                                          settings.
-                                      </p>
-                                  </TooltipContent>
-                              </Tooltip>
-                          </TooltipProvider>
-                      </TableCell>
-                  </TableRow>
-              </template>
-          </Table>
-      </template>
-      </CardForm>
+        <template #body>
+            <Table :columns="3">
+                <template #head>
+                    <TableHead>Host</TableHead>
+                    <TableHead>Username</TableHead>
+                    <TableHead>Password</TableHead>
+                    <TableHead>Connections</TableHead>
+                    <TableHead>SSL</TableHead>
+                    <TableHead>Default</TableHead>
+                    <TableHead
+                        ># <Button class="w-8" @click="newServerSetting"><Plus /></Button
+                    ></TableHead>
+                </template>
+                <template #body>
+                    <TableRow v-for="(server, index) in form" :key="index">
+                        <TableCell>{{ server.server }}:{{ server.port }}</TableCell>
+                        <TableCell>{{ server.username }}</TableCell>
+                        <TableCellHidden :value="server.password" />
+                        <TableCell>{{ server.connections }}</TableCell>
+                        <TableCell>{{ server.ssl ? 'Enabled' : 'Disabled' }}</TableCell>
+                        <TableCell>
+                            <SwitchInput
+                                v-model="server.isDefault"
+                                @update:model-value="settingsStore.setServerDefault(index, $event)"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <Button
+                                variant="outline_default"
+                                size="xs"
+                                class="mr-2"
+                                @click="editServerSetting(index)"
+                            >
+                                <Pencil />
+                            </Button>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger as-child>
+                                        <Button
+                                            variant="outline_destructive"
+                                            size="xs"
+                                            @click="form.splice(index, 1)"
+                                            ><Trash
+                                        /></Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>
+                                            Remove from the serverlist, is not saved until you save
+                                            the settings.
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </TableCell>
+                    </TableRow>
+                </template>
+            </Table>
+        </template>
+    </CardForm>
 
     <Dialog
         :open="activeServerSettingForm !== null"

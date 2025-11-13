@@ -20,14 +20,15 @@ defineProps({
         type: String,
         required: false
     }
-
 })
 </script>
 <template>
     <Card class="shadow-sm">
         <CardHeader v-if="title || description">
             <CardTitle v-if="title">{{ title }}</CardTitle>
-            <CardDescription v-if="description" :class="description_class">{{ description }}</CardDescription>
+            <CardDescription v-if="description" :class="description_class">{{
+                description
+            }}</CardDescription>
             <slot name="header"></slot>
         </CardHeader>
         <CardContent>
@@ -36,7 +37,7 @@ defineProps({
             </div>
         </CardContent>
         <CardFooter v-if="$slots.footer" :class="footer_class">
-                <slot name="footer"/>
+            <slot name="footer" />
         </CardFooter>
     </Card>
 </template>

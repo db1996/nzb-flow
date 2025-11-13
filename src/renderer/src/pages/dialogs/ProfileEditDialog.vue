@@ -48,7 +48,12 @@ const save = () => {
                     </div>
                 </div>
             </DialogHeader>
-            <TextInput v-model="settingsStore.activeProfileEdit.name" label="Profile name" :disabled="disabled" class="mb-4"/>
+            <TextInput
+                v-model="settingsStore.activeProfileEdit.name"
+                label="Profile name"
+                :disabled="disabled"
+                class="mb-4"
+            />
             <Tabs default-value="posting" class="flex flex-col gap-4">
                 <TabsList class="grid w-full grid-cols-6">
                     <slot name="tablist-before"></slot>
@@ -68,33 +73,32 @@ const save = () => {
                     />
                 </TabsContent>
                 <TabsContent value="server">
-                  <div class="grid grid-cols-1 gap-4">
-
-                    <SelectInput
-                        v-if="settingsStore.settings"
-                        label="Server configuration"
-                        v-model="settingsStore.activeProfileEdit.taskSettings.serverId"
-                        :options="
-                            settingsStore.settings.servers.map(server => ({
-                                label: server.server,
-                                value: server.id
-                            }))
-                        "
-                        :disable-clear="true"
-                    />
-                    <SelectInput
-                        v-if="settingsStore.settings"
-                        label="Backup server configuration (when primary server fails)"
-                        v-model="settingsStore.activeProfileEdit.taskSettings.backupServerId"
-                        :options="
-                            settingsStore.settings.servers.map(server => ({
-                                label: server.server,
-                                value: server.id
-                            }))
-                        "
-                        :disable-clear="true"
-                    />
-                  </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <SelectInput
+                            v-if="settingsStore.settings"
+                            label="Server configuration"
+                            v-model="settingsStore.activeProfileEdit.taskSettings.serverId"
+                            :options="
+                                settingsStore.settings.servers.map(server => ({
+                                    label: server.server,
+                                    value: server.id
+                                }))
+                            "
+                            :disable-clear="true"
+                        />
+                        <SelectInput
+                            v-if="settingsStore.settings"
+                            label="Backup server configuration (when primary server fails)"
+                            v-model="settingsStore.activeProfileEdit.taskSettings.backupServerId"
+                            :options="
+                                settingsStore.settings.servers.map(server => ({
+                                    label: server.server,
+                                    value: server.id
+                                }))
+                            "
+                            :disable-clear="true"
+                        />
+                    </div>
                 </TabsContent>
                 <TabsContent value="rar">
                     <RarSettings

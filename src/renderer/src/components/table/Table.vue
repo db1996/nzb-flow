@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import TablePagination from '@components/table/TablePagination.vue';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select';
-import { Table, TableHeader, TableRow } from '@ui/table';
-import type { PaginationLink } from '@renderer/types/pagination';
-import { useSlots } from 'vue';
-import TableLoading from './TableLoading.vue';
+import TablePagination from '@components/table/TablePagination.vue'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
+import { Table, TableHeader, TableRow } from '@ui/table'
+import type { PaginationLink } from '@renderer/types/pagination'
+import { useSlots } from 'vue'
+import TableLoading from './TableLoading.vue'
 
 const props = withDefaults(
     defineProps<{
-        filters?: { perPage: number | string };
-        links?: PaginationLink[];
-        loading?: boolean;
-        columns?: number;
-        autoWidth?: boolean;
+        filters?: { perPage: number | string }
+        links?: PaginationLink[]
+        loading?: boolean
+        columns?: number
+        autoWidth?: boolean
     }>(),
     {
-        autoWidth: true,
-    },
-);
+        autoWidth: true
+    }
+)
 
-const slots = useSlots();
-const filters = props.filters;
+const slots = useSlots()
+const filters = props.filters
 </script>
 
 <template>
@@ -52,7 +52,10 @@ const filters = props.filters;
         </template>
     </div>
 
-    <div v-if="links?.length" class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div
+        v-if="links?.length"
+        class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+    >
         <div v-if="filters" class="flex items-center gap-2">
             <label for="perPage" class="text-muted-foreground text-sm"> {{ 'Per Page' }}: </label>
             <Select v-model="filters.perPage">

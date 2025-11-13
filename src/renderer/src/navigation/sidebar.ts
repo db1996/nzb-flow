@@ -38,7 +38,7 @@ const sidebar = [
                 current: 'folders.*',
                 isVisible: true
             }
-        ] as NavItem[],
+        ] as NavItem[]
     }
 ]
 

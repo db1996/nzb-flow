@@ -19,5 +19,5 @@ export const CommandDataYupSchema: yup.Schema<CommandData> = yup.object({
     exitCode: yup.number().nullable().default(null),
     executedCommand: yup.string().default(''),
     lastMessage: yup.string().default(''),
-    lastKnownProgress: yup.number().default(0),
+    lastKnownProgress: yup.number().default(0)
 })

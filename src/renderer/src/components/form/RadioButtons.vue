@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue';
-import Label from '../ui/label/Label.vue';
+import { computed, useId } from 'vue'
+import Label from '../ui/label/Label.vue'
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string | number | boolean;
+        modelValue: string | number | boolean
         options: {
-            value: string | number | boolean;
-            label: string;
-            icon?: any;
-        }[];
-        label?: string;
-        required?: boolean;
-        error?: string;
-        help?: string;
+            value: string | number | boolean
+            label: string
+            icon?: any
+        }[]
+        label?: string
+        required?: boolean
+        error?: string
+        help?: string
     }>(),
     {
         required: false,
-        error: '',
-    },
-);
+        error: ''
+    }
+)
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: string | number | boolean): void;
-}>();
+    (e: 'update:modelValue', value: string | number | boolean): void
+}>()
 
-const proxyId = useId();
+const proxyId = useId()
 
-const isSelected = computed(() => (value: string | number | boolean) => props.modelValue === value);
+const isSelected = computed(() => (value: string | number | boolean) => props.modelValue === value)
 
 function select(value: string | number | boolean) {
-    emit('update:modelValue', value);
+    emit('update:modelValue', value)
 }
 </script>
 
@@ -42,17 +42,20 @@ function select(value: string | number | boolean) {
         </Label>
 
         <!-- shrink-wrap the background -->
-        <div :id="proxyId" class="inline-flex w-fit gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
+        <div
+            :id="proxyId"
+            class="inline-flex w-fit gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
+        >
             <button
                 v-for="{ value, label, icon } in options"
-                :key="value"
+                :key="value.toString()"
                 type="button"
                 @click="select(value)"
                 :class="[
                     'flex cursor-pointer items-center rounded-md px-3.5 py-1.5 transition-colors',
                     isSelected(value)
                         ? 'text-primary dark:text-primary bg-white shadow-xs dark:bg-neutral-700'
-                        : 'hover:text-primary dark:hover:text-primary text-neutral-500 hover:bg-neutral-200/60 dark:text-neutral-400 dark:hover:bg-neutral-700/60',
+                        : 'hover:text-primary dark:hover:text-primary text-neutral-500 hover:bg-neutral-200/60 dark:text-neutral-400 dark:hover:bg-neutral-700/60'
                 ]"
             >
                 <component v-if="icon" :is="icon" class="mr-1.5 -ml-1 h-4 w-4" />

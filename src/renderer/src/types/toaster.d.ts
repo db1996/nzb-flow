@@ -1,4 +1,4 @@
 interface Toast {
-    message: string;
-    level?: 'success' | 'error' | 'warning' | 'info' | 'default';
+    message: string
+    level?: 'success' | 'error' | 'warning' | 'info' | 'default'
 }

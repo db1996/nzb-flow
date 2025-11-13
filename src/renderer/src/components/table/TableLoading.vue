@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { Skeleton } from '@ui/skeleton';
+import { Skeleton } from '@ui/skeleton'
 
 defineProps({
     columns: {
         type: Number,
-        default: 3,
+        default: 3
     },
     rows: {
         type: Number,
-        default: 7,
-    },
-});
+        default: 7
+    }
+})
 </script>
 
 <template>
@@ -31,14 +31,22 @@ defineProps({
             <table class="min-w-full text-sm">
                 <thead>
                     <tr class="border-b">
-                        <th v-for="(col, colIndex) in columns" :key="'head-' + colIndex" class="p-4">
+                        <th
+                            v-for="(_col, colIndex) in columns"
+                            :key="'head-' + colIndex"
+                            class="p-4"
+                        >
                             <Skeleton class="h-4 w-16" />
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(row, rowIndex) in rows" :key="'row-' + rowIndex" class="border-b">
-                        <td v-for="(col, colIndex) in columns" :key="'cell-' + rowIndex + '-' + colIndex" class="p-4">
+                    <tr v-for="(_row, rowIndex) in rows" :key="'row-' + rowIndex" class="border-b">
+                        <td
+                            v-for="(_col, colIndex) in columns"
+                            :key="'cell-' + rowIndex + '-' + colIndex"
+                            class="p-4"
+                        >
                             <Skeleton class="h-4" :style="{ width: '4rem' }" />
                         </td>
                     </tr>

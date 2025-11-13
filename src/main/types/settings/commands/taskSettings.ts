@@ -29,11 +29,9 @@ export type TaskConfig = {
 
     used_profile: string
 
-
     taskSettings: TaskSettings
     taskVariables: TaskVariables
 }
-
 
 export type TaskSettings = {
     rarSettings: RarSettings
@@ -50,7 +48,7 @@ export const TaskSettingsYupSchema: yup.Schema<TaskSettings> = yup.object({
     nyuuSettings: NyuuSettingsYupSchema.default(() => NyuuSettingsYupSchema.cast({})),
     postingSettings: PostingSettingsYupSchema.default(() => PostingSettingsYupSchema.cast({})),
     serverId: yup.string().default(''),
-    backupServerId: yup.string().default(''),
+    backupServerId: yup.string().default('')
 }) as yup.Schema<TaskSettings>
 
 export const TaskConfigYupSchema: yup.Schema<TaskConfig> = yup.object({
@@ -66,7 +64,10 @@ export const TaskConfigYupSchema: yup.Schema<TaskConfig> = yup.object({
     rarParFiles: yup.array().of(yup.string()).default([]),
     error: yup.string().default(''),
     nzbFile: yup.string().default(''),
-    currentStep: yup.mixed<CommandStep>().oneOf(Object.values(CommandStep)).default(CommandStep.RAR),
+    currentStep: yup
+        .mixed<CommandStep>()
+        .oneOf(Object.values(CommandStep))
+        .default(CommandStep.RAR),
     lastMessage: yup.string().default(''),
     log_file: yup.string().default(''),
     used_profile: yup.string().default(''),
@@ -75,5 +76,5 @@ export const TaskConfigYupSchema: yup.Schema<TaskConfig> = yup.object({
     nyuuCommandOutput: CommandDataYupSchema.default(() => CommandDataYupSchema.cast({})),
 
     taskSettings: TaskSettingsYupSchema.default(() => TaskSettingsYupSchema.cast({})),
-    taskVariables: TaskVariablesYupSchema.default(() => TaskVariablesYupSchema.cast({})),
+    taskVariables: TaskVariablesYupSchema.default(() => TaskVariablesYupSchema.cast({}))
 }) as yup.Schema<TaskConfig>

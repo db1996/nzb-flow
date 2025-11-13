@@ -1,38 +1,41 @@
 <script setup lang="ts">
-import AppLogo from '@components/AppLogo.vue';
-import Breadcrumbs from '@components/Breadcrumbs.vue';
-import { Button } from '@ui/button';
+import AppLogo from '@components/AppLogo.vue'
+import Breadcrumbs from '@components/Breadcrumbs.vue'
+import { Button } from '@ui/button'
 import {
     NavigationMenu,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    navigationMenuTriggerStyle,
-} from '@ui/navigation-menu';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@ui/sheet';
-import { isCurrent, resolve } from '@renderer/helpers/route';
-import { BreadcrumbItem, NavItem } from '@renderer/types/navigation';
-import { Route } from '@renderer/types/routes';
-import { LayoutGrid, Menu, Search } from 'lucide-vue-next';
-import { computed } from 'vue';
+    navigationMenuTriggerStyle
+} from '@ui/navigation-menu'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@ui/sheet'
+import { isCurrent, resolve } from '@renderer/helpers/route'
+import { BreadcrumbItem, NavItem } from '@renderer/types/navigation'
+import { Route } from '@renderer/types/routes'
+import { LayoutGrid, Menu, Search } from 'lucide-vue-next'
+import { computed } from 'vue'
 
 interface Props {
-    breadcrumbs?: BreadcrumbItem[];
+    breadcrumbs?: BreadcrumbItem[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
-});
+    breadcrumbs: () => []
+})
 
-const activeItemStyles = computed(() => (route: Route) => (isCurrent(route) ? 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100' : ''));
+const activeItemStyles = computed(
+    () => (route: Route) =>
+        isCurrent(route) ? 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100' : ''
+)
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         route: 'dashboard',
-        icon: LayoutGrid,
-    },
-];
+        icon: LayoutGrid
+    }
+]
 </script>
 
 <template>
@@ -61,7 +64,11 @@ const mainNavItems: NavItem[] = [
                                         class="hover:bg-accent flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium"
                                         :class="activeItemStyles(item.route ?? '')"
                                     >
-                                        <component v-if="item.icon" :is="item.icon" class="h-5 w-5" />
+                                        <component
+                                            v-if="item.icon"
+                                            :is="item.icon"
+                                            class="h-5 w-5"
+                                        />
                                     </Link>
                                 </nav>
                             </div>
@@ -74,13 +81,25 @@ const mainNavItems: NavItem[] = [
                 <div class="hidden h-full lg:flex lg:flex-1">
                     <NavigationMenu class="ml-10 flex h-full items-stretch">
                         <NavigationMenuList class="flex h-full items-stretch space-x-2">
-                            <NavigationMenuItem v-for="(item, index) in mainNavItems" :key="index" class="relative flex h-full items-center">
+                            <NavigationMenuItem
+                                v-for="(item, index) in mainNavItems"
+                                :key="index"
+                                class="relative flex h-full items-center"
+                            >
                                 <Link :href="resolve(item.route)">
                                     <NavigationMenuLink
                                         v-if="item.route"
-                                        :class="[navigationMenuTriggerStyle(), activeItemStyles(item.route), 'h-9 cursor-pointer px-3']"
+                                        :class="[
+                                            navigationMenuTriggerStyle(),
+                                            activeItemStyles(item.route),
+                                            'h-9 cursor-pointer px-3'
+                                        ]"
                                     >
-                                        <component v-if="item.icon" :is="item.icon" class="mr-2 h-4 w-4" />
+                                        <component
+                                            v-if="item.icon"
+                                            :is="item.icon"
+                                            class="mr-2 h-4 w-4"
+                                        />
                                         {{ item.title }}
                                     </NavigationMenuLink>
                                 </Link>
@@ -127,8 +146,13 @@ const mainNavItems: NavItem[] = [
             </div>
         </div>
 
-        <div v-if="props.breadcrumbs.length > 1" class="border-sidebar-border/70 flex w-full border-b">
-            <div class="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
+        <div
+            v-if="props.breadcrumbs.length > 1"
+            class="border-sidebar-border/70 flex w-full border-b"
+        >
+            <div
+                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl"
+            >
                 <Breadcrumbs :breadcrumbs="breadcrumbs || []" />
             </div>
         </div>

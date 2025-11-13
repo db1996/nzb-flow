@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import { Button } from '@ui/button';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog';
-import { useConfirm } from '@composables/useConfirm';
+import { Button } from '@ui/button'
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from '@ui/dialog'
+import { useConfirm } from '@composables/useConfirm'
 
-const { isOpen, options, resolve } = useConfirm();
+const { isOpen, options, resolve } = useConfirm()
 </script>
 
 <template>

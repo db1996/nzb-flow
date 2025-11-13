@@ -30,7 +30,6 @@ import { AllSettings } from '@main/types/settings/AllSettings'
 
 const settingsStore = useSettingsStore()
 
-
 const sections = ref([
     {
         id: 'general',
@@ -103,8 +102,11 @@ const lastSettingsForm = ref<AllSettings | null>(null)
 
 watch(
     () => settingsStore.form,
-    (newVal) => {
-        if (JSON.stringify(newVal) !== JSON.stringify(lastSettingsForm.value) && lastSettingsForm.value !== null) {
+    newVal => {
+        if (
+            JSON.stringify(newVal) !== JSON.stringify(lastSettingsForm.value) &&
+            lastSettingsForm.value !== null
+        ) {
             settingsStore.saveSettingsFormDebounce()
         }
         lastSettingsForm.value = JSON.parse(JSON.stringify(newVal))
@@ -119,10 +121,22 @@ watch(
             <TabsList class="grid w-full grid-cols-[1fr_1fr_2fr_2fr_1fr_1fr]">
                 <TabsTriggerSection :section="sections.find(s => s.id === 'general')!" />
                 <TabsTriggerSection :section="sections.find(s => s.id === 'queues')!" />
-                <TabsTriggerSection :badge="badgeSections['servers']" :section="sections.find(s => s.id === 'servers')!" />
-                <TabsTriggerSection :badge="badgeSections['rar']" :section="sections.find(s => s.id === 'rar')!" />
-                <TabsTriggerSection :badge="badgeSections['par']" :section="sections.find(s => s.id === 'par')!" />
-                <TabsTriggerSection :badge="badgeSections['nyuu']" :section="sections.find(s => s.id === 'nyuu')!" />
+                <TabsTriggerSection
+                    :badge="badgeSections['servers']"
+                    :section="sections.find(s => s.id === 'servers')!"
+                />
+                <TabsTriggerSection
+                    :badge="badgeSections['rar']"
+                    :section="sections.find(s => s.id === 'rar')!"
+                />
+                <TabsTriggerSection
+                    :badge="badgeSections['par']"
+                    :section="sections.find(s => s.id === 'par')!"
+                />
+                <TabsTriggerSection
+                    :badge="badgeSections['nyuu']"
+                    :section="sections.find(s => s.id === 'nyuu')!"
+                />
             </TabsList>
             <TabsContent value="general">
                 <GeneralSettings v-if="settingsStore.form" :form="settingsStore.form" />

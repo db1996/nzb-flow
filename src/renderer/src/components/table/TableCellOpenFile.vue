@@ -1,20 +1,19 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
-import TableCell from '../ui/table/TableCell.vue';
-import { FolderOpen } from 'lucide-vue-next';
-import TableButton from './TableButton.vue';
+import { computed } from 'vue'
+import TableCell from '../ui/table/TableCell.vue'
+import { FolderOpen } from 'lucide-vue-next'
+import TableButton from './TableButton.vue'
 interface Props {
-    full_path: string;
+    full_path: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    full_path: '',
-});
-
+    full_path: ''
+})
 
 const fileName = computed(() => {
-    return props.full_path.split(/[\\/]/).pop() || '';
-});
+    return props.full_path.split(/[\\/]/).pop() || ''
+})
 
 const openFile = () => {
     window.api.openFileInExplorer(props.full_path)

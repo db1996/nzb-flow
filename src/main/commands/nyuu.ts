@@ -65,7 +65,6 @@ export default class Nyuu extends BaseCommand {
             this._settings.taskSettings.nyuuSettings.checkQueueSize.toString()
         )
 
-
         if (this._settings.taskSettings.postingSettings.obfuscateYencName) {
             const uuid = randomUUID().toString()
             args.push('--yenc-name', this.cmdString(uuid))
@@ -80,10 +79,7 @@ export default class Nyuu extends BaseCommand {
             const uuid = randomUUID().toString()
             args.push('--subject', this.cmdString(uuid))
         } else if (this._settings.taskSettings.nyuuSettings.subjectOverride) {
-            args.push(
-                '--subject',
-                this.cmdString(this._settings.taskSettings.nyuuSettings.subject)
-            )
+            args.push('--subject', this.cmdString(this._settings.taskSettings.nyuuSettings.subject))
         }
 
         if (this._settings.taskSettings.postingSettings.obfuscateFilename) {

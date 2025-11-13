@@ -1,4 +1,4 @@
-import { TaskConfig } from "./taskSettings"
+import { TaskConfig } from './taskSettings'
 
 export type QueueStatus = {
     compressionActive: boolean

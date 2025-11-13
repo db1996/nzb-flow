@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { getCurrentAppearance } from '@renderer/composables/useAppearance';
-import { computed, type HTMLAttributes } from 'vue';
-import lightTheme from '@renderer/assets/logo-light.svg';
-import darkTheme from '@renderer/assets/logo-dark.svg';
-import smallLogo from '@renderer/assets/icon.png';
-import { useSidebar } from './ui/sidebar';
+import { getCurrentAppearance } from '@renderer/composables/useAppearance'
+import { computed, type HTMLAttributes } from 'vue'
+import lightTheme from '@renderer/assets/logo-light.svg'
+import darkTheme from '@renderer/assets/logo-dark.svg'
+import smallLogo from '@renderer/assets/icon.png'
+import { useSidebar } from './ui/sidebar'
 
-const { open} = useSidebar();
+const { open } = useSidebar()
 
 defineOptions({
-    inheritAttrs: false,
-});
+    inheritAttrs: false
+})
 
 interface Props {
-    className?: HTMLAttributes['class'];
+    className?: HTMLAttributes['class']
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 const source = computed(() => {
     if (getCurrentAppearance() === 'light') {
-        return lightTheme;
+        return lightTheme
     } else {
-        return darkTheme;
+        return darkTheme
     }
-});
+})
 </script>
 
 <template>
-    <img v-show="open" :src="source" alt="Logo">
-    <img v-show="!open" :src="smallLogo" alt="Logo" class="mx-auto">
+    <img v-show="open" :src="source" alt="Logo" />
+    <img v-show="!open" :src="smallLogo" alt="Logo" class="mx-auto" />
 </template>

@@ -25,6 +25,5 @@ export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     nyuu_time: yup.number().nullable().default(null),
 
     total_size: yup.number().nullable().default(null),
-    total_time: yup.number().nullable().default(null),
+    total_time: yup.number().nullable().default(null)
 }) as yup.Schema<TaskVariables>
-

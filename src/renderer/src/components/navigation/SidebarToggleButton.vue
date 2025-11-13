@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { PanelLeft, PanelLeftClose } from 'lucide-vue-next';
-import { useSidebar } from '../ui/sidebar';
-import Button from '../ui/button/Button.vue';
-import { watch } from 'vue';
-import { useSettingsStore } from '@renderer/composables/settingsStore';
+import { PanelLeft, PanelLeftClose } from 'lucide-vue-next'
+import { useSidebar } from '../ui/sidebar'
+import Button from '../ui/button/Button.vue'
+import { watch } from 'vue'
+import { useSettingsStore } from '@renderer/composables/settingsStore'
 
-const { toggleSidebar, open} = useSidebar();
-const settingsStore = useSettingsStore();
+const { toggleSidebar, open } = useSidebar()
+const settingsStore = useSettingsStore()
 
-function toggleSidebarWithSettings() {
-    toggleSidebar();
-    if(settingsStore.settings == null) {
-        return;
+function toggleSidebarWithSettings () {
+    toggleSidebar()
+    if (settingsStore.settings == null) {
+        return
     }
-    if(settingsStore.settings.theme.sidebarOpen !== open.value) {
-        settingsStore.savePartialSettings({ theme: { ...settingsStore.settings.theme, sidebarOpen: open.value } });
+    if (settingsStore.settings.theme.sidebarOpen !== open.value) {
+        settingsStore.savePartialSettings({
+            theme: { ...settingsStore.settings.theme, sidebarOpen: open.value }
+        })
     }
 }
 
@@ -24,10 +26,9 @@ watch(
         if (open.value === newSidebarOpen) {
             return
         }
-        toggleSidebar();
+        toggleSidebar()
     }
 )
-
 </script>
 <template>
     <Button

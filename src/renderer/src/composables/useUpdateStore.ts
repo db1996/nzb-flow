@@ -3,7 +3,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 
-type UpdateState = 'idle' | 'checking' | 'available' | 'downloading' | 'downloaded' | 'error' |  'unavailable'
+type UpdateState =
+    | 'idle'
+    | 'checking'
+    | 'available'
+    | 'downloading'
+    | 'downloaded'
+    | 'error'
+    | 'unavailable'
 
 export const useUpdateStore = defineStore('update', () => {
     const updateState = ref<UpdateState>('idle')
@@ -36,8 +43,7 @@ export const useUpdateStore = defineStore('update', () => {
         updateState.value = 'available'
         updateInfo.value = info
 
-        if(currentToastId.value)
-          toast.dismiss(currentToastId.value!)
+        if (currentToastId.value) toast.dismiss(currentToastId.value!)
 
         currentToastId.value = toast('Update available!', {
             description: 'Download the update now, or visit the settings to do it later.',
@@ -69,8 +75,7 @@ export const useUpdateStore = defineStore('update', () => {
         updateState.value = 'error'
         errorMessage.value = error
 
-        if(currentToastId.value)
-          toast.dismiss(currentToastId.value!)
+        if (currentToastId.value) toast.dismiss(currentToastId.value!)
 
         currentToastId.value = toast('Something went wrong with the update process :(', {
             description: 'An error occurred: ' + error,
@@ -93,11 +98,10 @@ export const useUpdateStore = defineStore('update', () => {
         updateState.value = 'downloading'
         downloadProgress.value = progress.percent || 0
 
-        if(!toastIsDownloading.value) {
+        if (!toastIsDownloading.value) {
             toastIsDownloading.value = true
 
-            if(currentToastId.value)
-              toast.dismiss(currentToastId.value!)
+            if (currentToastId.value) toast.dismiss(currentToastId.value!)
 
             currentToastId.value = toast('Downloading update...', {
                 description: 'Download is in progress.',
@@ -123,8 +127,7 @@ export const useUpdateStore = defineStore('update', () => {
         updateState.value = 'downloaded'
         updateInfo.value = info
 
-        if(currentToastId.value)
-          toast.dismiss(currentToastId.value!)
+        if (currentToastId.value) toast.dismiss(currentToastId.value!)
 
         currentToastId.value = toast('Update downloaded', {
             description: 'Install the update now, or visit the settings to do it later.',
@@ -152,8 +155,7 @@ export const useUpdateStore = defineStore('update', () => {
     const downloadUpdate = async () => {
         updateState.value = 'downloading'
         console.log('downloading update...')
-        if(currentToastId.value)
-          toast.dismiss(currentToastId.value!)
+        if (currentToastId.value) toast.dismiss(currentToastId.value!)
 
         toast.promise(
             () =>

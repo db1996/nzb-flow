@@ -7,7 +7,7 @@ import Button from '@renderer/components/ui/button/Button.vue'
 const tasksStore = useTasksStore()
 
 const addToApprovals = () => {
-    if(tasksStore.activeTaskConfig === null) return
+    if (tasksStore.activeTaskConfig === null) return
 
     tasksStore.addApprovalTask(tasksStore.activeTaskConfig)
     tasksStore.removeActiveTask()
@@ -20,7 +20,12 @@ const addToApprovals = () => {
         :open="tasksStore.activeTaskConfig !== null && !tasksStore.activeTaskConfigIsEdit"
         :form="tasksStore.activeTaskConfig"
         @close="tasksStore.activeTaskConfig = null"
-        @profile-change="tasksStore.createNewTask(tasksStore.activeTaskConfig.taskSettings.postingSettings.files, $event)"
+        @profile-change="
+            tasksStore.createNewTask(
+                tasksStore.activeTaskConfig.taskSettings.postingSettings.files,
+                $event
+            )
+        "
     >
         <template #header>
             <div class="flex justify-between mr-8">
@@ -29,12 +34,7 @@ const addToApprovals = () => {
                     <Button variant="default" @click="tasksStore.queueActiveTask()">
                         Add to queue
                     </Button>
-                    <Button
-                        variant="secondary"
-                        @click="addToApprovals"
-                    >
-                        Add to approvals
-                    </Button>
+                    <Button variant="secondary" @click="addToApprovals"> Add to approvals </Button>
                 </div>
             </div>
         </template>

@@ -35,7 +35,11 @@ export const NyuuSettingsYupSchema: yup.Schema<NyuuSettings> = yup.object({
     yencNameOverride: yup.boolean().default(false),
     yencName: yup.string().default('{filename}'),
     subjectOverride: yup.boolean().default(false),
-    subject: yup.string().default('{comment} [{0filenum}/{files}] - "{filename}" yEnc ({part}/{parts}) {filesize} {comment2}'),
+    subject: yup
+        .string()
+        .default(
+            '{comment} [{0filenum}/{files}] - "{filename}" yEnc ({part}/{parts}) {filesize} {comment2}'
+        ),
     filenameOverride: yup.boolean().default(false),
     filename: yup.string().default('{basename}'),
     dateOverride: yup.boolean().default(false),

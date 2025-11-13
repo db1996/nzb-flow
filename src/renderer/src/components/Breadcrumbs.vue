@@ -1,34 +1,48 @@
 <script setup lang="ts">
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@ui/breadcrumb';
-import type { BreadcrumbItem as BreadcrumbItemType } from '@renderer/types/navigation';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@ui/dropdown-menu';
-import { resolve } from '@renderer/helpers/route';
-import { computed } from 'vue';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator
+} from '@ui/breadcrumb'
+import type { BreadcrumbItem as BreadcrumbItemType } from '@renderer/types/navigation'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@ui/dropdown-menu'
+import { resolve } from '@renderer/helpers/route'
+import { computed } from 'vue'
 
 interface BreadcrumbItem {
-    title: string;
-    route?: string;
+    title: string
+    route?: string
 }
 
-const props = defineProps<{ breadcrumbs: BreadcrumbItemType[] }>();
+const props = defineProps<{ breadcrumbs: BreadcrumbItemType[] }>()
 
 // How many items to always show at the end
-const visibleTailCount = 3;
+const visibleTailCount = 3
 
-const len = computed(() => props.breadcrumbs.length);
+const len = computed(() => props.breadcrumbs.length)
 
 // Tail starts at max(len - visibleTailCount, 1) so we never re-include the first item
-const tailStart = computed(() => Math.max(len.value - visibleTailCount, 1));
+const tailStart = computed(() => Math.max(len.value - visibleTailCount, 1))
 
 // Items shown in the dropdown (between first and tail)
-const hiddenMiddle = computed(() => (len.value > 1 ? props.breadcrumbs.slice(1, tailStart.value) : []));
+const hiddenMiddle = computed(() =>
+    len.value > 1 ? props.breadcrumbs.slice(1, tailStart.value) : []
+)
 
 // Items always visible at the end
-const visibleTail = computed(() => (len.value > 1 ? props.breadcrumbs.slice(tailStart.value) : []));
+const visibleTail = computed(() => (len.value > 1 ? props.breadcrumbs.slice(tailStart.value) : []))
 
 // Convenience flags
-const hasDropdown = computed(() => hiddenMiddle.value.length > 0);
-const isSingle = computed(() => len.value === 1);
+const hasDropdown = computed(() => hiddenMiddle.value.length > 0)
+const isSingle = computed(() => len.value === 1)
 </script>
 
 <template>
@@ -59,7 +73,10 @@ const isSingle = computed(() => len.value === 1);
                         <DropdownMenu>
                             <DropdownMenuTrigger class="px-2">…</DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem v-for="(item, idx) in hiddenMiddle" :key="`${item.title}-${idx}`">
+                                <DropdownMenuItem
+                                    v-for="(item, idx) in hiddenMiddle"
+                                    :key="`${item.title}-${idx}`"
+                                >
                                     <a :href="resolve(item.route)">{{ item.title }}</a>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>

@@ -280,7 +280,7 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     async function removeMultipleApprovalTasks(ids: string[]) {
-      try {
+        try {
             let success = true
             for (const id of ids) {
                 // Clear active if it's the one being removed

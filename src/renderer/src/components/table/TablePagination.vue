@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Button } from '@ui/button';
-import type { PaginationLink } from '@renderer/types/pagination';
+import { Button } from '@ui/button'
+import type { PaginationLink } from '@renderer/types/pagination'
 
 defineProps<{
-    links: PaginationLink[];
-}>();
+    links: PaginationLink[]
+}>()
 </script>
 
 <template>

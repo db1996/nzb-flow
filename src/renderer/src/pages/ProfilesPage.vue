@@ -27,7 +27,7 @@ async function setDefaultProfile(id: string, isDefault: boolean) {
                 profile.isDefault = false
             }
         })
-    }else{
+    } else {
         // Prevent unsetting the default profile
         const profile = settingsStore.profiles.find(profile => profile.id === id)
         if (profile) {
@@ -35,7 +35,7 @@ async function setDefaultProfile(id: string, isDefault: boolean) {
         }
     }
 
-    await settingsStore.saveProfiles(settingsStore.profiles);
+    await settingsStore.saveProfiles(settingsStore.profiles)
 }
 </script>
 

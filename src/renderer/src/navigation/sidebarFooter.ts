@@ -10,7 +10,7 @@ const sidebarFooter = [
                 current: 'settings',
                 icon: Cog,
                 badgeVariant: 'destructive'
-            },
+            }
         ] as NavItem[]
     }
 ]

@@ -1,91 +1,91 @@
 <script lang="ts" setup>
-import type { PropType } from 'vue';
-import { ref, useId, watch } from 'vue';
-import Input from '../ui/input/Input.vue';
-import Label from '../ui/label/Label.vue';
+import type { PropType } from 'vue'
+import { ref, useId, watch } from 'vue'
+import Input from '../ui/input/Input.vue'
+import Label from '../ui/label/Label.vue'
 
 const props = defineProps({
     modelValue: {
         type: [Object, Array, null] as PropType<File | File[] | null>,
-        default: null,
+        default: null
     },
     name: {
         type: String,
-        default: undefined,
+        default: undefined
     },
     label: {
         type: String,
-        default: '',
+        default: ''
     },
     required: {
         type: Boolean,
-        default: false,
+        default: false
     },
     multiple: {
         type: Boolean,
-        default: false,
+        default: false
     },
     accept: {
         type: String,
-        default: '',
+        default: ''
     },
     disabled: {
         type: Boolean,
-        default: false,
+        default: false
     },
     error: {
         type: String,
-        default: '',
+        default: ''
     },
     help: {
         type: String,
-        default: '',
-    },
-});
+        default: ''
+    }
+})
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: File | File[] | null): void;
-    (e: 'change', value: File | File[] | null, ev: Event): void;
-}>();
+    (e: 'update:modelValue', value: File | File[] | null): void
+    (e: 'change', value: File | File[] | null, ev: Event): void
+}>()
 
-const id = useId();
-const inputEl = ref<HTMLInputElement | null>(null);
+const id = useId()
+const inputEl = ref<HTMLInputElement | null>(null)
 
 function onChange(ev: Event) {
-    const el = ev.target as HTMLInputElement;
-    const files = el.files;
-    let value: File | File[] | null = props.multiple ? [] : null;
+    const el = ev.target as HTMLInputElement
+    const files = el.files
+    let value: File | File[] | null = props.multiple ? [] : null
 
     if (files && files.length > 0) {
-        value = props.multiple ? Array.from(files) : files[0];
+        value = props.multiple ? Array.from(files) : files[0]
     }
 
-    emit('update:modelValue', value);
-    emit('change', value, ev);
+    emit('update:modelValue', value)
+    emit('change', value, ev)
 }
 
 watch(
     () => props.error,
-    (err) => {
-        if (err) inputEl.value?.focus();
+    err => {
+        if (err) inputEl.value?.focus()
     },
-    { immediate: false },
-);
+    { immediate: false }
+)
 
 watch(
     () => props.modelValue,
-    (val) => {
-        const isEmpty = val === null || (Array.isArray(val) && val.length === 0);
+    val => {
+        const isEmpty = val === null || (Array.isArray(val) && val.length === 0)
 
         if (isEmpty && inputEl.value) {
-            inputEl.value.value = '';
+            inputEl.value.value = ''
         }
-    },
-);
+    }
+)
 
 defineExpose({
-    focus: () => inputEl.value?.focus(),
-});
+    focus: () => inputEl.value?.focus()
+})
 </script>
 
 <template>

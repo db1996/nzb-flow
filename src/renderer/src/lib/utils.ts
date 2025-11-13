@@ -33,7 +33,6 @@ export function timestampToLocale(timestamp: number) {
     return moment(timestamp).fromNow(true)
 }
 
-
 export function useTrackedDebounce<T extends (...args: any[]) => void>(fn: T, wait: number) {
     const remaining = ref(0)
     const isRunning = ref(false)
@@ -66,7 +65,6 @@ export function useTrackedDebounce<T extends (...args: any[]) => void>(fn: T, wa
             }
         }, 16) // ~60fps update
 
-        // Trigger lodash debounce
         debounced(...args)
     }
 

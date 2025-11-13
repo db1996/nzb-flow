@@ -24,7 +24,7 @@ const props = defineProps({
 const appearanceStore = useAppearance()
 watch(
     () => props.form.theme.type,
-    (newVal) => {
+    newVal => {
         appearanceStore.updateAppearance(newVal as Appearance)
     }
 )
@@ -87,7 +87,7 @@ watch(
                     v-model="form.theme.minimizeToTray"
                 />
             </div>
-            <hr>
+            <hr />
             <div class="space-y-2">
                 <Label>Updates</Label>
                 <div class="grid grid-cols-2 gap-4 space-y-2">

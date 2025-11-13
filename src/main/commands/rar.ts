@@ -8,7 +8,7 @@ export default class RarCommand extends BaseCommand {
     public name: string = ''
 
     public command(): string {
-        return  this.cmdString(Settings.allSettings.commands.rar)
+        return this.cmdString(Settings.allSettings.commands.rar)
     }
 
     public args(): string[] {
@@ -50,9 +50,7 @@ export default class RarCommand extends BaseCommand {
         // Exclusions
         if (this._settings.taskSettings.rarSettings.excludes.length > 0) {
             args.push(
-                ...this._settings.taskSettings.rarSettings.excludes.map(
-                    (exclude) => `-x${exclude}`
-                )
+                ...this._settings.taskSettings.rarSettings.excludes.map((exclude) => `-x${exclude}`)
             )
         }
 

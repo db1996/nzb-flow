@@ -1,75 +1,74 @@
 <script lang="ts" setup>
-import { LoaderCircle } from 'lucide-vue-next';
-import { computed, ref, useId, watch } from 'vue';
-import Icon from '../Icon.vue';
-import Input from '../ui/input/Input.vue';
-import Label from '../ui/label/Label.vue';
+import { LoaderCircle } from 'lucide-vue-next'
+import { computed, ref, useId, watch } from 'vue'
+import Icon from '../Icon.vue'
+import Input from '../ui/input/Input.vue'
+import Label from '../ui/label/Label.vue'
 
 const props = defineProps({
     modelValue: {
-        type: [String, Number, Array<string>],
+        type: [String, Number, Array<string>]
     },
     label: {
         type: String,
-        required: false,
+        required: false
     },
     loading: {
         type: Boolean,
-        default: false,
+        default: false
     },
     required: {
         type: Boolean,
-        default: false,
+        default: false
     },
     type: {
         type: String as () => 'text' | 'email' | 'password' | 'number' | 'tel' | 'search',
-        default: 'text',
+        default: 'text'
     },
     icon: {
         type: String,
-        required: false,
+        required: false
     },
     iconPosition: {
         type: String,
         default: 'start',
-        validator: (value: string) => ['start', 'end'].includes(value),
+        validator: (value: string) => ['start', 'end'].includes(value)
     },
     placeholder: {
         type: String,
-        default: '',
+        default: ''
     },
     error: {
         type: String,
-        default: '',
+        default: ''
     },
     help: {
         type: String,
-        default: '',
+        default: ''
     },
     disabled: {
         type: Boolean,
-        default: false,
+        default: false
     },
     heightClass: {
         type: String,
-        default: '',
+        default: ''
     },
     labelHeightClass: {
         type: String,
-        default: '',
+        default: ''
     },
     helpClass: {
         type: String,
-        default: '',
-    },
-});
+        default: ''
+    }
+})
 
 const emit = defineEmits(['update:modelValue'])
 
-const proxyId = useId();
+const proxyId = useId()
 
-const input = ref<HTMLInputElement | null>(null);
-
+const input = ref<HTMLInputElement | null>(null)
 
 const proxyValue = computed(() => {
     if (Array.isArray(props.modelValue)) {
@@ -80,21 +79,21 @@ const proxyValue = computed(() => {
 
 watch(
     () => props.error,
-    (error) => {
+    error => {
         if (error && input.value) {
-            input.value.focus();
+            input.value.focus()
         }
     },
-    { immediate: true },
-);
+    { immediate: true }
+)
 
 defineExpose({
-    focus: () => input.value?.focus(),
-});
+    focus: () => input.value?.focus()
+})
 
 function updateValue(string) {
     if (Array.isArray(props.modelValue)) {
-        const value = string.split(',').map((v) => v.trim())
+        const value = string.split(',').map(v => v.trim())
 
         emit('update:modelValue', value)
         return
@@ -123,20 +122,31 @@ function updateValue(string) {
                     { 'border-red-600': error },
                     { 'pl-9': iconPosition === 'start' && icon },
                     { 'pr-9': iconPosition === 'end' && icon },
-                    { 'pr-9': loading },
+                    { 'pr-9': loading }
                 ]"
             />
-            <span v-if="loading" class="absolute inset-y-0 end-0 flex items-center justify-center px-3 pt-1">
+            <span
+                v-if="loading"
+                class="absolute inset-y-0 end-0 flex items-center justify-center px-3 pt-1"
+            >
                 <LoaderCircle class="text-muted-foreground size-4 animate-spin" />
             </span>
-            <span v-if="iconPosition === 'start' && icon" class="absolute inset-y-0 start-0 flex items-center justify-center px-3 pt-1">
+            <span
+                v-if="iconPosition === 'start' && icon"
+                class="absolute inset-y-0 start-0 flex items-center justify-center px-3 pt-1"
+            >
                 <Icon :name="icon" class="text-muted-foreground size-4" />
             </span>
-            <span v-if="iconPosition === 'end' && icon" class="absolute inset-y-0 end-0 flex items-center justify-center px-3 pt-1">
+            <span
+                v-if="iconPosition === 'end' && icon"
+                class="absolute inset-y-0 end-0 flex items-center justify-center px-3 pt-1"
+            >
                 <Icon :name="icon" class="text-muted-foreground size-4" />
             </span>
         </div>
         <span v-if="error" class="text-sm text-red-600">{{ error }}</span>
-        <span v-if="help" class="ms-1 mt-0 text-xs text-gray-500 italic" :class="helpClass">{{ help }}</span>
+        <span v-if="help" class="ms-1 mt-0 text-xs text-gray-500 italic" :class="helpClass">{{
+            help
+        }}</span>
     </div>
 </template>

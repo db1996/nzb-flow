@@ -29,7 +29,6 @@ defineProps({
         required: false
     }
 })
-
 </script>
 <template>
     <CardForm
@@ -114,7 +113,17 @@ defineProps({
                 />
             </div>
             <hr />
-            <p>Advanced overrides <Button as="a" target="_blank" href="https://github.com/animetosho/Nyuu/blob/master/help-full.txt" variant="link" class="inline">Check nyuu documentation</Button></p>
+            <p>
+                Advanced overrides
+                <Button
+                    as="a"
+                    target="_blank"
+                    href="https://github.com/animetosho/Nyuu/blob/master/help-full.txt"
+                    variant="link"
+                    class="inline"
+                    >Check nyuu documentation</Button
+                >
+            </p>
             <div class="grid gap-2 grid-cols-2 gap-6">
                 <div class="grid grid-cols-1 gap-2">
                     <Label for="messageId">Subject Override</Label>
@@ -125,10 +134,17 @@ defineProps({
                             </InputGroupAddon>
                         </ButtonGroupText>
                         <InputGroup>
-                            <InputGroupInput id="subject" v-model="form.subject" :disabled="disabled || !form.subjectOverride" />
+                            <InputGroupInput
+                                id="subject"
+                                v-model="form.subject"
+                                :disabled="disabled || !form.subjectOverride"
+                            />
                         </InputGroup>
                     </ButtonGroup>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic">Check the checkbox to override the default (by default, no argument is used). This is the <code>--subject</code> parameter for nyuu</span>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic"
+                        >Check the checkbox to override the default (by default, no argument is
+                        used). This is the <code>--subject</code> parameter for nyuu</span
+                    >
                 </div>
                 <div class="grid grid-cols-1 gap-2">
                     <Label for="messageId">Filename Override</Label>
@@ -139,10 +155,17 @@ defineProps({
                             </InputGroupAddon>
                         </ButtonGroupText>
                         <InputGroup>
-                            <InputGroupInput id="filename" v-model="form.filename" :disabled="disabled || !form.filenameOverride" />
+                            <InputGroupInput
+                                id="filename"
+                                v-model="form.filename"
+                                :disabled="disabled || !form.filenameOverride"
+                            />
                         </InputGroup>
                     </ButtonGroup>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic">Check the checkbox to override the default (by default, no argument is used). This is the <code>--filename</code> parameter from nyuu</span>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic"
+                        >Check the checkbox to override the default (by default, no argument is
+                        used). This is the <code>--filename</code> parameter from nyuu</span
+                    >
                 </div>
                 <div class="grid grid-cols-1 gap-2">
                     <Label for="messageId">Yenc name override</Label>
@@ -153,10 +176,17 @@ defineProps({
                             </InputGroupAddon>
                         </ButtonGroupText>
                         <InputGroup>
-                            <InputGroupInput id="yencHeader" v-model="form.yencName" :disabled="disabled || !form.yencNameOverride" />
+                            <InputGroupInput
+                                id="yencHeader"
+                                v-model="form.yencName"
+                                :disabled="disabled || !form.yencNameOverride"
+                            />
                         </InputGroup>
                     </ButtonGroup>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic">Check the checkbox to override the default (by default, no argument is used). This is the <code>--yenc-name</code> parameter from nyuu</span>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic"
+                        >Check the checkbox to override the default (by default, no argument is
+                        used). This is the <code>--yenc-name</code> parameter from nyuu</span
+                    >
                 </div>
                 <div class="grid grid-cols-1 gap-2">
                     <Label for="messageId">Date Override</Label>
@@ -167,10 +197,17 @@ defineProps({
                             </InputGroupAddon>
                         </ButtonGroupText>
                         <InputGroup>
-                            <InputGroupInput id="date" v-model="form.date" :disabled="disabled || !form.dateOverride" />
+                            <InputGroupInput
+                                id="date"
+                                v-model="form.date"
+                                :disabled="disabled || !form.dateOverride"
+                            />
                         </InputGroup>
                     </ButtonGroup>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic">Check the checkbox to override the default (by default, no argument is used). This is the <code>--date</code> parameter from nyuu</span>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic"
+                        >Check the checkbox to override the default (by default, no argument is
+                        used). This is the <code>--date</code> parameter from nyuu</span
+                    >
                 </div>
                 <div class="grid grid-cols-1 gap-2">
                     <Label for="messageId">Message-ID Override</Label>
@@ -181,26 +218,42 @@ defineProps({
                             </InputGroupAddon>
                         </ButtonGroupText>
                         <InputGroup>
-                            <InputGroupInput id="messageId" v-model="form.messageId" :disabled="disabled || !form.messageIdOverride" />
+                            <InputGroupInput
+                                id="messageId"
+                                v-model="form.messageId"
+                                :disabled="disabled || !form.messageIdOverride"
+                            />
                         </InputGroup>
                     </ButtonGroup>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic">Check the checkbox to override the default (by default, no argument is used). This is the <code>--message-id</code> parameter from nyuu</span>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic"
+                        >Check the checkbox to override the default (by default, no argument is
+                        used). This is the <code>--message-id</code> parameter from nyuu</span
+                    >
                 </div>
-
 
                 <div class="grid grid-cols-1 gap-2">
                     <Label for="messageId">Article encoding override</Label>
                     <ButtonGroup class="!gap-0 w-[auto]">
                         <ButtonGroupText as-child>
                             <InputGroupAddon>
-                                <Checkbox :disabled="disabled" v-model="form.articleEncodingOverride" />
+                                <Checkbox
+                                    :disabled="disabled"
+                                    v-model="form.articleEncodingOverride"
+                                />
                             </InputGroupAddon>
                         </ButtonGroupText>
                         <InputGroup>
-                            <InputGroupInput id="articleEncoding" v-model="form.articleEncoding" :disabled="disabled || !form.articleEncodingOverride" />
+                            <InputGroupInput
+                                id="articleEncoding"
+                                v-model="form.articleEncoding"
+                                :disabled="disabled || !form.articleEncodingOverride"
+                            />
                         </InputGroup>
                     </ButtonGroup>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic">Check the checkbox to override the default (by default, no argument is used). This is the <code>--article-encoding</code> parameter from nyuu</span>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic"
+                        >Check the checkbox to override the default (by default, no argument is
+                        used). This is the <code>--article-encoding</code> parameter from nyuu</span
+                    >
                 </div>
             </div>
         </template>
