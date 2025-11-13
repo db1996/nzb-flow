@@ -1,0 +1,614 @@
+import path from 'node:path'
+import { AllSettings, AllSettingsYupSchema } from '../types/settings/AllSettings'
+import { app } from 'electron'
+import fs from 'fs'
+import { RandomSettings } from '../types/settings/RandomSettings'
+import {
+    TaskConfig,
+    TaskConfigYupSchema,
+    TaskSettings,
+    TaskSettingsYupSchema
+} from '../types/settings/commands/taskSettings'
+import { ServerSettings } from '../types/settings/ServerSettings'
+import { ProfileSettings, ProfileSettingsYupSchema } from '../types/settings/ProfileSettings'
+import { randomUUID } from 'crypto'
+import Utils from './Utils'
+import Migrator from './Migrator'
+import { FolderSettings, FolderSettingsYupSchema } from '../types/settings/FolderSettings'
+import { FolderWatched } from '../types/FolderWatched'
+import TaskManager from '../commands/manager/TaskManager'
+
+export default class Settings {
+    private static loaded: boolean = false
+
+    static allSettingsPath = path.join(app.getPath('userData'), 'settings.json')
+    static taskHistoryPath = path.join(app.getPath('userData'), 'history-log')
+    static profileSettingsPath = path.join(app.getPath('userData'), 'profiles')
+    static folderSettingsPath = path.join(app.getPath('userData'), 'folder-monitoring')
+
+    static profiles: ProfileSettings[] = []
+
+    static folders: FolderSettings[] = []
+    static folderWatched: Record<string, FolderWatched> = {}
+
+    static historyTasks: TaskConfig[] = []
+
+    static historyTasksPromise: Promise<TaskConfig[]> | null = null
+
+    static mainWindow: Electron.BrowserWindow | null = null
+
+    static allSettings: AllSettings = AllSettingsYupSchema.cast({})
+
+    static taskManager: TaskManager | null = null
+
+    static async load(
+        mainWindow: Electron.BrowserWindow | null = null,
+        forceReload: boolean = false,
+        taskManager: TaskManager | null = null
+    ): Promise<void> {
+        if (mainWindow !== null) {
+            Settings.mainWindow = mainWindow
+        }
+
+        if (taskManager !== null) {
+            Settings.taskManager = taskManager
+        }
+
+        if (Settings.loaded && !forceReload) {
+            return
+        }
+        Settings.loaded = true
+
+        Settings.allSettingsPath = path.join(app.getPath('userData'), 'settings.json')
+        console.log('settings path:', Settings.allSettingsPath)
+        Settings.taskHistoryPath = path.join(app.getPath('userData'), 'history-log')
+        Settings.profileSettingsPath = path.join(app.getPath('userData'), 'profiles')
+
+        if (!fs.existsSync(path.dirname(Settings.allSettingsPath))) {
+            fs.mkdir(path.dirname(Settings.allSettingsPath), { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating settings directory', err)
+                }
+            })
+        }
+
+        if (!fs.existsSync(Settings.profileSettingsPath)) {
+            fs.mkdir(Settings.profileSettingsPath, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating profile settings directory', err)
+                }
+            })
+        }
+
+        if (!fs.existsSync(Settings.taskHistoryPath)) {
+            fs.mkdir(Settings.taskHistoryPath, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating task history directory', err)
+                }
+            })
+        }
+
+        if (!fs.existsSync(Settings.folderSettingsPath)) {
+            fs.mkdir(Settings.folderSettingsPath, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating folder settings directory', err)
+                }
+            })
+        }
+
+        await Settings.loadMainSettings()
+
+        if (!fs.existsSync(Settings.allSettings.nzbOutputFolder)) {
+            fs.mkdir(Settings.allSettings.nzbOutputFolder, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating NZB output directory', err)
+                }
+            })
+        }
+
+        if (!fs.existsSync(Settings.allSettings.rarparFolder)) {
+            fs.mkdir(Settings.allSettings.rarparFolder, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating RAR/PAR output directory', err)
+                }
+            })
+        }
+
+        await Settings.loadProfiles()
+        Settings.loadFolders()
+        Settings.loadHistoryTasks()
+    }
+
+    static async loadMainSettings(): Promise<AllSettings> {
+        Settings.allSettings.nzbOutputFolder = path.join(app.getPath('userData'), 'nzbs')
+        Settings.allSettings.rarparFolder = path.join(app.getPath('userData'), 'rarpars')
+
+        if (!fs.existsSync(Settings.allSettingsPath)) {
+            Settings.allSettings.commands.rar = Utils.defaultRarPath()
+            // If the settings file does not exist, create it with default settings
+            Settings.saveAllSettings(Settings.allSettings)
+        }
+
+        if (fs.existsSync(Settings.allSettingsPath)) {
+            const settings = fs.readFileSync(Settings.allSettingsPath, 'utf-8')
+            try {
+                const parsedSettings = JSON.parse(settings) as Partial<AllSettings>
+                let validatedSettings = await AllSettingsYupSchema.validate(parsedSettings, {
+                    stripUnknown: true,
+                    abortEarly: false
+                })
+
+                const diff = Utils.diffObjects(parsedSettings, validatedSettings)
+                if (diff.added.length > 0 || diff.removed.length > 0 || diff.changed.length > 0) {
+                    console.log(
+                        'Settings file had invalid or missing entries, updating settings file.',
+                        diff
+                    )
+                    validatedSettings = Migrator.migrateAllSettings(
+                        parsedSettings,
+                        validatedSettings,
+                        diff
+                    )
+                    Settings.saveAllSettings(validatedSettings)
+                }
+
+                Settings.allSettings = validatedSettings
+            } catch (error) {
+                console.error('Error parsing settings file', error)
+            }
+        }
+
+        return Settings.allSettings
+    }
+
+    static async loadProfiles(): Promise<ProfileSettings[]> {
+        Settings.profiles = []
+
+        const files = fs.readdirSync(Settings.profileSettingsPath)
+        for (const file of files) {
+            if (file.endsWith('.json')) {
+                const filePath = path.join(Settings.profileSettingsPath, file)
+                const data = fs.readFileSync(filePath, 'utf-8')
+
+                try {
+                    const parsedProfile = JSON.parse(data) as ProfileSettings
+                    let validatedSettings = await ProfileSettingsYupSchema.validate(parsedProfile, {
+                        stripUnknown: true,
+                        abortEarly: false
+                    })
+
+                    const diff = Utils.diffObjects(parsedProfile, validatedSettings)
+                    if (
+                        diff.added.length > 0 ||
+                        diff.removed.length > 0 ||
+                        diff.changed.length > 0
+                    ) {
+                        console.log(
+                            'Profile file had invalid or missing entries, updating settings file.',
+                            filePath,
+                            diff
+                        )
+                        validatedSettings = Migrator.migrateProfileSettings(
+                            parsedProfile,
+                            validatedSettings,
+                            diff
+                        )
+                        console.log('migrated', validatedSettings)
+                        fs.rmSync(filePath)
+                        Settings.saveProfile(validatedSettings)
+                    }
+
+                    Settings.profiles.push(validatedSettings)
+                } catch (error) {
+                    console.error('Error parsing settings file', error)
+                }
+            }
+        }
+
+        // If no profiles exist, create a default one
+        if (Settings.profiles.length === 0) {
+            const defaultProfile = ProfileSettingsYupSchema.cast({})
+            defaultProfile.id = randomUUID().toString()
+            defaultProfile.name = 'Default Profile'
+            defaultProfile.isDefault = true
+            defaultProfile.taskSettings = Settings.getNewTaskSettings()
+
+            Settings.profiles.push(defaultProfile)
+            Settings.saveProfile(defaultProfile)
+        }
+
+        return Settings.profiles
+    }
+
+    static async loadFolders(): Promise<FolderSettings[]> {
+        Settings.folders = []
+
+        const files = fs.readdirSync(Settings.folderSettingsPath)
+        for (const file of files) {
+            if (file.endsWith('.json')) {
+                const filePath = path.join(Settings.folderSettingsPath, file)
+                const data = fs.readFileSync(filePath, 'utf-8')
+
+                try {
+                    const parsedFolder = JSON.parse(data) as FolderSettings
+
+                    let validatedSettings = await FolderSettingsYupSchema.validate(parsedFolder, {
+                        stripUnknown: true,
+                        abortEarly: false
+                    })
+
+                    const diff = Utils.diffObjects(parsedFolder, validatedSettings)
+                    if (
+                        diff.added.length > 0 ||
+                        diff.removed.length > 0 ||
+                        diff.changed.length > 0
+                    ) {
+                        console.log(
+                            'Profile file had invalid or missing entries, updating settings file.',
+                            filePath,
+                            diff
+                        )
+                        validatedSettings = Migrator.migrateFolderSettings(
+                            parsedFolder,
+                            validatedSettings,
+                            diff
+                        )
+                        console.log('migrated', validatedSettings)
+                        fs.rmSync(filePath)
+                        Settings.saveFolder(validatedSettings)
+                    }
+                    if (!Settings.folderWatched[validatedSettings.id]) {
+                        Settings.folderWatched[validatedSettings.id] = {
+                            lastScanned: 0,
+                            watchActive: false,
+                            promise: null
+                        }
+                    }
+                    Settings.folders.push(validatedSettings)
+                } catch (error) {
+                    console.error('Error parsing folder settings file', error)
+                }
+            }
+        }
+
+        this.watchFolders()
+        return Settings.folders
+    }
+
+    static processWatchFolderItem(folderId: string, filename: string) {
+        // Placeholder for processing logic
+
+        const updatedFolder = Settings.folders.find((f) => f.id === folderId)
+        if (!updatedFolder || !Settings.taskManager) return
+        if (!fs.existsSync(path.join(updatedFolder.fullPath, filename))) return
+
+        const isFolder = fs.lstatSync(path.join(updatedFolder.fullPath, filename)).isDirectory()
+        const isFile = fs.lstatSync(path.join(updatedFolder.fullPath, filename)).isFile()
+        if (isFolder && updatedFolder.uploadFolder) {
+            // New folder added
+            console.log(
+                `New folder detected: ${filename} in ${updatedFolder.fullPath}, ${updatedFolder.profileId}`
+            )
+            const taskSettings = Settings.getNewTaskSettings(updatedFolder.profileId)
+            taskSettings.postingSettings.files = [path.join(updatedFolder.fullPath, filename)]
+
+            const config = Settings.getNewTaskConfig(taskSettings, updatedFolder.profileId)
+            config.folderWatchId = updatedFolder.id
+
+            if (updatedFolder.deleteUploadedFiles) {
+                config.taskSettings.postingSettings.deleteUploadedFiles = true
+            }
+            if (updatedFolder.autoApprove) {
+                Settings.taskManager.queueTaskConfig(config)
+            } else {
+                Settings.taskManager.addApprovalTaskConfig(config)
+            }
+        } else if (isFile && updatedFolder.uploadFiles) {
+            // New file added
+            console.log(
+                `New file detected: ${filename} in ${updatedFolder.fullPath}, ${updatedFolder.profileId}`
+            )
+            const taskSettings = Settings.getNewTaskSettings(updatedFolder.profileId)
+            taskSettings.postingSettings.files = [path.join(updatedFolder.fullPath, filename)]
+
+            const config = Settings.getNewTaskConfig(taskSettings, updatedFolder.profileId)
+
+            config.folderWatchId = updatedFolder.id
+
+            if (updatedFolder.deleteUploadedFiles) {
+                config.taskSettings.postingSettings.deleteUploadedFiles = true
+            }
+            if (updatedFolder.autoApprove) {
+                Settings.taskManager.queueTaskConfig(config)
+            } else {
+                Settings.taskManager.addApprovalTaskConfig(config)
+            }
+        }
+    }
+
+    static async watchFolders(): Promise<void> {
+        console.log('activate folder watch')
+        for (const [_folderId, folder] of Object.entries(Settings.folderWatched)) {
+            if (folder.watchActive && folder.promise) {
+                // close existing watcher
+                folder.promise?.close()
+                folder.watchActive = false
+                folder.promise = null
+            }
+        }
+
+        for (const folder of Settings.folders) {
+            if (!Settings.folderWatched[folder.id]) {
+                Settings.folderWatched[folder.id] = {
+                    lastScanned: 0,
+                    watchActive: false,
+                    promise: null
+                }
+            }
+
+            if (folder.active && !Settings.folderWatched[folder.id].watchActive) {
+                Settings.folderWatched[folder.id].watchActive = true
+
+                const promise = fs.watch(
+                    folder.fullPath,
+                    { persistent: true },
+                    (eventType, filename) => {
+                        if (!filename) return
+
+                        if (eventType == 'rename') {
+                            Settings.processWatchFolderItem(folder.id, filename)
+                        }
+                    }
+                )
+
+                Settings.folderWatched[folder.id].promise = promise
+            }
+        }
+    }
+
+    static async loadHistoryTasks(): Promise<TaskConfig[]> {
+        if (Settings.historyTasksPromise) {
+            await Settings.historyTasksPromise
+            Settings.historyTasksPromise = null
+            return Settings.historyTasks
+        } else {
+            Settings.historyTasks = []
+
+            const files = fs.readdirSync(Settings.taskHistoryPath)
+            for (const file of files) {
+                if (file.endsWith('.json')) {
+                    const filePath = path.join(Settings.taskHistoryPath, file)
+                    const data = fs.readFileSync(filePath, 'utf-8')
+
+                    try {
+                        const parsedTask = JSON.parse(data) as TaskConfig
+                        let validatedSettings = await TaskConfigYupSchema.validate(parsedTask, {
+                            stripUnknown: true,
+                            abortEarly: false
+                        })
+                        Settings.historyTasks.push(validatedSettings)
+                    } catch (error) {
+                        console.error('Error parsing settings file', error)
+                    }
+                }
+            }
+
+            // Sort tasks by created_at descending
+            Settings.historyTasks.sort((a, b) => (b.created_at ?? 1) - (a.created_at ?? 1))
+            Settings.historyTasksPromise = Promise.resolve(Settings.historyTasks)
+            return Settings.historyTasks
+        }
+    }
+
+    static saveTask(task: TaskConfig): string {
+        const saveFolder = Settings.taskHistoryPath
+        // utc timestamp
+        const timestamp = Date.now()
+        let fileName = `${timestamp} - ${task.name}.json`
+        // sanitize file name
+        fileName = fileName.replace(/[/\\?%*:|"<>]/g, '-')
+
+        const filePath = path.join(saveFolder, fileName)
+
+        task.log_file = filePath
+
+        if (!fs.existsSync(saveFolder)) {
+            fs.mkdirSync(saveFolder, { recursive: true })
+        }
+
+        const validated = TaskConfigYupSchema.validateSync(task, {
+            stripUnknown: true,
+            abortEarly: false
+        })
+
+        fs.writeFileSync(filePath, JSON.stringify(validated, null, 4))
+
+        Settings.loadHistoryTasks()
+        return filePath
+    }
+
+    static saveProfile(profile: ProfileSettings) {
+        if (profile.id === '') {
+            profile.id = randomUUID().toString()
+        }
+
+        const filePath = path.join(Settings.profileSettingsPath, `${profile.id}.json`)
+
+        if (!fs.existsSync(Settings.profileSettingsPath)) {
+            fs.mkdirSync(Settings.profileSettingsPath, { recursive: true })
+        }
+
+        const validated = ProfileSettingsYupSchema.validateSync(profile, {
+            stripUnknown: true,
+            abortEarly: false
+        })
+        fs.writeFileSync(filePath, JSON.stringify(validated, null, 4))
+    }
+
+    static saveFolder(folder: FolderSettings) {
+        if (folder.id === '') {
+            folder.id = randomUUID().toString()
+        }
+
+        const filePath = path.join(Settings.folderSettingsPath, `${folder.id}.json`)
+
+        if (!fs.existsSync(Settings.folderSettingsPath)) {
+            fs.mkdirSync(Settings.folderSettingsPath, { recursive: true })
+        }
+
+        const validated = FolderSettingsYupSchema.validateSync(folder, {
+            stripUnknown: true,
+            abortEarly: false
+        })
+        fs.writeFileSync(filePath, JSON.stringify(validated, null, 4))
+    }
+
+    static deleteProfile(id: string) {
+        const filePath = path.join(Settings.profileSettingsPath, `${id}.json`)
+
+        if (fs.existsSync(filePath)) {
+            fs.rmSync(filePath)
+        }
+    }
+
+    static deleteFolder(id: string) {
+        const filePath = path.join(Settings.folderSettingsPath, `${id}.json`)
+
+        if (fs.existsSync(filePath)) {
+            fs.rmSync(filePath)
+        }
+    }
+
+    static scanFolder(id: string) {
+        const folder = Settings.folders.find((f) => f.id === id)
+        if (!folder) return
+
+        // Scan the folder for files
+        const filesAndFolders = fs.readdirSync(folder.fullPath)
+        for (const item of filesAndFolders) {
+            Settings.processWatchFolderItem(folder.id, item)
+        }
+    }
+
+    static generateName(nameSettings: RandomSettings): string {
+        if (!nameSettings.randomNameMode) {
+            return nameSettings.prefix + nameSettings.customName + nameSettings.suffix
+        }
+
+        let characters = ''
+        if (nameSettings.useLowercase) {
+            characters += 'abcdefghijklmnopqrstuvwxyz'
+        }
+        if (nameSettings.useUppercase) {
+            characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        }
+        if (nameSettings.useNumbers) {
+            characters += '0123456789'
+        }
+        if (nameSettings.useSpecialCharacters) {
+            characters += '!@#$%^&*()_+'
+        }
+
+        let name = ''
+        for (let i = 0; i < nameSettings.randomNameLength; i++) {
+            name += characters[Math.floor(Math.random() * characters.length)]
+        }
+
+        return nameSettings.prefix + name + nameSettings.suffix
+    }
+
+    static generateString(length: number): string {
+        const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        let result = ''
+        for (let i = 0; i < length; i++) {
+            result += characters[Math.floor(Math.random() * characters.length)]
+        }
+        return result
+    }
+
+    static sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+
+    static saveAllSettings(allSettings: AllSettings) {
+        allSettings.servers.forEach((server) => {
+            if (server.id === '') {
+                server.id = randomUUID().toString()
+            }
+        })
+
+        const validated = AllSettingsYupSchema.validateSync(allSettings, {
+            stripUnknown: true,
+            abortEarly: false
+        })
+        Settings.allSettings = validated
+
+        // Save settings to disk
+        fs.writeFileSync(Settings.allSettingsPath, JSON.stringify(validated, null, 4))
+    }
+
+    static getNewTaskConfig(taskSettings: TaskSettings, profileId?: string): TaskConfig {
+        // ✅ ensure taskSettings is its own deep copy
+        const safeTaskSettings = structuredClone(taskSettings)
+
+        const config = TaskConfigYupSchema.cast({})
+        config.id = randomUUID().toString()
+        config.taskSettings = safeTaskSettings
+
+        if (profileId) {
+            config.used_profile = profileId
+        }
+
+        return config
+    }
+
+    static getNewTaskSettings(profileId?: string): TaskSettings {
+        let taskSettings: TaskSettings | null = null
+        let serversettings: ServerSettings | null = null
+
+        if (Settings.allSettings.servers.length > 0) {
+            serversettings = Settings.allSettings.servers.filter((s) => s.isDefault)[0] || null
+        }
+
+        if (!serversettings && Settings.allSettings.servers.length > 0) {
+            serversettings = Settings.allSettings.servers[0]
+        }
+
+        if (profileId) {
+            const profile = Settings.profiles.find((p) => p.id === profileId)
+            if (profile) {
+                taskSettings = profile.taskSettings
+            }
+        }
+
+        if (!taskSettings) {
+            console.log('profileid not found')
+
+            const defaultProfile = Settings.profiles.find((p) => p.isDefault)
+            if (defaultProfile) {
+                taskSettings = defaultProfile.taskSettings
+            } else {
+                taskSettings = TaskSettingsYupSchema.cast({})
+            }
+        }
+
+        // ✅ deep clone to avoid shared references
+        const clonedSettings: TaskSettings = structuredClone(taskSettings)
+
+        if (serversettings) {
+            clonedSettings.serverId = serversettings.id
+        }
+
+        return clonedSettings
+    }
+
+    static sanitize(data: string): string {
+        return data
+            .trim()
+            .replace(/\n$/, '')
+            .replace(/\r$/, '')
+            .replace(/\n\r$/, '')
+            .replace(/\\b$/, '')
+            .replace(/[^\x20-\x7E]/g, '')
+    }
+}

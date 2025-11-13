@@ -1,0 +1,59 @@
+name: Build Electron App
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Platform-specific dependencies
+      - name: Install Windows-specific dependencies
+        if: matrix.os == 'windows-latest'
+        run: pnpm add -D @rollup/rollup-win32-x64-msvc sass-embedded-win32-x64
+
+      - name: Install Linux-specific dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          export ELECTRON_BUILDER_CACHE=$RUNNER_TEMP/electron-builder-cache
+          pnpm exec electron-builder install-app-deps
+
+      # Build app
+      - name: Build and Publish app
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            pnpm run build:publish:win
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            pnpm run build:publish:mac
+          else
+            pnpm run build:publish:linux
+          fi
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}

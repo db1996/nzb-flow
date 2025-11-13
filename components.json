@@ -1,0 +1,19 @@
+{
+    "$schema": "https://shadcn-vue.com/schema.json",
+    "style": "default",
+    "typescript": true,
+    "tailwind": {
+        "config": "tailwind.config.ts",
+        "css": "src/renderer/src/assets/main.css",
+        "baseColor": "neutral",
+        "cssVariables": true,
+        "prefix": ""
+    },
+    "aliases": {
+        "components": "@renderer/src/components",
+        "ui": "@renderer/src/components/ui",
+        "utils": "@renderer/lib/utils",
+        "lib": "/src/renderer/src/lib"
+    },
+    "iconLibrary": "lucide"
+}

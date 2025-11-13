@@ -1,0 +1,167 @@
+<script setup lang="ts">
+import { Label } from '@ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
+import { AllSettings } from '@main/types/settings/AllSettings'
+import { PropType } from 'vue'
+import SwitchInput from '@renderer/components/form/SwitchInput.vue'
+import CardForm from '@renderer/components/form/CardForm.vue'
+import { Button } from '@components/ui/button'
+import { useUpdateStore } from '@renderer/composables/useUpdateStore'
+import { LoaderCircle } from 'lucide-vue-next'
+import Alert from '@renderer/components/ui/alert/Alert.vue'
+import AlertTitle from '@renderer/components/ui/alert/AlertTitle.vue'
+import AlertDescription from '@renderer/components/ui/alert/AlertDescription.vue'
+const updateStore = useUpdateStore()
+
+const props = defineProps({
+    form: {
+        type: Object as PropType<AllSettings>,
+        required: true
+    }
+})
+</script>
+
+<template>
+    <CardForm title="General Settings" description="Configure application appearance and behavior.">
+        <template #body>
+            <div class="space-y-2">
+                <Label>Updates</Label>
+                <div class="grid grid-cols-2 gap-4 space-y-2">
+                    <Button
+                        v-if="
+                            updateStore.updateState === 'checking' ||
+                            updateStore.updateState === 'downloading'
+                        "
+                        variant="outline_default"
+                        disabled
+                    >
+                        {{
+                            updateStore.updateState === 'checking'
+                                ? 'Checking for updates...'
+                                : 'Downloading update...'
+                        }}
+                        <LoaderCircle class="animate-spin" />
+                    </Button>
+                    <Button
+                        v-if="
+                            updateStore.updateState === 'idle' ||
+                            updateStore.updateState === 'unavailable'
+                        "
+                        variant="outline_default"
+                        @click="() => updateStore.checkForUpdates()"
+                    >
+                        Check for Updates
+                    </Button>
+
+                    <Button
+                        v-if="updateStore.updateState === 'available'"
+                        variant="outline_info"
+                        @click="() => updateStore.downloadUpdate()"
+                    >
+                        Download Update
+                    </Button>
+                    <Button
+                        v-if="updateStore.updateState === 'downloaded'"
+                        variant="default"
+                        @click="() => updateStore.installUpdate()"
+                    >
+                        Install Update
+                    </Button>
+                    <Alert
+                        v-if="updateStore.updateState === 'error'"
+                        variant="destructive"
+                        title="Update Error"
+                        description="An error occurred while checking for updates."
+                    >
+                        <AlertTitle>Error with updater</AlertTitle>
+                        <AlertDescription>
+                            {{ updateStore.errorMessage }}
+                        </AlertDescription>
+                    </Alert>
+                    <div>
+                        <p class="text-sm text-muted-foreground">
+                            Current Version: {{ updateStore.currentVersion }}
+                        </p>
+                        <p class="text-sm text-muted-foreground">
+                            Latest Version:
+                            {{ updateStore.updateInfo ? updateStore.updateInfo.version : 'N/A' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 space-y-2 mt-4 gap-2">
+                    <SwitchInput
+                        id="auto-check-updates"
+                        v-model="form.updateCheckAutomatically"
+                        label="Automatically check updates at startup"
+                    />
+                    <SwitchInput
+                        id="auto-download-updates"
+                        v-model="form.updateDownloadAutomatically"
+                        label="Automatically download updates"
+                    />
+                    <SwitchInput
+                        id="auto-install-updates"
+                        v-model="form.updateInstallAutomatically"
+                        label="Automatically install updates"
+                    />
+                </div>
+            </div>
+            <hr />
+            <div class="grid grid-cols-2">
+                <div class="space-y-2">
+                    <Label for="theme">Theme</Label>
+                    <Select v-model="form.theme.type" required>
+                        <SelectTrigger id="theme" class="w-[200px]">
+                            <SelectValue placeholder="Select theme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="light">Light</SelectItem>
+                            <SelectItem value="dark">Dark</SelectItem>
+                            <SelectItem value="system">System</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <p class="text-sm text-muted-foreground">
+                        Choose between light, dark, or system theme.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <Label for="date-formats">Date format</Label>
+                    <Select v-model="form.theme.datesLocale" required>
+                        <SelectTrigger id="date-formats" class="w-[250px]">
+                            <SelectValue placeholder="Select date format" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="us-US">mm/dd/yyyy hh:mm:ss AM</SelectItem>
+                            <SelectItem value="nl-NL">dd-mm-yyyy hh:mm:ss</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+            <hr />
+            <div class="flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <Label for="show-tray-icon">Show system tray icon</Label>
+                    <p class="text-sm text-muted-foreground">
+                        When enabled, the system tray icon will be shown.
+                    </p>
+                </div>
+                <SwitchInput id="show-tray-icon" v-model="form.theme.showTrayIcon" />
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <Label for="minimize-to-tray">Minimize to System Tray</Label>
+                    <p class="text-sm text-muted-foreground">
+                        When enabled, closing the window will minimize the app to the system tray
+                        instead of quitting. Requires "Show system tray icon" to be enabled.
+                    </p>
+                </div>
+                <SwitchInput
+                    :disabled="!form.theme.showTrayIcon"
+                    id="minimize-to-tray"
+                    v-model="form.theme.minimizeToTray"
+                />
+            </div>
+        </template>
+    </CardForm>
+</template>

@@ -1,0 +1,19 @@
+@import './base.css';
+
+.orderby-col {
+    position: relative;
+    cursor: pointer;
+}
+.orderby-active {
+    background-color: var(--color-secondary);
+}
+.orderby-active:after {
+    content: '^';
+    position: absolute;
+    top: 10px;
+    right: 5px;
+}
+
+.orderby-active.DESC:after {
+    transform: rotate(180deg);
+}
