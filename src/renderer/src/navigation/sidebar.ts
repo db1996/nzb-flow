@@ -1,3 +1,4 @@
+import { NavItem } from '@renderer/types/navigation'
 import { Clock, FolderSync, Home, ListCheck, UserCog } from 'lucide-vue-next'
 
 const sidebar = [
@@ -37,7 +38,7 @@ const sidebar = [
                 current: 'folders.*',
                 isVisible: true
             }
-        ]
+        ] as NavItem[],
     }
 ]
 

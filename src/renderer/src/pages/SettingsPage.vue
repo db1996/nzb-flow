@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import AppLayout from '@renderer/layout/AppLayout.vue'
-import { AllSettings } from '@main/types/settings/AllSettings'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 import {
     CheckIcon,
