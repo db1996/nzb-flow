@@ -10,6 +10,9 @@ const settingsStore = useSettingsStore();
 
 function toggleSidebarWithSettings() {
     toggleSidebar();
+    if(settingsStore.settings == null) {
+        return;
+    }
     if(settingsStore.settings.theme.sidebarOpen !== open.value) {
         settingsStore.savePartialSettings({ theme: { ...settingsStore.settings.theme, sidebarOpen: open.value } });
     }

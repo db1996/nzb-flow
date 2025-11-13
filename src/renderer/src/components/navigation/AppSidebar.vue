@@ -47,10 +47,10 @@ onMounted(async () => {
             </SidebarMenu>
         </SidebarHeader>
 
-        <SidebarContent>
+        <SidebarContent class="overflow-visible">
             <NavMain v-for="(group, index) in navGroups" :key="index" :name="group.name" :items="group.items" />
         </SidebarContent>
-        <SidebarFooter >
+        <SidebarFooter class="overflow-visible">
           <SidebarMenu>
               <NavFooter v-for="(group, index) in navGroupsFooter" :key="index" :name="group.name" :items="group.items" />
                 <SidebarMenuItem>

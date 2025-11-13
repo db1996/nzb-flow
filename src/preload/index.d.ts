@@ -56,15 +56,6 @@ declare global {
 
             openFolderInExplorer: (path: string) => Promise<void>
             openFileInExplorer: (path: string) => Promise<void>
-
-            onCommandProgress: (
-                callback: (data: {
-                    id: string
-                    currentStep?: CommandStep
-                    type: 'stdout' | 'stderr'
-                    message: string
-                }) => void
-            ) => void
             onCommandProgressPercentage: (
                 callback: (data: {
                     id: string

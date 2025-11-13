@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import AppLayout from '@renderer/layout/AppLayout.vue'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 import {
@@ -26,6 +26,7 @@ import Button from '@renderer/components/ui/button/Button.vue'
 import Alert from '@renderer/components/ui/alert/Alert.vue'
 import AlertTitle from '@renderer/components/ui/alert/AlertTitle.vue'
 import AlertDescription from '@renderer/components/ui/alert/AlertDescription.vue'
+import { AllSettings } from '@main/types/settings/AllSettings'
 
 const settingsStore = useSettingsStore()
 
@@ -97,6 +98,19 @@ const badgeSections = computed(() => {
     }
     return returnValue
 })
+
+const lastSettingsForm = ref<AllSettings | null>(null)
+
+watch(
+    () => settingsStore.form,
+    (newVal) => {
+        if (JSON.stringify(newVal) !== JSON.stringify(lastSettingsForm.value) && lastSettingsForm.value !== null) {
+            settingsStore.saveSettingsFormDebounce()
+        }
+        lastSettingsForm.value = JSON.parse(JSON.stringify(newVal))
+    },
+    { deep: true }
+)
 </script>
 
 <template>

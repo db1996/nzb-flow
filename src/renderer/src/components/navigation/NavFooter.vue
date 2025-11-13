@@ -21,7 +21,7 @@ const props = defineProps<{
 }>()
 const settingsStore = useSettingsStore()
 
-const { state } = useSidebar()
+const { state, open } = useSidebar()
 
 const visibleItems = computed(() => props.items.filter(item => isVisible(item)))
 
@@ -125,7 +125,7 @@ function setSettingsBadge() {
                                                 <span>{{ child.title }}</span>
                                             </RouterLink>
                                             <Badge
-                                                v-if="child.badge"
+                                                v-show="child.badge && open"
                                                 :variant="child.badgeVariant"
                                                 class="absolute top-1 right-2"
                                                 >{{ child.badge }}</Badge
@@ -149,9 +149,16 @@ function setSettingsBadge() {
                                 <span>{{ item.title }}</span>
                             </RouterLink>
                             <Badge
-                                v-if="item.badge"
+                                v-show="item.badge && open"
                                 :variant="item.badgeVariant"
                                 class="absolute top-1 right-2"
+                            >
+                                {{ item.badge }}
+                            </Badge>
+                            <Badge
+                                v-show="item.badge && !open"
+                                :variant="item.badgeVariant"
+                                class="absolute top-1 right-[-20px]"
                             >
                                 {{ item.badge }}
                             </Badge>

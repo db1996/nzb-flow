@@ -15,7 +15,7 @@ const props = defineProps<{
 
 const tasksStore = useTasksStore();
 
-const { state } = useSidebar();
+const { state, open } = useSidebar();
 
 const visibleItems = computed(() => props.items.filter((item) => isVisible(item)));
 
@@ -82,7 +82,11 @@ function setApprovalBadge() {
                                                 <component :is="child.icon" :size="16" />
                                                 <span>{{ child.title }}</span>
                                             </RouterLink>
-                                            <Badge v-if="child.badge" :variant="child.badgeVariant" class="absolute top-1 right-2">{{
+                                            <Badge v-show="child.badge && open" :variant="child.badgeVariant" class="absolute top-1 right-2">{{
+                                                child.badge
+                                            }}</Badge>
+
+                                            <Badge v-show="child.badge && !open" :variant="child.badgeVariant" class="absolute top-1 right-[-20px] z-1000">{{
                                                 child.badge
                                             }}</Badge>
                                         </SidebarMenuButton>
@@ -99,7 +103,14 @@ function setApprovalBadge() {
                                 <component :is="item.icon" />
                                 <span>{{ item.title }}</span>
                             </RouterLink>
-                            <Badge v-if="item.badge" :variant="item.badgeVariant" class="absolute top-1 right-2">
+                            <Badge v-show="item.badge && open" :variant="item.badgeVariant" class="absolute top-1 right-2 z-1000">
+                                {{ item.badge }}
+                            </Badge>
+                            <Badge
+                                v-show="item.badge && !open"
+                                :variant="item.badgeVariant"
+                                class="absolute top-1 right-[-20px]"
+                            >
                                 {{ item.badge }}
                             </Badge>
                         </SidebarMenuButton>

@@ -3,10 +3,11 @@ import Breadcrumbs from '@components/Breadcrumbs.vue';
 import type { BreadcrumbItem } from '@renderer/types/navigation';
 import { Button } from '@ui/button';
 import { isCurrent } from '@renderer/helpers/route';
-import { LoaderCircle, Pause, Play, Save } from 'lucide-vue-next';
+import { BadgeCheck, LoaderCircle, Pause, Play } from 'lucide-vue-next';
 import { useSettingsStore } from '@renderer/composables/settingsStore';
 import { useTasksStore } from '@renderer/composables/useTasksStore';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
+import LoadCircle from '../LoadCircle.vue';
 
 const settingsStore = useSettingsStore();
 const tasksStore = useTasksStore();
@@ -38,6 +39,7 @@ async function selectFolders() {
         }
     })
 }
+
 
 </script>
 
@@ -74,11 +76,13 @@ async function selectFolders() {
         </div>
         <div class="flex justify-between gap-2 w-full items-center border-b pb-3 pt-3" v-if="isCurrent('settings')">
             <div class="flex-1 md:flex md:justify-end items-center">
-                <Button @click="settingsStore.saveSettingsForm">
+                <Button @click="settingsStore.fireDebounceNow"> Save Settings
                   <LoaderCircle
                       v-if="settingsStore.formIsSaving"
                       class="animate-spin text-amber-500"
-                  /> Save Settings <Save />
+                  />
+                  <BadgeCheck v-if="settingsStore.flashSavedIndicator" class="text-green-500" />
+                  <LoadCircle v-if="settingsStore.remainingTimeSaveSettings > 10" :duration="settingsStore.debounceTime" :remaining="settingsStore.remainingTimeSaveSettings" />
                 </Button>
             </div>
 

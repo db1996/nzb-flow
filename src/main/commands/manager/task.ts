@@ -115,13 +115,6 @@ export default class Task {
             this.taskConfig.currentStep = CommandStep.POST
         }
 
-        Settings.mainWindow?.webContents.send('command-progress', {
-            id: this.taskConfig.id,
-            currentStep: this.taskConfig.currentStep,
-            type: 'stdout',
-            message: 'Starting step...'
-        })
-
         let success = false
         switch (this.taskConfig.currentStep) {
             case CommandStep.RAR:
@@ -138,15 +131,6 @@ export default class Task {
                 return true
             case CommandStep.ERROR:
                 return false
-        }
-
-        if (success) {
-            Settings.mainWindow?.webContents.send('command-progress', {
-                id: this.taskConfig.id,
-                currentStep: this.taskConfig.currentStep,
-                type: 'stdout',
-                message: 'Step completed successfully'
-            })
         }
 
         return success

@@ -2,7 +2,7 @@
 import { Label } from '@ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import { AllSettings } from '@main/types/settings/AllSettings'
-import { PropType } from 'vue'
+import { PropType, watch } from 'vue'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
 import CardForm from '@renderer/components/form/CardForm.vue'
 import { Button } from '@components/ui/button'
@@ -11,6 +11,8 @@ import { LoaderCircle } from 'lucide-vue-next'
 import Alert from '@renderer/components/ui/alert/Alert.vue'
 import AlertTitle from '@renderer/components/ui/alert/AlertTitle.vue'
 import AlertDescription from '@renderer/components/ui/alert/AlertDescription.vue'
+import { useAppearance } from '@renderer/composables/useAppearance'
+import { Appearance } from '@renderer/types/appearance'
 const updateStore = useUpdateStore()
 
 const props = defineProps({
@@ -19,11 +21,73 @@ const props = defineProps({
         required: true
     }
 })
+const appearanceStore = useAppearance()
+watch(
+    () => props.form.theme.type,
+    (newVal) => {
+        appearanceStore.updateAppearance(newVal as Appearance)
+    }
+)
 </script>
 
 <template>
     <CardForm title="General Settings" description="Configure application appearance and behavior.">
         <template #body>
+            <div class="grid grid-cols-2">
+                <div class="space-y-2">
+                    <Label for="theme">Theme</Label>
+                    <Select v-model="form.theme.type" required>
+                        <SelectTrigger id="theme" class="w-[200px]">
+                            <SelectValue placeholder="Select theme" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="light">Light</SelectItem>
+                            <SelectItem value="dark">Dark</SelectItem>
+                            <SelectItem value="system">System</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <p class="text-sm text-muted-foreground">
+                        Choose between light, dark, or system theme.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <Label for="date-formats">Date format</Label>
+                    <Select v-model="form.theme.datesLocale" required>
+                        <SelectTrigger id="date-formats" class="w-[250px]">
+                            <SelectValue placeholder="Select date format" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="us-US">mm/dd/yyyy hh:mm:ss AM</SelectItem>
+                            <SelectItem value="nl-NL">dd-mm-yyyy hh:mm:ss</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+            <hr />
+            <div class="flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <Label for="show-tray-icon">Show system tray icon</Label>
+                    <p class="text-sm text-muted-foreground">
+                        When enabled, the system tray icon will be shown.
+                    </p>
+                </div>
+                <SwitchInput id="show-tray-icon" v-model="form.theme.showTrayIcon" />
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="space-y-0.5">
+                    <Label for="minimize-to-tray">Minimize to System Tray</Label>
+                    <p class="text-sm text-muted-foreground">
+                        When enabled, closing the window will minimize the app to the system tray
+                        instead of quitting. Requires "Show system tray icon" to be enabled.
+                    </p>
+                </div>
+                <SwitchInput
+                    :disabled="!form.theme.showTrayIcon"
+                    id="minimize-to-tray"
+                    v-model="form.theme.minimizeToTray"
+                />
+            </div>
+            <hr>
             <div class="space-y-2">
                 <Label>Updates</Label>
                 <div class="grid grid-cols-2 gap-4 space-y-2">
@@ -106,61 +170,6 @@ const props = defineProps({
                         label="Automatically install updates"
                     />
                 </div>
-            </div>
-            <hr />
-            <div class="grid grid-cols-2">
-                <div class="space-y-2">
-                    <Label for="theme">Theme</Label>
-                    <Select v-model="form.theme.type" required>
-                        <SelectTrigger id="theme" class="w-[200px]">
-                            <SelectValue placeholder="Select theme" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="light">Light</SelectItem>
-                            <SelectItem value="dark">Dark</SelectItem>
-                            <SelectItem value="system">System</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <p class="text-sm text-muted-foreground">
-                        Choose between light, dark, or system theme.
-                    </p>
-                </div>
-                <div class="space-y-2">
-                    <Label for="date-formats">Date format</Label>
-                    <Select v-model="form.theme.datesLocale" required>
-                        <SelectTrigger id="date-formats" class="w-[250px]">
-                            <SelectValue placeholder="Select date format" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="us-US">mm/dd/yyyy hh:mm:ss AM</SelectItem>
-                            <SelectItem value="nl-NL">dd-mm-yyyy hh:mm:ss</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-            <hr />
-            <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <Label for="show-tray-icon">Show system tray icon</Label>
-                    <p class="text-sm text-muted-foreground">
-                        When enabled, the system tray icon will be shown.
-                    </p>
-                </div>
-                <SwitchInput id="show-tray-icon" v-model="form.theme.showTrayIcon" />
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <Label for="minimize-to-tray">Minimize to System Tray</Label>
-                    <p class="text-sm text-muted-foreground">
-                        When enabled, closing the window will minimize the app to the system tray
-                        instead of quitting. Requires "Show system tray icon" to be enabled.
-                    </p>
-                </div>
-                <SwitchInput
-                    :disabled="!form.theme.showTrayIcon"
-                    id="minimize-to-tray"
-                    v-model="form.theme.minimizeToTray"
-                />
             </div>
         </template>
     </CardForm>

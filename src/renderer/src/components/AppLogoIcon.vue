@@ -3,6 +3,10 @@ import { getCurrentAppearance } from '@renderer/composables/useAppearance';
 import { computed, type HTMLAttributes } from 'vue';
 import lightTheme from '@renderer/assets/logo-light.svg';
 import darkTheme from '@renderer/assets/logo-dark.svg';
+import smallLogo from '@renderer/assets/icon.png';
+import { useSidebar } from './ui/sidebar';
+
+const { open} = useSidebar();
 
 defineOptions({
     inheritAttrs: false,
@@ -24,5 +28,6 @@ const source = computed(() => {
 </script>
 
 <template>
-    <img :src="source" alt="Logo">
+    <img v-show="open" :src="source" alt="Logo">
+    <img v-show="!open" :src="smallLogo" alt="Logo" class="mx-auto">
 </template>

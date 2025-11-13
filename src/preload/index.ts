@@ -75,26 +75,6 @@ const api = {
         electronAPI.ipcRenderer.invoke('test-nyuu', customCommand),
     installNyuu: () => electronAPI.ipcRenderer.invoke('install-nyuu'),
     installParpar: () => electronAPI.ipcRenderer.invoke('install-parpar'),
-    onCommandProgress: (
-        callback: (arg0: {
-            id: string
-            currentStep: CommandStep
-            type: 'stdout' | 'stderr'
-            message: string
-        }) => void
-    ) =>
-        electronAPI.ipcRenderer.on(
-            'command-progress',
-            (
-                _,
-                data: {
-                    id: string
-                    currentStep: CommandStep
-                    type: 'stdout' | 'stderr'
-                    message: string
-                }
-            ) => callback(data)
-        ),
     onCommandProgressPercentage: (
         callback: (arg0: { id: string; currentStep: CommandStep; percentage: number }) => void
     ) =>

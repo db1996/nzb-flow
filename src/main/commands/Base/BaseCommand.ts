@@ -29,15 +29,15 @@ export default class BaseCommand {
     public async run(): Promise<boolean> {
         if (this.taskId === '') this.taskId = randomUUID().toString()
 
-          try {
-            console.log("making rarpar", this._settings.rarParFolderPath);
+        try {
+            console.log('making rarpar', this._settings.rarParFolderPath)
 
-        if (!fs.existsSync(this._settings.rarParFolderPath)) {
-            fs.mkdirSync(this._settings.rarParFolderPath, { recursive: true })
-        }
+            if (!fs.existsSync(this._settings.rarParFolderPath)) {
+                fs.mkdirSync(this._settings.rarParFolderPath, { recursive: true })
+            }
         } catch (error) {
             this.commandData.error += `Failed to create RAR/PAR folder path: ${error}\n`
-            console.log("Error happened", error);
+            console.log('Error happened', error)
 
             return false
         }
@@ -65,13 +65,13 @@ export default class BaseCommand {
 
                 sp.stdout.on('data', (data) => {
                     const message = Settings.sanitize(data.toString())
-                    if(this._settings.currentStep === CommandStep.PAR) {
+                    if (this._settings.currentStep === CommandStep.PAR) {
                     }
 
-                    if( this.checkIsProgress(message) > 0 ) {
+                    if (this.checkIsProgress(message) > 0) {
                         this.progressPercentage(message)
                         return
-                    }else{
+                    } else {
                         if (this.checkStderr(message)) {
                             this.progress(message, 'stderr')
                         } else {
@@ -82,10 +82,10 @@ export default class BaseCommand {
 
                 sp.stderr.on('data', (data) => {
                     const message = Settings.sanitize(data.toString())
-                    if( this.checkIsProgress(message) > 0 ) {
+                    if (this.checkIsProgress(message) > 0) {
                         this.progressPercentage(message)
                         return
-                    }else{
+                    } else {
                         if (this.checkStderr(message)) {
                             this.progress(message, 'stderr')
                         } else {
@@ -118,18 +118,13 @@ export default class BaseCommand {
 
     private progress(message: string, type: 'stdout' | 'stderr' = 'stdout') {
         this.commandData.output += `${message}\n`
-        if (type === 'stderr') this.commandData.error += `${message}\n`
-
-        Settings.mainWindow?.webContents.send('command-progress', {
-            id: this.taskId,
-            currentStep: this._settings.currentStep,
-            type,
-            message
-        })
+        if (type === 'stderr') {
+            this.commandData.error += `${message}\n`
+        }
     }
 
     private progressPercentage(message: string) {
-        if(this.checkIsProgress(message) === 0) {
+        if (this.checkIsProgress(message) === 0) {
             return
         }
 

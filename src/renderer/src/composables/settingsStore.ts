@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { AllSettings } from '@main/types/settings/AllSettings'
 import { ProfileSettings, ProfileSettingsYupSchema } from '@main/types/settings/ProfileSettings'
 import { FolderSettings, FolderSettingsYupSchema } from '@main/types/settings/FolderSettings'
+import { debounce } from 'lodash'
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref<AllSettings | null>(null)
@@ -165,7 +166,6 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     async function saveSettings(newSettings: AllSettings) {
-        console.log('Saving settings json', JSON.stringify(newSettings))
         settings.value = JSON.parse(JSON.stringify(newSettings))
 
         await window.api?.saveAllSettings(JSON.parse(JSON.stringify(newSettings)))
@@ -265,8 +265,6 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     async function saveSettingsForm() {
-        console.log('attempting')
-
         if (!form.value) {
             console.error('⚠️ Form is null or undefined before validation!')
             return
@@ -274,20 +272,26 @@ export const useSettingsStore = defineStore('settings', () => {
 
         formIsSaving.value = true
 
-        console.log('🔍 Validating form:', JSON.stringify(form.value, null, 2))
-
         try {
-            // await formSchema.validate(form.value, { abortEarly: false })
-            console.log('✅ Validation successful!')
+            const toCheckRar = form.value.commands.rar !== settings.value?.commands.rar;
+            const toCheckPar = form.value.commands.par !== settings.value?.commands.par;
+            const toCheckNyuu = form.value.commands.nyuu !== settings.value?.commands.nyuu;
+
             await saveSettings(form.value)
+            if (toCheckRar) {
+                await checkRar(true, form.value.commands.rar)
+            }
+            if (toCheckPar) {
+                await checkPar(true, form.value.commands.par)
+            }
+            if (toCheckNyuu) {
+                await checkNyuu(true, form.value.commands.nyuu)
+            }
             formErrors.value = {}
             formIsSaving.value = false
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            console.error('❌ Validation failed:', err)
-
             if (err.inner) {
-                console.error('🔍 Validation errors:', err.inner)
+                console.error('Validation errors:', err.inner)
                 formErrors.value = err.inner.reduce((acc: Record<string, string>, error) => {
                     acc[error.path] = error.message
                     return acc
@@ -295,6 +299,53 @@ export const useSettingsStore = defineStore('settings', () => {
                 formIsSaving.value = false
             }
         }
+    }
+
+    const debounceTime = 3000
+    const remainingTimeSaveSettings = ref(0)
+    const flashSavedIndicator = ref(false)
+    let countdownInterval: number | null = null
+
+    const debounceSaveSettingForm = debounce(async () => {
+        clearCountdown()
+        remainingTimeSaveSettings.value = 0
+
+        await saveSettingsForm()
+        flashSavedIndicator.value = true
+        setTimeout(() => {
+            flashSavedIndicator.value = false
+        }, 500)
+    }, debounceTime)
+
+    function clearCountdown() {
+        if (countdownInterval !== null) {
+            clearInterval(countdownInterval)
+            countdownInterval = null
+        }
+    }
+
+    async function saveSettingsFormDebounce() {
+        clearCountdown()
+        remainingTimeSaveSettings.value = debounceTime
+        const start = Date.now()
+
+        countdownInterval = window.setInterval(() => {
+            const elapsed = Date.now() - start
+            const remaining = Math.max(debounceTime - elapsed, 0)
+            remainingTimeSaveSettings.value = remaining
+
+            // stop interval when done
+            if (remaining === 0) clearCountdown()
+        }, 16) // ~60fps smoothness
+
+        debounceSaveSettingForm()
+    }
+
+    async function fireDebounceNow() {
+        clearCountdown()
+        remainingTimeSaveSettings.value = debounceTime
+        debounceSaveSettingForm()
+        debounceSaveSettingForm.flush()
     }
 
     return {
@@ -329,7 +380,12 @@ export const useSettingsStore = defineStore('settings', () => {
         deleteFolder,
         scanFolder,
         activeFolderEdit,
-        newFolder
+        newFolder,
+        saveSettingsFormDebounce,
+        fireDebounceNow,
+        flashSavedIndicator,
+        remainingTimeSaveSettings,
+        debounceTime
     }
 })
 
