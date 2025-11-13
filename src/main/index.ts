@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain, dialog, Tray, Menu } from 'electron
 import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { autoUpdater } from 'electron-updater'
-import icon from '../../resources/icon.png?asset&v=3'
+import icon from '../../resources/icon.png?asset'
 import Settings from './classes/Settings'
 import { AllSettings } from './types/settings/AllSettings'
 import fs from 'fs'
@@ -57,7 +57,7 @@ function createTray(): void {
     ])
 
     tray.setContextMenu(contextMenu)
-    tray.setToolTip('NZB Uploader')
+    tray.setToolTip('NZB Flow')
 
     // Double-click to show/hide window
     tray.on('double-click', () => {

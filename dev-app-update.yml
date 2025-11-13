@@ -1,8 +1,8 @@
 provider: github
 owner: db1996
-repo: nzb-uploader
-updaterCacheDirName: nzb-uploader-updater
+repo: nzb-flow
+updaterCacheDirName: nzb-flow-updater
 private: false
 requestHeaders:
   Accept: application/vnd.github.v3+json
-  User-Agent: nzb-uploader
+  User-Agent: nzb-flow

@@ -1,17 +1,17 @@
 {
-  "name": "nzb-uploader",
+  "name": "nzb-flow",
   "version": "0.3.0",
-  "description": "NZB uploader",
+  "description": "NZB flow",
   "main": "./out/main/index.js",
   "author": "db1996",
-  "homepage": "https://github.com/db1996/nzb-uploader",
+  "homepage": "https://github.com/db1996/nzb-flow",
   "build": {
-    "appId": "com.nzbuploader.app",
+    "appId": "com.nzbflow.app",
     "publish": [
       {
         "provider": "github",
         "owner": "db1996",
-        "repo": "nzb-uploader"
+        "repo": "nzb-flow"
       }
     ],
     "linux": {
