@@ -63,7 +63,7 @@ Uses the nyuu CLI command parameter:
 
 ### filename
 
-Obfuscates the filename headers of the upload, so the original rar/par2 filenames are obfuscated
+Obfuscates the filename headers of the upload, so the original rar/par2 filenames are obfuscated. The rar/par2/NZB filenames are still used from the post title input. but this just obfuscates the headers of the usenet post.
 
 Uses the nyuu CLI command parameter:
 
