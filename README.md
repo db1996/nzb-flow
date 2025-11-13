@@ -1,6 +1,5 @@
-# NZB Flow ![Logo](build/icon.ico)
-
-
+# NZB Flow
+![alt text](docs/images/logo-dark.svg)
 
 A GUI application to automate usenet posting. It uses external cli tools for the whole process: rar for compression (others coming soon), parpar for par2 creation and nyuu for posting.
 
@@ -41,11 +40,11 @@ Check out the profile settings for detailed and advanced settings for posting.
 
 ## Quick docs links
 
-Rar cli help https://gist.github.com/YenForYang/5953ad8355cf32188aa75c0139cc9261
+[Rar cli help](https://gist.github.com/YenForYang/5953ad8355cf32188aa75c0139cc9261)
 
-ParPar cli help https://github.com/animetosho/ParPar/blob/master/help-full.txt
+[ParPar cli help](https://github.com/animetosho/ParPar/blob/master/help-full.txt)
 
-Nyuu cli help: https://github.com/animetosho/Nyuu/blob/master/help-full.txt
+[Nyuu cli help](https://github.com/animetosho/Nyuu/blob/master/help-full.txt)
 
 In the profile settings docs you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
 

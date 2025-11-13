@@ -26,6 +26,11 @@ export default class RarCommand extends BaseCommand {
             fileName += '.rar'
         }
 
+        const outputDir = path.join(this._settings.rarParFolderPath, this._settings.rarParFilename)
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true })
+        }
+
         // Output archive
         args.push(this.cmdString(path.join(this._settings.rarParFolderPath, fileName)))
 
@@ -39,7 +44,10 @@ export default class RarCommand extends BaseCommand {
         }
 
         // Volume size (manual or automatic)
-        if (!this._settings.taskSettings.rarSettings.automaticVolumes) {
+        if (
+            !this._settings.taskSettings.rarSettings.automaticVolumes &&
+            this._settings.taskSettings.rarSettings.volumes !== ''
+        ) {
             args.push(`-v${this._settings.taskSettings.rarSettings.volumes}`)
         }
 
