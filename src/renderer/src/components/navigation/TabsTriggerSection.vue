@@ -5,6 +5,7 @@ import TabsTrigger from '../ui/tabs/TabsTrigger.vue';
 
 defineProps<{
     section: SettingsTabSection;
+    badge?: boolean;
 }>();
 
 
@@ -13,8 +14,8 @@ defineProps<{
 <template>
     <TabsTrigger :value="section.id" >
         {{ section.label }}
-        <Badge v-if="section.badge" :variant="section.badgeVariant">
-            <template v-if="section.badge">
+        <Badge v-if="badge" :variant="section.badgeVariant">
+            <template v-if="badge">
                 <component :is="section.badgeIcon" />
             </template>
         </Badge>

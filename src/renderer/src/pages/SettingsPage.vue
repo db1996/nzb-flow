@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppLayout from '@renderer/layout/AppLayout.vue'
 import { AllSettings } from '@main/types/settings/AllSettings'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
@@ -29,104 +29,75 @@ import AlertTitle from '@renderer/components/ui/alert/AlertTitle.vue'
 import AlertDescription from '@renderer/components/ui/alert/AlertDescription.vue'
 
 const settingsStore = useSettingsStore()
+
+
 const sections = ref([
     {
         id: 'general',
         label: 'General',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
     {
         id: 'queues',
         label: 'Queues',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
     {
         id: 'servers',
         label: 'Servers',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
     {
         id: 'posting',
         label: 'Posting',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
     {
         id: 'rar',
         label: 'Compression (RAR)',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
     {
         id: 'par',
         label: 'Par',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
     {
         id: 'nyuu',
         label: 'Nyuu',
-        badge: false,
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     }
 ])
 
-const settings = ref<AllSettings | null>(null)
+const badgeSections = computed(() => {
+    let returnValue = {
+        servers: false,
+        rar: false,
+        par: false,
+        nyuu: false
+    }
 
-onMounted(async () => {
-    settings.value = await settingsStore.getSettings()
     if (settingsStore.settings?.servers.length === 0) {
-        sections.value.find(s => s.id === 'servers')!.badge = true
+        returnValue.servers = true
     }
-    if (!settingsStore.commands.rar.active) {
-        sections.value.find(s => s.id === 'rar')!.badge = true
+    if (!settingsStore.commands.rar.active && !settingsStore.commands.rar.checking) {
+        returnValue.rar = true
     }
-
-    if (!settingsStore.commands.par.active) {
-        sections.value.find(s => s.id === 'par')!.badge = true
+    if (!settingsStore.commands.par.active && !settingsStore.commands.par.checking) {
+        returnValue.par = true
     }
-
-    if (!settingsStore.commands.nyuu.active) {
-        sections.value.find(s => s.id === 'nyuu')!.badge = true
+    if (!settingsStore.commands.nyuu.active && !settingsStore.commands.nyuu.checking) {
+        returnValue.nyuu = true
     }
+    return returnValue
 })
-
-watch(
-    settingsStore.commands,
-    () => {
-        if (settingsStore.settings?.servers.length === 0) {
-            sections.value.find(s => s.id === 'servers')!.badge = true
-        }
-        if (settingsStore.commands.rar.active || settingsStore.commands.rar.checking) {
-            sections.value.find(s => s.id === 'rar')!.badge = false
-        } else {
-            sections.value.find(s => s.id === 'rar')!.badge = true
-        }
-
-        if (settingsStore.commands.par.active || settingsStore.commands.par.checking) {
-            sections.value.find(s => s.id === 'par')!.badge = false
-        } else {
-            sections.value.find(s => s.id === 'par')!.badge = true
-        }
-
-        if (settingsStore.commands.nyuu.active || settingsStore.commands.nyuu.checking) {
-            sections.value.find(s => s.id === 'nyuu')!.badge = false
-        } else {
-            sections.value.find(s => s.id === 'nyuu')!.badge = true
-        }
-    },
-    { deep: true }
-)
 </script>
 
 <template>
@@ -135,10 +106,10 @@ watch(
             <TabsList class="grid w-full grid-cols-[1fr_1fr_2fr_2fr_1fr_1fr]">
                 <TabsTriggerSection :section="sections.find(s => s.id === 'general')!" />
                 <TabsTriggerSection :section="sections.find(s => s.id === 'queues')!" />
-                <TabsTriggerSection :section="sections.find(s => s.id === 'servers')!" />
-                <TabsTriggerSection :section="sections.find(s => s.id === 'rar')!" />
-                <TabsTriggerSection :section="sections.find(s => s.id === 'par')!" />
-                <TabsTriggerSection :section="sections.find(s => s.id === 'nyuu')!" />
+                <TabsTriggerSection :badge="badgeSections['servers']" :section="sections.find(s => s.id === 'servers')!" />
+                <TabsTriggerSection :badge="badgeSections['rar']" :section="sections.find(s => s.id === 'rar')!" />
+                <TabsTriggerSection :badge="badgeSections['par']" :section="sections.find(s => s.id === 'par')!" />
+                <TabsTriggerSection :badge="badgeSections['nyuu']" :section="sections.find(s => s.id === 'nyuu')!" />
             </TabsList>
             <TabsContent value="general">
                 <GeneralSettings v-if="settingsStore.form" :form="settingsStore.form" />
