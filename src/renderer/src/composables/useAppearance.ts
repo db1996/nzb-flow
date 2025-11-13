@@ -79,8 +79,6 @@ export function useAppearance() {
             console.warn(`Invalid appearance value: ${value}`)
             return
         }
-        console.log('update appearance called')
-
         const actualAppearance = value as Appearance
         appearance.value = actualAppearance
 

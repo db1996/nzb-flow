@@ -34,8 +34,8 @@ const props = defineProps({
                 <TextInput
                     id="max-upload-queue-before-pause-compression"
                     label="Max uploads in queue before pausing compression"
-                    help="If set to 0, compression will not be paused. The maximum amount of uploads that can be queued before compression is paused.
-                    This will keep the upload queue from becoming too full, and at the same time make sure it never stops uploading."
+                    help="The maximum amount of uploads that can be queued before compression is paused.
+                    This will keep the upload queue from becoming too full, and at the same time make sure it never stops uploading. If set to 0, compression will not be paused. "
                     type="number"
                     v-model="form.maxUploadQueueBeforePause"
                 />
