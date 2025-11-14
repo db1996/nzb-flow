@@ -582,8 +582,6 @@ export default class Settings {
         }
 
         if (!taskSettings) {
-            console.log('profileid not found')
-
             const defaultProfile = Settings.profiles.find((p) => p.isDefault)
             if (defaultProfile) {
                 taskSettings = defaultProfile.taskSettings

@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: nzb-flow
+appId: com.nzbflow.app
+productName: NZB Flow
 directories:
   buildResources: build
 files:

@@ -17,12 +17,11 @@ import SidebarFooter from '../ui/sidebar/SidebarFooter.vue'
 import SidebarAppearanceButton from './SidebarAppearanceButton.vue'
 import SidebarToggleButton from './SidebarToggleButton.vue'
 import NavFooter from './NavFooter.vue'
-import sidebar from '@renderer/navigation/sidebar'
 
 const navigationStore = useNavigationStore()
 
-const navGroups = ref<NavGroup[]>(sidebar['items'])
-const navGroupsFooter = ref<NavGroup[]>(sidebar['footerItems'])
+const navGroups = ref<NavGroup[]>([])
+const navGroupsFooter = ref<NavGroup[]>([])
 
 const { open } = useSidebar()
 
