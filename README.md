@@ -56,6 +56,7 @@ But performance is something I need to test thoroughly. This application is writ
 
 ### features I'm working on/thinking about
 
+- Backup server per profile so if it fails uploading it should retry with the backup server
 - more extensive logging (with settings). Right now each command has its own log output. But I would like to introduce more extensive log levels
 - Ability to manage the history (you can manually delete log files right now to make them go away)
   - Including automatic management (x days/weeks/whatever)
