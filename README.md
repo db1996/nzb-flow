@@ -57,7 +57,9 @@ But performance is something I need to test thoroughly. This application is writ
 ### features I'm working on/thinking about
 
 - more extensive logging (with settings). Right now each command has its own log output. But I would like to introduce more extensive log levels
-- ability to create jobs using a cli
+- Ability to manage the history (you can manually delete log files right now to make them go away)
+  - Including automatic management (x days/weeks/whatever)
+- Ability to create jobs using a cli
 - a bit better visuals, I am not quite happy with all the tables yet, the screen needs to be quite wide to make it all fit.
 
 If you can think of any missing features please open an issue!
