@@ -54,7 +54,7 @@ In the profile settings you can choose whether to use a randomly generated one, 
 
 `{fname}` can be used in the custom name, suffix and prefix. It will be replaced by the name of the first file/folder in the list (the first one you drop)
 
-This will be used for the rar, par2 and NZB file names. Which results in the post title in nzb indexers. If obfuscation is used the filenames will still be the post title input (can be random, so still obfuscated). More details about the obfuscation methods [check here](###Obfuscation)
+This will be used for the rar, par2 and NZB file names. Which results in the post title in nzb indexers. If obfuscation is used the filenames will still be the post title input (can be random, so still obfuscated). More details about the obfuscation methods [check here](#obfuscation)
 
 ### Password
 
@@ -90,6 +90,8 @@ Nyuu CLI with the option:
 Generated files are not deleted after the job if you turn this on. Folder path can be found and changed in the general settings. IF you open a task log and go to the files tab you will find the exact folder for that task.
 
 ### Obfuscation
+
+All 3 obfuscation methods will generate a UUID if turned on (Seperate one for each).
 
 #### Subject
 
