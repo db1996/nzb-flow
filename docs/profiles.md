@@ -16,8 +16,8 @@ Here I will go through each setting individually and explain in more technical d
     - [Save Rar and Par2 files](#save-rar-and-par2-files)
     - [Obfuscation](#obfuscation)
       - [Subject](#subject)
-    - [Filename](#filename)
-    - [YENC name](#yenc-name)
+      - [Filename](#filename)
+      - [YENC name](#yenc-name)
   - [Server settings](#server-settings)
   - [Rar settings](#rar-settings)
     - [Skip rar creation](#skip-rar-creation)
@@ -43,6 +43,7 @@ Here I will go through each setting individually and explain in more technical d
       - [Filename override](#filename-override)
       - [YENC name override](#yenc-name-override)
       - [Message-ID override](#message-id-override)
+      - [Date override](#date-override)
       - [Article encoding override](#article-encoding-override)
 
 
@@ -101,7 +102,7 @@ Nyuu CLI command parameter:
 
 `--subject`
 
-### Filename
+#### Filename
 
 Obfuscates the filename headers of the upload, so the original rar/par2 filenames are obfuscated. The rar/par2/NZB filenames are still used from the post title input. but this just obfuscates the headers of the usenet post.
 
@@ -109,7 +110,7 @@ Nyuu CLI command parameter:
 
 `--filename`
 
-### YENC name
+#### YENC name
 
 Obfuscates the YENC headers. Some indexers will use the YENC headers to still piece together obfuscated posts.
 
