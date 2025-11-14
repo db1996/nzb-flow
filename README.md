@@ -5,7 +5,7 @@ A GUI application to automate usenet posting. It uses external cli tools for the
 
 ## quick start
 
-Go to releases to download the latest installer.
+[Go to releases](https://github.com/db1996/nzb-flow/releases/latest) to download the latest installer.
 
 The application requires access to all 3 external cli commands. It will automatically detect WinRAR installation on windows. And It has a built in option to install parpar and nyuu through nodejs.
 
