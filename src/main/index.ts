@@ -347,7 +347,7 @@ app.whenReady().then(() => {
     ipcMain.handle('check-for-updates', async () => {
         console.log('Check for update icp')
         try {
-            return null
+            // return null
             return await autoUpdater.checkForUpdatesAndNotify()
         } catch (error) {
             console.error('Error checking for updates:', error)
