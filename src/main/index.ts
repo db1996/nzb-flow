@@ -374,7 +374,7 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle('check-update-startup', () => {
-        // updaterInstance?.checkForUpdatesStartup()
+        updaterInstance?.checkForUpdatesStartup()
     })
 
     ipcMain.handle('get-current-version', () => {
