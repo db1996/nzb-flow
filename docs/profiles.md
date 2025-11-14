@@ -120,7 +120,7 @@ Nyuu CLI command parameter:
 
 ## Server settings
 
-You can set a primary and backup server. If the primary server fails the upload it will retry with the backup server (including the retries from nyuu settings).
+You can set a primary server (backup coming soon). If the primary server fails the upload it will retry with the backup server (including the retries from nyuu settings).
 
 Servers are managed on the settings page
 
