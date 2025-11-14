@@ -86,7 +86,7 @@ const save = () => {
                             "
                             :disable-clear="true"
                         />
-                        <SelectInput
+                        <!-- <SelectInput
                             v-if="settingsStore.settings"
                             label="Backup server configuration (when primary server fails)"
                             v-model="settingsStore.activeProfileEdit.taskSettings.backupServerId"
@@ -97,7 +97,7 @@ const save = () => {
                                 }))
                             "
                             :disable-clear="true"
-                        />
+                        /> -->
                     </div>
                 </TabsContent>
                 <TabsContent value="rar">
