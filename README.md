@@ -13,7 +13,7 @@ Change your usenet server settings in the main settings screen. Multiple servers
 
 You will have a default profile for posting settings with sensible defaults. You can start drag and dropping files to open the upload screen.
 
-Check out the profile settings for detailed and advanced settings for posting.
+[Check out the profile settings docs](docs/profiles.md) for detailed and advanced settings for posting.
 
 ## Features
 
@@ -46,7 +46,7 @@ Check out the profile settings for detailed and advanced settings for posting.
 
 [Nyuu cli help](https://github.com/animetosho/Nyuu/blob/master/help-full.txt)
 
-In the profile settings docs you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
+[In the profile settings docs](docs/profiles.md) you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
 
 ## still a work in progress
 
