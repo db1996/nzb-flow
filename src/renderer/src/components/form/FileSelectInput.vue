@@ -48,9 +48,11 @@ const emit = defineEmits<{
 }>()
 
 async function selectFolder() {
-    const result = await window.api.chooseFolder()
+    const result = await window.api.chooseFolder(props.modelValue)
 
-    if (result) {
+    console.log('result', result)
+
+    if (result && result.path != null) {
         emit('update:modelValue', result.path)
         emit('folder:selected', result)
     }
@@ -77,6 +79,9 @@ async function selectFolder() {
                     :disabled="disabled"
                 />
             </InputGroup>
+            <ButtonGroupText as-child v-if="$slots.append">
+                <slot name="append" />
+            </ButtonGroupText>
         </ButtonGroup>
         <span class="ms-1 mt-0 text-xs text-gray-500 italic" :class="helpClass">{{ help }}</span>
     </div>

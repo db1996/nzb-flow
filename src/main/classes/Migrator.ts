@@ -1,7 +1,9 @@
+import { app } from 'electron'
 import { AllSettings } from '../types/settings/AllSettings'
 import { TaskConfig } from '../types/settings/commands/taskSettings'
 import { FolderSettings } from '../types/settings/FolderSettings'
 import { ProfileSettings } from '../types/settings/ProfileSettings'
+import path from 'node:path'
 
 export default class Migrator {
     static migrateAllSettings(
@@ -13,6 +15,14 @@ export default class Migrator {
             changed: string[]
         }
     ): AllSettings {
+        if (_diff.added.includes('folderMonitoringFolder')) {
+            validatedConfig.folderMonitoringFolder = path.join(
+                app.getPath('userData'),
+                'folder-monitoring'
+            )
+            validatedConfig.profilesSettingsFolder = path.join(app.getPath('userData'), 'profiles')
+            validatedConfig.taskHistoryFolder = path.join(app.getPath('userData'), 'task-history')
+        }
         return validatedConfig
     }
 

@@ -47,7 +47,15 @@ declare global {
             resumeQueue: () => Promise<boolean>
             getQueueStatus: () => Promise<QueueStatus>
 
-            chooseFolder: () => Promise<{
+            getDefaultFolders: () => Promise<{
+                rarparFolder: string
+                nzbOutputFolder: string
+                taskHistoryFolder: string
+                profilesSettingsFolder: string
+                folderMonitoringFolder: string
+            }>
+
+            chooseFolder: (defaultPath?: string) => Promise<{
                 path: string
                 basename: string
             }>

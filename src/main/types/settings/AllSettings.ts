@@ -8,8 +8,12 @@ export type AllSettings = {
     theme: ThemeSettings
     queue: QueueSettings
     servers: ServerSettings[]
-    rarparFolder: string // // Path to the temporary folder where rars and pars are stored
-    nzbOutputFolder: string // // Path to the folder where nzbs are stored
+    rarparFolder: string
+    nzbOutputFolder: string
+    taskHistoryFolder: string
+    profilesSettingsFolder: string
+    folderMonitoringFolder: string
+
     updateCheckAutomatically: boolean
     updateDownloadAutomatically: boolean
     updateInstallAutomatically: boolean
@@ -29,6 +33,9 @@ export const AllSettingsYupSchema = yup.object({
         .default(() => []),
     rarparFolder: yup.string().default(''),
     nzbOutputFolder: yup.string().default(''),
+    taskHistoryFolder: yup.string().default(''),
+    profilesSettingsFolder: yup.string().default(''),
+    folderMonitoringFolder: yup.string().default(''),
     updateCheckAutomatically: yup.boolean().default(true),
     updateDownloadAutomatically: yup.boolean().default(false),
     updateInstallAutomatically: yup.boolean().default(false),

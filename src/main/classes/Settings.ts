@@ -22,9 +22,11 @@ export default class Settings {
     private static loaded: boolean = false
 
     static allSettingsPath = path.join(app.getPath('userData'), 'settings.json')
-    static taskHistoryPath = path.join(app.getPath('userData'), 'history-log')
-    static profileSettingsPath = path.join(app.getPath('userData'), 'profiles')
-    static folderSettingsPath = path.join(app.getPath('userData'), 'folder-monitoring')
+    static defaultNzbOutputFolder = path.join(app.getPath('userData'), 'nzbs')
+    static defaultRarparFolder = path.join(app.getPath('userData'), 'rarpars')
+    static defaultTaskHistoryPath = path.join(app.getPath('userData'), 'history-log')
+    static defaultProfileSettingsPath = path.join(app.getPath('userData'), 'profiles')
+    static defaultFolderSettingsPath = path.join(app.getPath('userData'), 'folder-monitoring')
 
     static profiles: ProfileSettings[] = []
 
@@ -61,8 +63,11 @@ export default class Settings {
 
         Settings.allSettingsPath = path.join(app.getPath('userData'), 'settings.json')
         console.log('settings path:', Settings.allSettingsPath)
-        Settings.taskHistoryPath = path.join(app.getPath('userData'), 'history-log')
-        Settings.profileSettingsPath = path.join(app.getPath('userData'), 'profiles')
+        Settings.defaultTaskHistoryPath = path.join(app.getPath('userData'), 'history-log')
+        Settings.defaultProfileSettingsPath = path.join(app.getPath('userData'), 'profiles')
+        Settings.defaultFolderSettingsPath = path.join(app.getPath('userData'), 'folder-monitoring')
+        Settings.defaultNzbOutputFolder = path.join(app.getPath('userData'), 'nzbs')
+        Settings.defaultRarparFolder = path.join(app.getPath('userData'), 'rarpars')
 
         if (!fs.existsSync(path.dirname(Settings.allSettingsPath))) {
             fs.mkdir(path.dirname(Settings.allSettingsPath), { recursive: true }, (err) => {
@@ -72,63 +77,38 @@ export default class Settings {
             })
         }
 
-        if (!fs.existsSync(Settings.profileSettingsPath)) {
-            fs.mkdir(Settings.profileSettingsPath, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating profile settings directory', err)
-                }
-            })
-        }
-
-        if (!fs.existsSync(Settings.taskHistoryPath)) {
-            fs.mkdir(Settings.taskHistoryPath, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating task history directory', err)
-                }
-            })
-        }
-
-        if (!fs.existsSync(Settings.folderSettingsPath)) {
-            fs.mkdir(Settings.folderSettingsPath, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating folder settings directory', err)
-                }
-            })
-        }
-
         await Settings.loadMainSettings()
 
-        if (!fs.existsSync(Settings.allSettings.nzbOutputFolder)) {
-            fs.mkdir(Settings.allSettings.nzbOutputFolder, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating NZB output directory', err)
-                }
-            })
-        }
-
-        if (!fs.existsSync(Settings.allSettings.rarparFolder)) {
-            fs.mkdir(Settings.allSettings.rarparFolder, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating RAR/PAR output directory', err)
-                }
-            })
-        }
+        Settings.makePaths()
 
         await Settings.loadProfiles()
         Settings.loadFolders()
         Settings.loadHistoryTasks()
     }
 
-    static async loadMainSettings(): Promise<AllSettings> {
-        Settings.allSettings.nzbOutputFolder = path.join(app.getPath('userData'), 'nzbs')
-        Settings.allSettings.rarparFolder = path.join(app.getPath('userData'), 'rarpars')
-
-        if (!fs.existsSync(Settings.allSettingsPath)) {
-            Settings.allSettings.commands.rar = Utils.defaultRarPath()
-            // If the settings file does not exist, create it with default settings
-            Settings.saveAllSettings(Settings.allSettings)
+    static makePaths() {
+        if (!fs.existsSync(Settings.nzbOutputPath)) {
+            fs.mkdirSync(Settings.nzbOutputPath, { recursive: true })
         }
 
+        if (!fs.existsSync(Settings.rarparOutputPath)) {
+            fs.mkdirSync(Settings.rarparOutputPath, { recursive: true })
+        }
+
+        if (!fs.existsSync(Settings.taskHistoryPath)) {
+            fs.mkdirSync(Settings.taskHistoryPath, { recursive: true })
+        }
+
+        if (!fs.existsSync(Settings.profileSettingsPath)) {
+            fs.mkdirSync(Settings.profileSettingsPath, { recursive: true })
+        }
+
+        if (!fs.existsSync(Settings.folderSettingsPath)) {
+            fs.mkdirSync(Settings.folderSettingsPath, { recursive: true })
+        }
+    }
+
+    static async loadMainSettings(): Promise<AllSettings> {
         if (fs.existsSync(Settings.allSettingsPath)) {
             const settings = fs.readFileSync(Settings.allSettingsPath, 'utf-8')
             try {
@@ -598,6 +578,55 @@ export default class Settings {
         }
 
         return clonedSettings
+    }
+
+    static get taskHistoryPath(): string {
+        if (
+            Settings.allSettings.taskHistoryFolder &&
+            Settings.allSettings.taskHistoryFolder !== ''
+        ) {
+            return Settings.allSettings.taskHistoryFolder
+        }
+        Settings.allSettings.taskHistoryFolder = Settings.defaultTaskHistoryPath
+        return Settings.defaultTaskHistoryPath
+    }
+
+    static get profileSettingsPath(): string {
+        if (
+            Settings.allSettings.profilesSettingsFolder &&
+            Settings.allSettings.profilesSettingsFolder !== ''
+        ) {
+            return Settings.allSettings.profilesSettingsFolder
+        }
+        Settings.allSettings.profilesSettingsFolder = Settings.defaultProfileSettingsPath
+        return Settings.defaultProfileSettingsPath
+    }
+
+    static get folderSettingsPath(): string {
+        if (
+            Settings.allSettings.folderMonitoringFolder &&
+            Settings.allSettings.folderMonitoringFolder !== ''
+        ) {
+            return Settings.allSettings.folderMonitoringFolder
+        }
+        Settings.allSettings.folderMonitoringFolder = Settings.defaultFolderSettingsPath
+        return Settings.defaultFolderSettingsPath
+    }
+
+    static get nzbOutputPath(): string {
+        if (Settings.allSettings.nzbOutputFolder && Settings.allSettings.nzbOutputFolder !== '') {
+            return Settings.allSettings.nzbOutputFolder
+        }
+        Settings.allSettings.nzbOutputFolder = Settings.defaultNzbOutputFolder
+        return Settings.defaultNzbOutputFolder
+    }
+
+    static get rarparOutputPath(): string {
+        if (Settings.allSettings.rarparFolder && Settings.allSettings.rarparFolder !== '') {
+            return Settings.allSettings.rarparFolder
+        }
+        Settings.allSettings.rarparFolder = Settings.defaultRarparFolder
+        return Settings.defaultRarparFolder
     }
 
     static sanitize(data: string): string {
