@@ -418,6 +418,21 @@ export const useTasksStore = defineStore('tasks', () => {
         }
     }
 
+    function clearHistoryTasks() {
+        window.api.clearHistoryTasks()
+        historyTasks.value = []
+    }
+
+    function deleteHistoryTask(id: string) {
+        window.api.deleteHistoryTask(id)
+        historyTasks.value = historyTasks.value.filter((task) => task.id !== id)
+    }
+
+    function deleteHistoryTasks(ids: string[]) {
+        window.api.deleteHistoryTasks(JSON.parse(JSON.stringify(ids)))
+        historyTasks.value = historyTasks.value.filter((task) => !ids.includes(task.id))
+    }
+
     return {
         finishedTasks,
         commandProgressMessage,
@@ -451,6 +466,9 @@ export const useTasksStore = defineStore('tasks', () => {
         createNewTask,
         removeActiveTask,
         loadHistoryTasks,
+        clearHistoryTasks,
+        deleteHistoryTask,
+        deleteHistoryTasks,
 
         // Approval task functions
         loadApprovalTasks,

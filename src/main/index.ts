@@ -260,6 +260,23 @@ app.whenReady().then(() => {
         return await Settings.loadHistoryTasks()
     })
 
+    ipcMain.handle('delete-history-task', async (_event, id: string) => {
+        Settings.deleteHistoryTask(id)
+        return
+    })
+
+    ipcMain.handle('delete-history-tasks', async (_event, ids: string[]) => {
+        ids.forEach(async (id) => {
+            Settings.deleteHistoryTask(id)
+        })
+        return
+    })
+
+    ipcMain.handle('clear-history-tasks', async () => {
+        Settings.clearHistoryTasks()
+        return
+    })
+
     ipcMain.handle('test-rar', async (_event, customCommand: string | null = null) => {
         const rarCommand = new RarCommand()
         return rarCommand.testConnection(customCommand)

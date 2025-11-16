@@ -7,15 +7,16 @@ import TableHead from '@renderer/components/ui/table/TableHead.vue'
 import TableRow from '@renderer/components/ui/table/TableRow.vue'
 import TableCell from '@renderer/components/ui/table/TableCell.vue'
 import TableCellHidden from '@renderer/components/table/TableCellHidden.vue'
-import { Logs, Pencil, Trash2 } from 'lucide-vue-next'
+import { CheckCircle, Logs, OctagonX, Pencil, Trash2 } from 'lucide-vue-next'
 import { Button } from '@components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
 import TaskSettingsLogDialog from './dialogs/TaskSettingsLogDialog.vue'
 import TableCellOpenFile from '@renderer/components/table/TableCellOpenFile.vue'
 import TableCellCopy from '@renderer/components/table/TableCellCopy.vue'
-import { currentStepToStatusCol, timestampToLocale } from '@renderer/lib/utils'
+import { timestampToLocale } from '@renderer/lib/utils'
 import TableCellTaskStatus from '@renderer/components/table/TableCellTaskStatus.vue'
 import UploadEditQueueDialog from './dialogs/UploadEditQueueDialog.vue'
+import { CommandStep } from '@main/enums/CommandStep'
 
 const tasksStore = useTasksStore()
 
@@ -183,7 +184,14 @@ const setEditTask = (task: any) => {
                             </TableCellCopy>
                             <TableCellHidden :value="task.password" />
                             <TableCell>
-                                {{ currentStepToStatusCol(task.currentStep) }}
+                                <CheckCircle
+                                    v-if="task.currentStep === CommandStep.FINISH"
+                                    class="text-green-600"
+                                />
+                                <OctagonX
+                                    v-else-if="task.currentStep === CommandStep.ERROR"
+                                    class="text-destructive"
+                                />
                             </TableCell>
                             <TableCellOpenFile :full_path="task.nzbFile" />
                             <TableCell>

@@ -380,6 +380,27 @@ export default class Settings {
         }
     }
 
+    static clearHistoryTasks(): void {
+        const files = fs.readdirSync(Settings.taskHistoryPath)
+        for (const file of files) {
+            if (file.endsWith('.json')) {
+                const filePath = path.join(Settings.taskHistoryPath, file)
+                fs.rmSync(filePath)
+            }
+        }
+        Settings.historyTasks = []
+        Settings.historyTasksPromise = null
+    }
+
+    static deleteHistoryTask(id: string) {
+        const task = Settings.historyTasks.find((t) => t.id === id)
+        if (!task) return
+
+        if (task.log_file && fs.existsSync(task.log_file)) {
+            fs.rmSync(task.log_file)
+        }
+    }
+
     static saveTask(task: TaskConfig): string {
         const saveFolder = Settings.taskHistoryPath
         // utc timestamp

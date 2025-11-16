@@ -75,20 +75,3 @@ export function useTrackedDebounce<T extends (...args: any[]) => void>(fn: T, wa
 
     return { call: wrapped, remaining, isRunning }
 }
-
-export function currentStepToStatusCol(currentStep: CommandStep) {
-    switch (currentStep) {
-        case CommandStep.RAR:
-            return 'RAR-ing file'
-        case CommandStep.PAR:
-            return 'PAR-ing file'
-        case CommandStep.POST:
-            return 'Posting file'
-        case CommandStep.ERROR:
-            return 'Failed'
-        case CommandStep.FINISH:
-            return 'Finished'
-        default:
-            return 'Unknown'
-    }
-}
