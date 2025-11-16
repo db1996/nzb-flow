@@ -13,7 +13,7 @@ export default class ParCommand extends BaseCommand {
         let totalsize: number = 0
         let files: string[] = []
         const parFile = path.join(
-            this._settings.rarParFolderPath,
+            Settings.rarparOutputPath,
             `${this._settings.rarParFilename}.par2`
         )
         if (this._settings.taskSettings.rarSettings.skipRarCreation) {
@@ -31,8 +31,8 @@ export default class ParCommand extends BaseCommand {
             }
         } else {
             files = fs
-                .readdirSync(this._settings.rarParFolderPath)
-                .map((file) => path.join(this._settings.rarParFolderPath, file))
+                .readdirSync(Settings.rarparOutputPath)
+                .map((file) => path.join(Settings.rarparOutputPath, file))
             try {
                 totalsize = files.reduce((acc, file) => {
                     const stats = fs.statSync(file)

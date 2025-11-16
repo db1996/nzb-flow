@@ -18,7 +18,10 @@ const api = {
         electronAPI.ipcRenderer.on('reload-settings', () => callback()),
     copy: async (text: string) => electronAPI.ipcRenderer.invoke('copy', text),
 
-    chooseFolder: () => electronAPI.ipcRenderer.invoke('choose-folder'),
+    getDefaultFolders: () => electronAPI.ipcRenderer.invoke('get-default-folders'),
+
+    chooseFolder: async (defaultPath?: string) =>
+        electronAPI.ipcRenderer.invoke('choose-folder', defaultPath),
     chooseFiles: () => electronAPI.ipcRenderer.invoke('choose-files'),
     chooseFolders: () => electronAPI.ipcRenderer.invoke('choose-folders'),
     openFolderInExplorer: (path: string) =>

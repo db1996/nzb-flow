@@ -13,6 +13,8 @@ import AlertTitle from '@renderer/components/ui/alert/AlertTitle.vue'
 import AlertDescription from '@renderer/components/ui/alert/AlertDescription.vue'
 import { useAppearance } from '@renderer/composables/useAppearance'
 import { Appearance } from '@renderer/types/appearance'
+import FileSelectInput from '@renderer/components/form/FileSelectInput.vue'
+import { useSettingsStore } from '@renderer/composables/settingsStore'
 const updateStore = useUpdateStore()
 
 const props = defineProps({
@@ -22,6 +24,7 @@ const props = defineProps({
     }
 })
 const appearanceStore = useAppearance()
+const settingsStore = useSettingsStore()
 watch(
     () => props.form.theme.type,
     newVal => {
@@ -63,6 +66,7 @@ watch(
                     </Select>
                 </div>
             </div>
+
             <hr />
             <div class="flex items-center justify-between">
                 <div class="space-y-0.5">
@@ -89,7 +93,73 @@ watch(
             </div>
             <hr />
             <div class="space-y-2">
-                <Label>Updates</Label>
+                <p class="card-header leading-none font-semibold">Folders</p>
+            </div>
+            <FileSelectInput
+                id="rarpar-folder"
+                label="RAR/PAR temp folder"
+                v-model="form.rarparFolder"
+                placeholder="Select RAR/PAR temp folder"
+            >
+                <template #append>
+                    <Button
+                        size="lg"
+                        variant="outline_default"
+                        @click="
+                            () => (form.rarparFolder = settingsStore.defaultFolders.rarparFolder)
+                        "
+                    >
+                        Default
+                    </Button>
+                </template>
+            </FileSelectInput>
+            <FileSelectInput
+                id="nzb-folder"
+                label="NZB output folder"
+                v-model="form.nzbOutputFolder"
+                placeholder="Select NZB output folder"
+            >
+                <template #append>
+                    <Button
+                        size="lg"
+                        variant="outline_default"
+                        @click="
+                            () =>
+                                (form.nzbOutputFolder =
+                                    settingsStore.defaultFolders.nzbOutputFolder)
+                        "
+                    >
+                        Default
+                    </Button>
+                </template>
+            </FileSelectInput>
+            <FileSelectInput
+                id="history-folder"
+                label="Task history folder"
+                v-model="form.taskHistoryFolder"
+                help="Post logs are stored in this folder."
+                placeholder="Select Task history folder"
+            >
+                <template #append>
+                    <Button
+                        size="lg"
+                        variant="outline_default"
+                        @click="
+                            () =>
+                                (form.taskHistoryFolder =
+                                    settingsStore.defaultFolders.taskHistoryFolder)
+                        "
+                    >
+                        Default
+                    </Button>
+                </template>
+            </FileSelectInput>
+            <hr />
+            <div class="space-y-2">
+                <p class="card-header leading-none font-semibold">Updates</p>
+            </div>
+
+            <div class="space-y-2">
                 <div class="grid grid-cols-2 gap-4 space-y-2">
                     <Button
                         v-if="

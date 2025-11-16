@@ -4,11 +4,26 @@ import { AllSettings } from '@main/types/settings/AllSettings'
 import { ProfileSettings, ProfileSettingsYupSchema } from '@main/types/settings/ProfileSettings'
 import { FolderSettings, FolderSettingsYupSchema } from '@main/types/settings/FolderSettings'
 import { debounce } from 'lodash'
+import { toast } from 'vue-sonner'
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref<AllSettings | null>(null)
     const profiles = ref<ProfileSettings[]>([])
     const folders = ref<FolderSettings[]>([])
+
+    const defaultFolders = ref<{
+        rarparFolder: string
+        nzbOutputFolder: string
+        taskHistoryFolder: string
+        profilesSettingsFolder: string
+        folderMonitoringFolder: string
+    }>({
+        rarparFolder: '',
+        nzbOutputFolder: '',
+        taskHistoryFolder: '',
+        profilesSettingsFolder: '',
+        folderMonitoringFolder: ''
+    })
 
     let activeSettingsPromise: Promise<AllSettings> | null = null
     let activeRarPromise: Promise<boolean> | null = null
@@ -63,10 +78,18 @@ export const useSettingsStore = defineStore('settings', () => {
         form.value = settings.value
         formInitialized.value = true
 
-        await checkRar()
-        await checkPar()
-        await checkNyuu()
-        await getFolders()
+        checkRar()
+        checkPar()
+        checkNyuu()
+        getFolders()
+        getDefaultFolders()
+    }
+
+    async function getDefaultFolders() {
+        if (window.api) {
+            defaultFolders.value = await window.api.getDefaultFolders()
+            console.log('Default folders loaded:', defaultFolders.value)
+        }
     }
 
     async function getSettings(): Promise<AllSettings> {
@@ -311,6 +334,10 @@ export const useSettingsStore = defineStore('settings', () => {
         remainingTimeSaveSettings.value = 0
 
         await saveSettingsForm()
+        toast('Settings saved!', {
+            duration: 1200,
+            closeButton: true
+        })
         flashSavedIndicator.value = true
         setTimeout(() => {
             flashSavedIndicator.value = false
@@ -385,7 +412,8 @@ export const useSettingsStore = defineStore('settings', () => {
         fireDebounceNow,
         flashSavedIndicator,
         remainingTimeSaveSettings,
-        debounceTime
+        debounceTime,
+        defaultFolders
     }
 })
 

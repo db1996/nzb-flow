@@ -126,14 +126,14 @@ export default class Nyuu extends BaseCommand {
         args.push('--nzb-file-mode', 'defer')
         args.push('--progress', 'stdout')
 
-        const outputPath = path.join(Settings.allSettings.nzbOutputFolder, this.name)
+        const outputPath = path.join(Settings.nzbOutputPath, this.name)
         this.nzbFile = outputPath + '.nzb'
         args.push('-o', this.cmdString(this.nzbFile), '-O')
 
         // Collect all files in the rarparFolder for upload
         const files = fs
-            .readdirSync(this._settings.rarParFolderPath)
-            .map((file) => path.join(this._settings.rarParFolderPath, file))
+            .readdirSync(Settings.rarparOutputPath)
+            .map((file) => path.join(Settings.rarparOutputPath, file))
 
         if (this._settings.taskSettings.rarSettings.skipRarCreation) {
             this._settings.taskSettings.postingSettings.files.forEach((file) => {
@@ -144,7 +144,7 @@ export default class Nyuu extends BaseCommand {
         }
 
         if (files.length === 0) {
-            this.commandData.error = `No files found in ${this._settings.rarParFolderPath}`
+            this.commandData.error = `No files found in ${Settings.rarparOutputPath}`
         }
         const sorted = files.sort((a, b) => {
             if (a.endsWith('.rar')) return -1

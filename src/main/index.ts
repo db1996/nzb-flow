@@ -275,9 +275,20 @@ app.whenReady().then(() => {
         return nyuuCommand.testConnection(customCommand)
     })
 
-    ipcMain.handle('choose-folder', async () => {
+    ipcMain.handle('get-default-folders', () => {
+        return {
+            rarparFolder: Settings.defaultRarparFolder,
+            nzbOutputFolder: Settings.defaultNzbOutputFolder,
+            taskHistoryFolder: Settings.defaultTaskHistoryPath,
+            profilesSettingsFolder: Settings.defaultProfileSettingsPath,
+            folderMonitoringFolder: Settings.defaultFolderSettingsPath
+        }
+    })
+
+    ipcMain.handle('choose-folder', async (_event, defaultPath?: string) => {
         const result = await dialog.showOpenDialog({
-            properties: ['openDirectory']
+            properties: ['openDirectory'],
+            defaultPath: defaultPath || undefined
         })
 
         return {

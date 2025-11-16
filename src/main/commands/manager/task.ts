@@ -57,7 +57,7 @@ export default class Task {
         }
 
         this.taskConfig.rarParFolderPath = path.join(
-            Settings.allSettings.rarparFolder,
+            Settings.rarparOutputPath,
             this.taskConfig.name
         )
 

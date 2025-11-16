@@ -30,10 +30,10 @@ export default class BaseCommand {
         if (this.taskId === '') this.taskId = randomUUID().toString()
 
         try {
-            console.log('making rarpar', this._settings.rarParFolderPath)
+            console.log('making rarpar', Settings.rarparOutputPath)
 
-            if (!fs.existsSync(this._settings.rarParFolderPath)) {
-                fs.mkdirSync(this._settings.rarParFolderPath, { recursive: true })
+            if (!fs.existsSync(Settings.rarparOutputPath)) {
+                fs.mkdirSync(Settings.rarparOutputPath, { recursive: true })
             }
         } catch (error) {
             this.commandData.error += `Failed to create RAR/PAR folder path: ${error}\n`
