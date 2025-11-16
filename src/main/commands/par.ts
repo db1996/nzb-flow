@@ -12,8 +12,10 @@ export default class ParCommand extends BaseCommand {
     public args(): string[] {
         let totalsize: number = 0
         let files: string[] = []
+        console.log('par args', this._settings.rarParFolderPath)
+
         const parFile = path.join(
-            Settings.rarparOutputPath,
+            this._settings.rarParFolderPath,
             `${this._settings.rarParFilename}.par2`
         )
         if (this._settings.taskSettings.rarSettings.skipRarCreation) {
@@ -31,8 +33,8 @@ export default class ParCommand extends BaseCommand {
             }
         } else {
             files = fs
-                .readdirSync(Settings.rarparOutputPath)
-                .map((file) => path.join(Settings.rarparOutputPath, file))
+                .readdirSync(this._settings.rarParFolderPath)
+                .map((file) => path.join(this._settings.rarParFolderPath, file))
             try {
                 totalsize = files.reduce((acc, file) => {
                     const stats = fs.statSync(file)
@@ -43,7 +45,7 @@ export default class ParCommand extends BaseCommand {
                 this.commandData.error = error.message
             }
         }
-        const { sliceSize, redundancy } = this.calculateParParams(totalsize)
+        const { sliceSize, redundancy } = this.calculateParParams()
 
         const args: string[] = [
             `-r${redundancy}`, // Set redundancy percentage
@@ -56,27 +58,9 @@ export default class ParCommand extends BaseCommand {
         return args
     }
 
-    public calculateParParams(fileSize: number): { sliceSize: string; redundancy: string } {
-        let sliceSize: string
-        let redundancy: string
-
-        if (fileSize < 100 * 1024 * 1024) {
-            // < 100MB
-            sliceSize = '256K'
-            redundancy = '10%'
-        } else if (fileSize < 1024 * 1024 * 1024) {
-            // 100MB - 1GB
-            sliceSize = '512K'
-            redundancy = '15%'
-        } else if (fileSize < 10 * 1024 * 1024 * 1024) {
-            // 1GB - 10GB
-            sliceSize = '1M'
-            redundancy = '20%'
-        } else {
-            // > 10GB
-            sliceSize = '2M'
-            redundancy = '25%'
-        }
+    public calculateParParams(): { sliceSize: string; redundancy: string } {
+        let sliceSize: string = '0.5w*10'
+        let redundancy: string = '15%'
 
         if (!this._settings.taskSettings.parSettings.automaticSlices) {
             sliceSize = this._settings.taskSettings.parSettings.slices

@@ -132,8 +132,8 @@ export default class Nyuu extends BaseCommand {
 
         // Collect all files in the rarparFolder for upload
         const files = fs
-            .readdirSync(Settings.rarparOutputPath)
-            .map((file) => path.join(Settings.rarparOutputPath, file))
+            .readdirSync(this._settings.rarParFolderPath)
+            .map((file) => path.join(this._settings.rarParFolderPath, file))
 
         if (this._settings.taskSettings.rarSettings.skipRarCreation) {
             this._settings.taskSettings.postingSettings.files.forEach((file) => {
@@ -144,7 +144,7 @@ export default class Nyuu extends BaseCommand {
         }
 
         if (files.length === 0) {
-            this.commandData.error = `No files found in ${Settings.rarparOutputPath}`
+            this.commandData.error = `No files found in ${this._settings.rarParFolderPath}`
         }
         const sorted = files.sort((a, b) => {
             if (a.endsWith('.rar')) return -1
