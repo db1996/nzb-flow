@@ -1,7 +1,7 @@
 export enum CommandStep {
-    RAR = 'Rarring file',
-    PAR = 'Par-ing file',
-    POST = 'Posting to usenet',
+    RAR = 'compressing',
+    PAR = 'parring',
+    POST = 'posting',
     FINISH = 'Finished successfully',
     ERROR = 'Error'
 }

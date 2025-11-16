@@ -1,0 +1,294 @@
+{
+    "info": {
+        "_postman_id": "edad454b-635e-4b25-ac24-3027d8726ee3",
+        "name": "nzb flow",
+        "description": "All API endpoints for the HTTP server\n\nEvery endpoint's resposne will look like this\n\nEvery request requires the API key in the header, use key \"x-api-token\"\n\n``` json\n{\n    \"success\": true,\n    \"error\": null,\n    \"data\": {\n        \"paused\": true\n    }\n}\n\n ```\n\nIf there is an error success will be false, if data is returned it is present in the data body",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "6695149"
+    },
+    "item": [
+        {
+            "name": "Queue management",
+            "item": [
+                {
+                    "name": "Pause queue",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/pause-queue",
+                            "host": ["{{base_url}}"],
+                            "path": ["pause-queue"]
+                        },
+                        "description": "Pause compression/upload queue"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Resume queue",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/resume-queue",
+                            "host": ["{{base_url}}"],
+                            "path": ["resume-queue"]
+                        },
+                        "description": "Resume compression/upload queue"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get current queue status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/get-queue-status",
+                            "host": ["{{base_url}}"],
+                            "path": ["get-queue-status"]
+                        },
+                        "description": "Get full current queue status. With full task config (same as log files)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Queue files",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"files\": [\r\n        \"/absolute/path/to/file/or/folder\"\r\n    ],\r\n    \"profileId\": \"4256cd73-6d03-4505-a657-3e0915806479\", // Profile ID, if not provided it uses the default profile\r\n    \"autoQueue\": false // set to true to skip approval \r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/queue",
+                            "host": ["{{base_url}}"],
+                            "path": ["queue"]
+                        },
+                        "description": "Queue a list of files/folders, with optional autoqueue and profile ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Queue task config",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"taskConfig\": {\r\n        \"taskVariables\": {\r\n            \"total_time\": null,\r\n            \"total_size\": null,\r\n            \"nyuu_time\": null,\r\n            \"par_time\": null,\r\n            \"par_count\": null,\r\n            \"par_size\": null,\r\n            \"rar_time\": null,\r\n            \"rar_count\": null,\r\n            \"rar_size\": null,\r\n            \"fname\": \"New Text Document\"\r\n        },\r\n        \"taskSettings\": {\r\n            \"backupServerId\": \"\",\r\n            \"serverId\": \"ce68d83e-ab4b-445c-a502-b356b8f6b784\",\r\n            \"postingSettings\": {\r\n                \"obfuscateYencName\": false,\r\n                \"obfuscateFilename\": false,\r\n                \"obfuscateSubject\": false,\r\n                \"post_groups\": \"alt.binaries.test\",\r\n                \"postFromRandomized\": false,\r\n                \"post_from\": \"test@test.link\",\r\n                \"files\": [\r\n                    \"/absolute/path/to/file/or/folder\"\r\n                ],\r\n                \"deleteUploadedFiles\": false,\r\n                \"saveRarPars\": false,\r\n                \"passwordSettings\": {\r\n                    \"useSpecialCharacters\": false,\r\n                    \"useNumbers\": true,\r\n                    \"useUppercase\": true,\r\n                    \"useLowercase\": true,\r\n                    \"randomNameLength\": 10,\r\n                    \"suffix\": \"\",\r\n                    \"prefix\": \"\",\r\n                    \"customName\": \"\",\r\n                    \"randomNameMode\": true\r\n                },\r\n                \"nameSettings\": {\r\n                    \"useSpecialCharacters\": false,\r\n                    \"useNumbers\": true,\r\n                    \"useUppercase\": true,\r\n                    \"useLowercase\": true,\r\n                    \"randomNameLength\": 10,\r\n                    \"suffix\": \"\",\r\n                    \"prefix\": \"abook - \",\r\n                    \"customName\": \"{fname}\",\r\n                    \"randomNameMode\": true\r\n                }\r\n            },\r\n            \"nyuuSettings\": {\r\n                \"articleEncoding\": \"{filename}\",\r\n                \"articleEncodingOverride\": false,\r\n                \"messageId\": \"${rand(24)}-{timestamp}@nyuu\",\r\n                \"messageIdOverride\": false,\r\n                \"date\": \"{now}\",\r\n                \"dateOverride\": false,\r\n                \"filename\": \"{basename}\",\r\n                \"filenameOverride\": false,\r\n                \"subject\": \"{comment} [{0filenum}/{files}] - \\\"{filename}\\\" yEnc ({part}/{parts}) {filesize} {comment2}\",\r\n                \"subjectOverride\": false,\r\n                \"yencName\": \"{filename}\",\r\n                \"yencNameOverride\": false,\r\n                \"checkQueueSize\": 10000,\r\n                \"checkPostTries\": 1,\r\n                \"checkRetryDelay\": \"30s\",\r\n                \"checkDelay\": \"5s\",\r\n                \"checkTries\": 2,\r\n                \"checkConnections\": 0,\r\n                \"articleSize\": \"700K\",\r\n                \"includePasswordInNzb\": false\r\n            },\r\n            \"parSettings\": {\r\n                \"slices\": \"\",\r\n                \"automaticSlices\": true,\r\n                \"redundancy\": \"\",\r\n                \"automaticRedundancy\": true,\r\n                \"skipParCreation\": false\r\n            },\r\n            \"rarSettings\": {\r\n                \"skipRarCreation\": false,\r\n                \"encryptHeaders\": true,\r\n                \"solidArchive\": false,\r\n                \"volumes\": \"\",\r\n                \"automaticVolumes\": false,\r\n                \"excludes\": [\r\n                    \"*.json\",\r\n                    \"*.png\"\r\n                ],\r\n                \"recursion\": true\r\n            }\r\n        },\r\n        \"nyuuCommandOutput\": {\r\n            \"lastKnownProgress\": 0,\r\n            \"lastMessage\": \"\",\r\n            \"executedCommand\": \"\",\r\n            \"exitCode\": null,\r\n            \"finished\": false,\r\n            \"started\": false,\r\n            \"error\": \"\",\r\n            \"output\": \"\"\r\n        },\r\n        \"parCommandOutput\": {\r\n            \"lastKnownProgress\": 0,\r\n            \"lastMessage\": \"\",\r\n            \"executedCommand\": \"\",\r\n            \"exitCode\": null,\r\n            \"finished\": false,\r\n            \"started\": false,\r\n            \"error\": \"\",\r\n            \"output\": \"\"\r\n        },\r\n        \"rarCommandOutput\": {\r\n            \"lastKnownProgress\": 0,\r\n            \"lastMessage\": \"\",\r\n            \"executedCommand\": \"\",\r\n            \"exitCode\": null,\r\n            \"finished\": false,\r\n            \"started\": false,\r\n            \"error\": \"\",\r\n            \"output\": \"\"\r\n        },\r\n        \"used_profile\": \"4256cd73-6d03-4505-a657-3e0915806479\", // profile id\r\n        \"log_file\": \"\",\r\n        \"lastMessage\": \"\",\r\n        \"currentStep\": \"Rarring file\", // do not change, this is queue logic \r\n        \"nzbFile\": \"\",\r\n        \"error\": \"\",\r\n        \"rarParFiles\": [],\r\n        \"rarParFolderPath\": \"/absolute/path/to/folder\", // pointless to change, is regenerated by the name\r\n        \"rarParFilename\": \"rarpar_filename\", // pointless to change, is regenerated by the name\r\n        \"password\": \"7qiCm9mOvv\",\r\n        \"name\": \"post_name\",\r\n        \"finished\": false,\r\n        \"started\": false,\r\n        \"folderWatchId\": \"\",\r\n        \"created_at\": 1763305265092,\r\n        \"id\": \"cf2bcace-67f9-4754-9a84-44626cbf9952\" // This will determine which task is changed\r\n    }\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/queue-config",
+                            "host": ["{{base_url}}"],
+                            "path": ["queue-config"]
+                        },
+                        "description": "You can send an update to a task in the queue. Even if it's running.\n\nThis updates the task in the current queue if it exists (checked by ID), if it does not exist it adds it to the queue (NOT approval)\n\nThis could cause issues with rar/par2/nzb filenames if the task is already running. If the task is in the compressionQueue it is safe to edit anything\n\nOptions that will get overwritten due to dependency on other parameters:\n\n- rarParFilename\n    \n- rarParFolderPath\n    \n- All task variables"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Unqueue task",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"id\": \"6f36f092-bfc4-4596-9c68-db9a52c55937\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/unqueue-task",
+                            "host": ["{{base_url}}"],
+                            "path": ["unqueue-task"]
+                        },
+                        "description": "Unqueue task from the compression and upload queue if it exists. This will stop the task in the next step"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Various actions to manipulate the queues"
+        },
+        {
+            "name": "Approval list",
+            "item": [
+                {
+                    "name": "Approve task",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"id\": \"1c9a666e-99ef-43c8-be11-2dc90c8d6b51\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/approve-task",
+                            "host": ["{{base_url}}"],
+                            "path": ["approve-task"]
+                        },
+                        "description": "Approve task ID from approval list (retrieve with current queue status)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Approve multiple tasks",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"ids\": [\r\n        \"57038fa3-045f-4cea-9ad1-cc094937d5cf\",\r\n        \"df4b8b9a-1402-45da-942c-dc57b7dc35ec\",\r\n        \"2bff66f6-c5d8-4e0c-93c9-193840791361\"\r\n    ]\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/approve-multiple-tasks",
+                            "host": ["{{base_url}}"],
+                            "path": ["approve-multiple-tasks"]
+                        },
+                        "description": "Approve multiple task ID's from approval list (retrieve with current queue status)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reject task",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"id\": \"6f36f092-bfc4-4596-9c68-db9a52c55937\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/reject-task",
+                            "host": ["{{base_url}}"],
+                            "path": ["reject-task"]
+                        },
+                        "description": "Reject task ID from approval list (retrieve with current queue status)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reject Multiple tasks",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"ids\": [\r\n        \"2f0cd58d-af67-425b-88ea-9890d536e3c7\",\r\n        \"224d5b4c-3c76-480f-bdce-9c04d09ca55f\"\r\n    ]\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/reject-multiple-tasks",
+                            "host": ["{{base_url}}"],
+                            "path": ["reject-multiple-tasks"]
+                        },
+                        "description": "Reject multiple task ID's from approval list (retrieve with current queue status)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update approval task",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"taskConfig\": {\r\n        \"taskVariables\": {\r\n            \"total_time\": null,\r\n            \"total_size\": null,\r\n            \"nyuu_time\": null,\r\n            \"par_time\": null,\r\n            \"par_count\": null,\r\n            \"par_size\": null,\r\n            \"rar_time\": null,\r\n            \"rar_count\": null,\r\n            \"rar_size\": null,\r\n            \"fname\": \"New Text Document\"\r\n        },\r\n        \"taskSettings\": {\r\n            \"backupServerId\": \"\",\r\n            \"serverId\": \"ce68d83e-ab4b-445c-a502-b356b8f6b784\",\r\n            \"postingSettings\": {\r\n                \"obfuscateYencName\": false,\r\n                \"obfuscateFilename\": false,\r\n                \"obfuscateSubject\": false,\r\n                \"post_groups\": \"alt.binaries.test\",\r\n                \"postFromRandomized\": false,\r\n                \"post_from\": \"test@test.link\",\r\n                \"files\": [\r\n                    \"/absolute/path/to/file/or/folder\"\r\n                ],\r\n                \"deleteUploadedFiles\": false,\r\n                \"saveRarPars\": false,\r\n                \"passwordSettings\": {\r\n                    \"useSpecialCharacters\": false,\r\n                    \"useNumbers\": true,\r\n                    \"useUppercase\": true,\r\n                    \"useLowercase\": true,\r\n                    \"randomNameLength\": 10,\r\n                    \"suffix\": \"\",\r\n                    \"prefix\": \"\",\r\n                    \"customName\": \"\",\r\n                    \"randomNameMode\": true\r\n                },\r\n                \"nameSettings\": {\r\n                    \"useSpecialCharacters\": false,\r\n                    \"useNumbers\": true,\r\n                    \"useUppercase\": true,\r\n                    \"useLowercase\": true,\r\n                    \"randomNameLength\": 10,\r\n                    \"suffix\": \"\",\r\n                    \"prefix\": \"abook - \",\r\n                    \"customName\": \"{fname}\",\r\n                    \"randomNameMode\": true\r\n                }\r\n            },\r\n            \"nyuuSettings\": {\r\n                \"articleEncoding\": \"{filename}\",\r\n                \"articleEncodingOverride\": false,\r\n                \"messageId\": \"${rand(24)}-{timestamp}@nyuu\",\r\n                \"messageIdOverride\": false,\r\n                \"date\": \"{now}\",\r\n                \"dateOverride\": false,\r\n                \"filename\": \"{basename}\",\r\n                \"filenameOverride\": false,\r\n                \"subject\": \"{comment} [{0filenum}/{files}] - \\\"{filename}\\\" yEnc ({part}/{parts}) {filesize} {comment2}\",\r\n                \"subjectOverride\": false,\r\n                \"yencName\": \"{filename}\",\r\n                \"yencNameOverride\": false,\r\n                \"checkQueueSize\": 10000,\r\n                \"checkPostTries\": 1,\r\n                \"checkRetryDelay\": \"30s\",\r\n                \"checkDelay\": \"5s\",\r\n                \"checkTries\": 2,\r\n                \"checkConnections\": 0,\r\n                \"articleSize\": \"700K\",\r\n                \"includePasswordInNzb\": false\r\n            },\r\n            \"parSettings\": {\r\n                \"slices\": \"\",\r\n                \"automaticSlices\": true,\r\n                \"redundancy\": \"\",\r\n                \"automaticRedundancy\": true,\r\n                \"skipParCreation\": false\r\n            },\r\n            \"rarSettings\": {\r\n                \"skipRarCreation\": false,\r\n                \"encryptHeaders\": true,\r\n                \"solidArchive\": false,\r\n                \"volumes\": \"\",\r\n                \"automaticVolumes\": false,\r\n                \"excludes\": [\r\n                    \"*.json\",\r\n                    \"*.png\"\r\n                ],\r\n                \"recursion\": true\r\n            }\r\n        },\r\n        \"nyuuCommandOutput\": {\r\n            \"lastKnownProgress\": 0,\r\n            \"lastMessage\": \"\",\r\n            \"executedCommand\": \"\",\r\n            \"exitCode\": null,\r\n            \"finished\": false,\r\n            \"started\": false,\r\n            \"error\": \"\",\r\n            \"output\": \"\"\r\n        },\r\n        \"parCommandOutput\": {\r\n            \"lastKnownProgress\": 0,\r\n            \"lastMessage\": \"\",\r\n            \"executedCommand\": \"\",\r\n            \"exitCode\": null,\r\n            \"finished\": false,\r\n            \"started\": false,\r\n            \"error\": \"\",\r\n            \"output\": \"\"\r\n        },\r\n        \"rarCommandOutput\": {\r\n            \"lastKnownProgress\": 0,\r\n            \"lastMessage\": \"\",\r\n            \"executedCommand\": \"\",\r\n            \"exitCode\": null,\r\n            \"finished\": false,\r\n            \"started\": false,\r\n            \"error\": \"\",\r\n            \"output\": \"\"\r\n        },\r\n        \"used_profile\": \"4256cd73-6d03-4505-a657-3e0915806479\", // profile id\r\n        \"log_file\": \"\",\r\n        \"lastMessage\": \"\",\r\n        \"currentStep\": \"Rarring file\", // do not change, this is queue logic \r\n        \"nzbFile\": \"\",\r\n        \"error\": \"\",\r\n        \"rarParFiles\": [],\r\n        \"rarParFolderPath\": \"/absolute/path/to/folder\", // pointless to change\r\n        \"rarParFilename\": \"rarpar_filename\", // pointless to change\r\n        \"password\": \"7qiCm9mOvv\",\r\n        \"name\": \"post_name\",\r\n        \"finished\": false,\r\n        \"started\": false,\r\n        \"folderWatchId\": \"\",\r\n        \"created_at\": 1763305265092,\r\n        \"id\": \"cf2bcace-67f9-4754-9a84-44626cbf9952\" // This will determine which task is changed\r\n    }\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/update-approval-task",
+                            "host": ["{{base_url}}"],
+                            "path": ["update-approval-task"]
+                        },
+                        "description": "You can send an update to a current approval task. As long as the ID is the same it will overwrite that task.\n\nOptions that will get overwritten due to dependency on other parameters:\n\n- rarParFilename\n    \n- rarParFolderPath\n    \n- All task variables"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Various actions to manipulate the approval task list"
+        }
+    ],
+    "auth": {
+        "type": "apikey",
+        "apikey": [
+            {
+                "key": "value",
+                "value": "{{api_token}}",
+                "type": "string"
+            },
+            {
+                "key": "key",
+                "value": "x-api-token",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [""]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000"
+        },
+        {
+            "key": "api_token",
+            "value": ""
+        }
+    ]
+}

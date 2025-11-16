@@ -63,10 +63,10 @@ export const useTasksStore = defineStore('tasks', () => {
         try {
             const status = await window.api.getQueueStatus()
             queueActive.value = status.uploadActive || status.compressionActive
-            uploadQueued.value = status.uploadQueuedSettings
-            uploadRunning.value = status.uploadRunningSettings
-            compressionQueued.value = status.compressionQueuedSettings
-            compressionRunning.value = status.compressionRunningSettings
+            uploadQueued.value = status.uploadQueuedConfigs
+            uploadRunning.value = status.uploadRunningConfigs
+            compressionQueued.value = status.compressionQueuedConfigs
+            compressionRunning.value = status.compressionRunningConfigs
             uploadRunning.value.forEach((task) => {
                 taskPercentages.value[task.id] = {
                     percentage: task.nyuuCommandOutput.lastKnownProgress,
@@ -135,10 +135,10 @@ export const useTasksStore = defineStore('tasks', () => {
 
         window.api.onQueueUpdated((data: QueueStatus) => {
             queueActive.value = data.uploadActive || data.compressionActive
-            uploadQueued.value = data.uploadQueuedSettings
-            uploadRunning.value = data.uploadRunningSettings
-            compressionQueued.value = data.compressionQueuedSettings
-            compressionRunning.value = data.compressionRunningSettings
+            uploadQueued.value = data.uploadQueuedConfigs
+            uploadRunning.value = data.uploadRunningConfigs
+            compressionQueued.value = data.compressionQueuedConfigs
+            compressionRunning.value = data.compressionRunningConfigs
 
             uploadRunning.value.forEach((task) => {
                 taskPercentages.value[task.id] = {
@@ -383,10 +383,10 @@ export const useTasksStore = defineStore('tasks', () => {
         try {
             const status = await window.api.getQueueStatus()
             queueActive.value = status.uploadActive || status.compressionActive
-            uploadQueued.value = status.uploadQueuedSettings
-            uploadRunning.value = status.uploadRunningSettings
-            compressionQueued.value = status.compressionQueuedSettings
-            compressionRunning.value = status.compressionRunningSettings
+            uploadQueued.value = status.uploadQueuedConfigs
+            uploadRunning.value = status.uploadRunningConfigs
+            compressionQueued.value = status.compressionQueuedConfigs
+            compressionRunning.value = status.compressionRunningConfigs
         } catch (error) {
             console.error('Error loading queue status:', error)
         }

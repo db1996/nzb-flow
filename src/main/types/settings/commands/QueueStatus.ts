@@ -4,12 +4,12 @@ export type QueueStatus = {
     compressionActive: boolean
     uploadActive: boolean
     compressionRunning: number
-    compressionRunningSettings: TaskConfig[]
+    compressionRunningConfigs: TaskConfig[]
     uploadRunning: number
-    uploadRunningSettings: TaskConfig[]
+    uploadRunningConfigs: TaskConfig[]
     compressionQueued: number
-    compressionQueuedSettings: TaskConfig[]
+    compressionQueuedConfigs: TaskConfig[]
     uploadQueued: number
-    uploadQueuedSettings: TaskConfig[]
+    uploadQueuedConfigs: TaskConfig[]
     compressionPaused: boolean
 }

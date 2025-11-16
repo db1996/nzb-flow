@@ -85,7 +85,7 @@ export default class TaskManager {
                 [CommandStep.RAR, CommandStep.PAR].includes(t.taskConfig.currentStep)
         ).length
 
-        const compressionRunningSettings = this.compressionQueue
+        const compressionRunningConfigs = this.compressionQueue
             .filter((t) => t.currentlyRunning && t.taskConfig)
             .map((t) => t.taskConfig) as TaskConfig[]
 
@@ -94,19 +94,19 @@ export default class TaskManager {
                 t.currentlyRunning && t.taskConfig && t.taskConfig.currentStep === CommandStep.POST
         ).length
 
-        const uploadRunningSettings = this.uploadQueue
+        const uploadRunningConfigs = this.uploadQueue
             .filter((t) => t.currentlyRunning && t.taskConfig)
             .map((t) => t.taskConfig) as TaskConfig[]
 
         const compressionQueued = this.compressionQueue.filter((t) => !t.taskConfig?.started).length
 
-        const compressionQueuedSettings = this.compressionQueue
+        const compressionQueuedConfigs = this.compressionQueue
             .filter((t) => !t.taskConfig?.started)
             .map((t) => t.taskConfig) as TaskConfig[]
 
         const uploadQueued = this.uploadQueue.filter((t) => !t.taskConfig?.started).length
 
-        const uploadQueuedSettings = this.uploadQueue
+        const uploadQueuedConfigs = this.uploadQueue
             .filter((t) => !t.taskConfig?.started)
             .map((t) => t.taskConfig) as TaskConfig[]
 
@@ -114,13 +114,13 @@ export default class TaskManager {
             compressionActive: !this.compressionPaused,
             uploadActive: !this.uploadPaused,
             compressionRunning,
-            compressionRunningSettings,
+            compressionRunningConfigs,
             uploadRunning,
-            uploadRunningSettings,
+            uploadRunningConfigs,
             compressionQueued,
-            compressionQueuedSettings,
+            compressionQueuedConfigs,
             uploadQueued,
-            uploadQueuedSettings,
+            uploadQueuedConfigs,
             compressionPaused: this.compressionPaused || this.compressionAutoPaused
         }
     }
