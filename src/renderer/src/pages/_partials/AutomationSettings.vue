@@ -9,7 +9,6 @@ import { useAppearance } from '@renderer/composables/useAppearance'
 import { Appearance } from '@renderer/types/appearance'
 import Input from '@renderer/components/ui/input/Input.vue'
 import CopyInput from '@renderer/components/form/CopyInput.vue'
-import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 
 const props = defineProps({
     form: {
