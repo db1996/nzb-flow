@@ -32,6 +32,9 @@ declare global {
             scanFolder: (id: string) => Promise<void>
 
             getHistoryTasks: () => Promise<TaskConfig[]>
+            clearHistoryTasks: () => Promise<void>
+            deleteHistoryTask: (id: string) => Promise<void>
+            deleteHistoryTasks: (ids: string[]) => Promise<void>
 
             // Approval task management
             getApprovalTasks: () => Promise<TaskConfig[]>

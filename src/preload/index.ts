@@ -35,6 +35,10 @@ const api = {
             files: files
         }),
     getHistoryTasks: () => electronAPI.ipcRenderer.invoke('get-history-tasks'),
+    clearHistoryTasks: () => electronAPI.ipcRenderer.invoke('clear-history-tasks'),
+    deleteHistoryTask: (id: string) => electronAPI.ipcRenderer.invoke('delete-history-task', id),
+    deleteHistoryTasks: (ids: string[]) =>
+        electronAPI.ipcRenderer.invoke('delete-history-tasks', ids),
     queueTask: (task: TaskConfig) => electronAPI.ipcRenderer.invoke('queue-task', task),
     unQueueTask: (id: string) => electronAPI.ipcRenderer.invoke('unqueue-task', id),
 
