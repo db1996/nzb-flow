@@ -1,4 +1,3 @@
-import { CommandStep } from '@main/enums/CommandStep'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import moment from 'moment'
@@ -74,4 +73,20 @@ export function useTrackedDebounce<T extends (...args: any[]) => void>(fn: T, wa
     })
 
     return { call: wrapped, remaining, isRunning }
+}
+
+export function copyToClipboard() {
+    const flashCopied = ref(false)
+    const copiedSuccess = ref(false)
+
+    const copy = async (text: string) => {
+        const result = await window.api.copy(text)
+        copiedSuccess.value = result
+        flashCopied.value = true
+        setTimeout(() => {
+            flashCopied.value = false
+        }, 1500)
+    }
+
+    return { flashCopied: flashCopied, copiedSuccess, copy }
 }

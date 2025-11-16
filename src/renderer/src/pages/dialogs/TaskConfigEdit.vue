@@ -13,6 +13,9 @@ import SelectInput from '@renderer/components/form/SelectInput.vue'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 import Button from '@renderer/components/ui/button/Button.vue'
 import CopyExplorerInput from '@renderer/components/form/CopyExplorerInput.vue'
+import DialogDescription from '@renderer/components/ui/dialog/DialogDescription.vue'
+import { Copy } from 'lucide-vue-next'
+import { copyToClipboard } from '@renderer/lib/utils'
 
 const settingsStore = useSettingsStore()
 
@@ -52,6 +55,8 @@ function addFolders() {
         props.form.taskSettings.postingSettings.files.push(...folderPaths)
     })
 }
+
+const copyUtil = copyToClipboard()
 </script>
 
 <template>
@@ -62,6 +67,18 @@ function addFolders() {
         >
             <DialogHeader>
                 <slot name="header"></slot>
+                <DialogDescription
+                    >Task ID: {{ form.id }}
+                    <Copy
+                        @click="copyUtil.copy(form.id)"
+                        :class="{
+                            'text-green-500':
+                                copyUtil.flashCopied.value && copyUtil.copiedSuccess.value
+                        }"
+                        class="cursor-pointer inline-block"
+                        :size="12"
+                    />
+                </DialogDescription>
             </DialogHeader>
             <SelectInput
                 :disabled="disabled"

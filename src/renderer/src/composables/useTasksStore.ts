@@ -128,6 +128,8 @@ export const useTasksStore = defineStore('tasks', () => {
         })
 
         window.api.onApprovalQueueUpdated((data) => {
+            console.log('approval queue updated')
+
             approvalTasks.value = data
         })
 

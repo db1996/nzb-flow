@@ -9,7 +9,7 @@ export default class TaskManager {
     // Separate queues for different stages
     private compressionQueue: Task[] = [] // RAR + PAR steps
     private uploadQueue: Task[] = [] // POST step
-    private tasksApproval: Task[] = []
+    public tasksApproval: Task[] = []
 
     // Queue control flags
     private compressionPaused: boolean = false
@@ -135,7 +135,11 @@ export default class TaskManager {
         return task
     }
 
-    public getFreshTask(profileId: string, files?: string[]): Task {
+    public getFreshTask(profileId?: string, files?: string[]): Task {
+        if (!profileId) {
+            profileId = Settings.profiles.filter((p) => p.isDefault)[0]?.id
+        }
+
         const taskSettings = Settings.getNewTaskSettings(profileId)
         if (files && files.length > 0) {
             taskSettings.postingSettings.files = files
@@ -154,7 +158,7 @@ export default class TaskManager {
         await this.addTaskToCompressionQueue(newTask)
     }
 
-    public async queueTaskConfig(taskConfig: TaskConfig): Promise<void> {
+    public queueTaskConfig(taskConfig: TaskConfig): void {
         // console.log(JSON.stringify(taskConfig));
 
         const newTask = this.configToTask(taskConfig)
@@ -204,7 +208,18 @@ export default class TaskManager {
             return
         }
 
-        await this.addTaskToCompressionQueue(newTask)
+        const existingInApproval = this.tasksApproval.find(
+            (t) => t.taskConfig?.id === newTask.taskConfig?.id
+        )
+        if (existingInApproval) {
+            console.log(
+                'Task ID already exists in approval queue, removing before queuing:',
+                newTask.taskConfig?.id
+            )
+            this.removeApprovalTaskConfig(newTask.taskConfig?.id || '')
+        }
+
+        this.addTaskToCompressionQueue(newTask)
     }
 
     public async unQueueTaskId(id: string): Promise<void> {
@@ -462,23 +477,23 @@ export default class TaskManager {
         Settings.mainWindow?.webContents.send('approval-queue-updated', approvalQueue)
     }
 
-    public async queueApprovalTask(id: string): Promise<void> {
+    public queueApprovalTask(id: string): void {
         const task = this.tasksApproval.find((ts) => ts.taskConfig?.id === id)
         if (!task) {
-            throw new Error('Task not found for approval')
+            throw new Error('Task ID not found in approval queue')
         }
         this.removeApprovalTaskConfig(id)
-        await this.addTaskToCompressionQueue(task)
+        this.addTaskToCompressionQueue(task)
     }
 
-    public async queueMultipleApprovalTaskConfigs(ids: string[]): Promise<void> {
+    public queueMultipleApprovalTaskConfigs(ids: string[]): void {
         for (const id of ids) {
             const task = this.tasksApproval.find((ts) => ts.taskConfig?.id === id)
             if (!task) {
-                throw new Error('Task not found for approval')
+                throw new Error(`Task ID ${id} not found in approval queue`)
             }
             this.removeApprovalTaskConfig(id)
-            await this.addTaskToCompressionQueue(task)
+            this.addTaskToCompressionQueue(task)
         }
     }
 
@@ -486,10 +501,15 @@ export default class TaskManager {
         const existing = this.tasksApproval.find((ts) => ts.taskConfig?.id === taskConfig.id)
         if (existing) {
             existing.taskConfig = taskConfig
+            existing.generateRandoms()
+        } else {
+            throw new Error('Task ID not found in approval queue')
         }
+
+        this.sendApprovalQueueUpdate()
     }
 
-    private async addTaskToCompressionQueue(task: Task): Promise<void> {
+    private addTaskToCompressionQueue(task: Task): void {
         if (task.taskConfig) {
             task.taskConfig.created_at = Date.now()
         }

@@ -44,14 +44,9 @@ export default class Settings {
     static taskManager: TaskManager | null = null
 
     static async load(
-        mainWindow: Electron.BrowserWindow | null = null,
         forceReload: boolean = false,
         taskManager: TaskManager | null = null
     ): Promise<void> {
-        if (mainWindow !== null) {
-            Settings.mainWindow = mainWindow
-        }
-
         if (taskManager !== null) {
             Settings.taskManager = taskManager
         }

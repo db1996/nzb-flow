@@ -2,13 +2,10 @@ import { autoUpdater, UpdateInfo } from 'electron-updater'
 import Settings from './Settings'
 
 export default class Updater {
-    public mainWindow: Electron.BrowserWindow | null = null
     public currentUpdateInfo: UpdateInfo | null = null
     public lastError: any | null = null
 
-    public constructor(mainWindow: Electron.BrowserWindow | null) {
-        this.mainWindow = mainWindow
-    }
+    public constructor() {}
 
     public setupAutoUpdater(): void {
         // Configure auto-updater
@@ -17,25 +14,25 @@ export default class Updater {
 
         // Auto-updater events
         autoUpdater.on('checking-for-update', () => {
-            this.mainWindow?.webContents.send('update-checking')
+            Settings.mainWindow?.webContents.send('update-checking')
         })
 
         autoUpdater.on('update-available', (info) => {
             console.log('Update available:', info.version)
             this.currentUpdateInfo = info
-            this.mainWindow?.webContents.send('update-available', info)
+            Settings.mainWindow?.webContents.send('update-available', info)
         })
 
         autoUpdater.on('update-not-available', (info) => {
             console.log('Update not available:', info.version)
             this.currentUpdateInfo = info
-            this.mainWindow?.webContents.send('update-not-available', info)
+            Settings.mainWindow?.webContents.send('update-not-available', info)
         })
 
         autoUpdater.on('error', (err) => {
             this.lastError = err
             console.log('Error in auto-updater:', err)
-            this.mainWindow?.webContents.send('update-error', err)
+            Settings.mainWindow?.webContents.send('update-error', err)
         })
 
         autoUpdater.on('download-progress', (progressObj) => {
@@ -44,12 +41,12 @@ export default class Updater {
             log_message =
                 log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
             console.log(log_message)
-            this.mainWindow?.webContents.send('update-download-progress', progressObj)
+            Settings.mainWindow?.webContents.send('update-download-progress', progressObj)
         })
 
         autoUpdater.on('update-downloaded', (info) => {
             this.currentUpdateInfo = info
-            this.mainWindow?.webContents.send('update-downloaded', info)
+            Settings.mainWindow?.webContents.send('update-downloaded', info)
         })
     }
 
