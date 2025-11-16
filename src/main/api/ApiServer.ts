@@ -4,6 +4,7 @@ import http from 'http'
 import TaskManager from '../commands/manager/TaskManager'
 import fs from 'fs'
 import { TaskConfig } from '../types/settings/commands/taskSettings'
+import Settings from '../classes/Settings'
 
 interface QueueRequestBody {
     files: string[]
@@ -15,10 +16,7 @@ export class ApiServer {
     private app: Express
     private server: http.Server | null = null
 
-    constructor(
-        private port: number,
-        private taskManager: TaskManager
-    ) {
+    constructor(private taskManager: TaskManager) {
         this.app = express()
         this.configureMiddleware()
         this.registerRoutes()
@@ -28,7 +26,11 @@ export class ApiServer {
         this.app.use(express.json())
 
         this.app.use((req, res, next) => {
-            if (req.headers['x-api-token'] !== 'asdasd') {
+            if (Settings.allSettings.httpServerApiToken === '') {
+                // No auth token set, allow all requests
+                return next()
+            }
+            if (req.headers['x-api-token'] !== Settings.allSettings.httpServerApiToken) {
                 return res.status(401).json({ success: false, error: 'Unauthorized', data: null })
             }
             next()
@@ -265,8 +267,10 @@ export class ApiServer {
     // --- SERVER MANAGEMENT ---------------------------------------------------
     public start() {
         if (this.server) return
-        this.server = this.app.listen(this.port, () => {
-            console.log(`API Server running on http://localhost:${this.port}`)
+        this.server = this.app.listen(Settings.allSettings.httpServerPort, () => {
+            console.log(
+                `API Server running on http://localhost:${Settings.allSettings.httpServerPort}`
+            )
         })
     }
 

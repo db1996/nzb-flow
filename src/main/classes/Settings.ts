@@ -586,7 +586,6 @@ export default class Settings {
             }
         }
 
-        // ✅ deep clone to avoid shared references
         const clonedSettings: TaskSettings = structuredClone(taskSettings)
 
         if (serversettings) {
@@ -594,6 +593,33 @@ export default class Settings {
         }
 
         return clonedSettings
+    }
+
+    // Let other classes register to receive webcontent updates by registering a callback function with channel name
+    private static webcontentUpdateCallbacks: { channel: string; callback: (data: any) => void }[] =
+        []
+
+    static registerWebcontentUpdateCallback(channel: string, callback: (data: any) => void) {
+        Settings.webcontentUpdateCallbacks.push({ channel, callback })
+    }
+
+    static unregisterWebcontentUpdateCallback(channel: string, callback: (data: any) => void) {
+        Settings.webcontentUpdateCallbacks = Settings.webcontentUpdateCallbacks.filter(
+            (item) => item.channel !== channel || item.callback !== callback
+        )
+    }
+
+    static sendWebcontentUpdate(channel: string, data: any) {
+        if (Settings.mainWindow) {
+            Settings.mainWindow.webContents.send(channel, data)
+        }
+
+        // Also call registered callbacks
+        for (const registeredCallback of Settings.webcontentUpdateCallbacks) {
+            if (registeredCallback.channel === channel) {
+                registeredCallback.callback(data)
+            }
+        }
     }
 
     static get taskHistoryPath(): string {

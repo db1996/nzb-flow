@@ -4,12 +4,12 @@ import { Copy } from 'lucide-vue-next'
 import { InputGroup, InputGroupInput } from '@components/ui/input-group'
 import Label from '@renderer/components/ui/label/Label.vue'
 import { ButtonGroup, ButtonGroupText } from '@components/ui/button-group'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
     modelValue: {
         type: String,
-        required: true
+        required: false
     },
     label: {
         type: String,
@@ -40,6 +40,21 @@ const props = defineProps({
     helpClass: {
         type: String,
         default: ''
+    },
+    value: {
+        type: String,
+        required: false
+    }
+})
+
+const proxyValue = computed(() => {
+    if (props.value !== undefined) {
+        return props.value
+    } else {
+        if (props.modelValue === undefined) {
+            return ''
+        }
+        return props.modelValue
     }
 })
 
@@ -74,18 +89,21 @@ async function copyToClipboard(str: string) {
                                 : 'outline_destructive'
                             : 'secondary'
                     "
-                    @click="copyToClipboard(modelValue)"
+                    @click="copyToClipboard(proxyValue)"
                 >
                     <Copy />
                 </Button>
             </ButtonGroupText>
             <InputGroup>
                 <InputGroupInput
-                    :model-value="modelValue"
+                    :model-value="proxyValue"
                     @update:modelValue="$emit('update:modelValue', $event)"
                     :disabled="disabled"
                 />
             </InputGroup>
+            <ButtonGroupText as-child v-if="$slots.append">
+                <slot name="append"></slot>
+            </ButtonGroupText>
         </ButtonGroup>
         <span class="ms-1 mt-0 text-xs text-gray-500 italic" :class="helpClass">{{ help }}</span>
     </div>

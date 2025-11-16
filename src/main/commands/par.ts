@@ -10,7 +10,7 @@ export default class ParCommand extends BaseCommand {
     }
 
     public args(): string[] {
-        let totalsize: number = 0
+        let _totalsize: number = 0
         let files: string[] = []
         console.log('par args', this._settings.rarParFolderPath)
 
@@ -23,7 +23,7 @@ export default class ParCommand extends BaseCommand {
             console.log('Skipping RAR creation as per settings, paring files directly')
             files = this._settings.taskSettings.postingSettings.files
             try {
-                totalsize = files.reduce((acc, file) => {
+                _totalsize = files.reduce((acc, file) => {
                     const stats = fs.statSync(file)
                     return acc + stats.size
                 }, 0)
@@ -36,7 +36,7 @@ export default class ParCommand extends BaseCommand {
                 .readdirSync(this._settings.rarParFolderPath)
                 .map((file) => path.join(this._settings.rarParFolderPath, file))
             try {
-                totalsize = files.reduce((acc, file) => {
+                _totalsize = files.reduce((acc, file) => {
                     const stats = fs.statSync(file)
                     return acc + stats.size
                 }, 0)

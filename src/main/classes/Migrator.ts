@@ -4,6 +4,7 @@ import { TaskConfig } from '../types/settings/commands/taskSettings'
 import { FolderSettings } from '../types/settings/FolderSettings'
 import { ProfileSettings } from '../types/settings/ProfileSettings'
 import path from 'node:path'
+import { randomUUID } from 'crypto'
 
 export default class Migrator {
     static migrateAllSettings(
@@ -23,6 +24,15 @@ export default class Migrator {
             validatedConfig.profilesSettingsFolder = path.join(app.getPath('userData'), 'profiles')
             validatedConfig.taskHistoryFolder = path.join(app.getPath('userData'), 'task-history')
         }
+
+        if (_diff.added.includes('httpServerApiToken')) {
+            validatedConfig.httpServerApiToken = randomUUID().toString()
+        }
+
+        if (_diff.added.includes('wsServerApiToken')) {
+            validatedConfig.wsServerApiToken = randomUUID().toString()
+        }
+
         return validatedConfig
     }
 

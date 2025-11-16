@@ -34,213 +34,222 @@ watch(
 </script>
 
 <template>
-    <CardForm title="General Settings" description="Configure application appearance and behavior.">
-        <template #body>
-            <div class="grid grid-cols-2">
-                <div class="space-y-2">
-                    <Label for="theme">Theme</Label>
-                    <Select v-model="form.theme.type" required>
-                        <SelectTrigger id="theme" class="w-[200px]">
-                            <SelectValue placeholder="Select theme" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="light">Light</SelectItem>
-                            <SelectItem value="dark">Dark</SelectItem>
-                            <SelectItem value="system">System</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <p class="text-sm text-muted-foreground">
-                        Choose between light, dark, or system theme.
-                    </p>
-                </div>
-                <div class="space-y-2">
-                    <Label for="date-formats">Date format</Label>
-                    <Select v-model="form.theme.datesLocale" required>
-                        <SelectTrigger id="date-formats" class="w-[250px]">
-                            <SelectValue placeholder="Select date format" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="us-US">mm/dd/yyyy hh:mm:ss AM</SelectItem>
-                            <SelectItem value="nl-NL">dd-mm-yyyy hh:mm:ss</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-
-            <hr />
-            <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <Label for="show-tray-icon">Show system tray icon</Label>
-                    <p class="text-sm text-muted-foreground">
-                        When enabled, the system tray icon will be shown.
-                    </p>
-                </div>
-                <SwitchInput id="show-tray-icon" v-model="form.theme.showTrayIcon" />
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <Label for="minimize-to-tray">Minimize to System Tray</Label>
-                    <p class="text-sm text-muted-foreground">
-                        When enabled, closing the window will minimize the app to the system tray
-                        instead of quitting. Requires "Show system tray icon" to be enabled.
-                    </p>
-                </div>
-                <SwitchInput
-                    :disabled="!form.theme.showTrayIcon"
-                    id="minimize-to-tray"
-                    v-model="form.theme.minimizeToTray"
-                />
-            </div>
-            <hr />
-            <div class="space-y-2">
-                <p class="card-header leading-none font-semibold">Folders</p>
-            </div>
-            <FileSelectInput
-                id="rarpar-folder"
-                label="RAR/PAR temp folder"
-                v-model="form.rarparFolder"
-                placeholder="Select RAR/PAR temp folder"
-            >
-                <template #append>
-                    <Button
-                        size="lg"
-                        variant="outline_default"
-                        @click="
-                            () => (form.rarparFolder = settingsStore.defaultFolders.rarparFolder)
-                        "
-                    >
-                        Default
-                    </Button>
-                </template>
-            </FileSelectInput>
-            <FileSelectInput
-                id="nzb-folder"
-                label="NZB output folder"
-                v-model="form.nzbOutputFolder"
-                placeholder="Select NZB output folder"
-            >
-                <template #append>
-                    <Button
-                        size="lg"
-                        variant="outline_default"
-                        @click="
-                            () =>
-                                (form.nzbOutputFolder =
-                                    settingsStore.defaultFolders.nzbOutputFolder)
-                        "
-                    >
-                        Default
-                    </Button>
-                </template>
-            </FileSelectInput>
-            <FileSelectInput
-                id="history-folder"
-                label="Task history folder"
-                v-model="form.taskHistoryFolder"
-                help="Post logs are stored in this folder."
-                placeholder="Select Task history folder"
-            >
-                <template #append>
-                    <Button
-                        size="lg"
-                        variant="outline_default"
-                        @click="
-                            () =>
-                                (form.taskHistoryFolder =
-                                    settingsStore.defaultFolders.taskHistoryFolder)
-                        "
-                    >
-                        Default
-                    </Button>
-                </template>
-            </FileSelectInput>
-            <hr />
-            <div class="space-y-2">
-                <p class="card-header leading-none font-semibold">Updates</p>
-            </div>
-
-            <div class="space-y-2">
-                <div class="grid grid-cols-2 gap-4 space-y-2">
-                    <Button
-                        v-if="
-                            updateStore.updateState === 'checking' ||
-                            updateStore.updateState === 'downloading'
-                        "
-                        variant="outline_default"
-                        disabled
-                    >
-                        {{
-                            updateStore.updateState === 'checking'
-                                ? 'Checking for updates...'
-                                : 'Downloading update...'
-                        }}
-                        <LoaderCircle class="animate-spin" />
-                    </Button>
-                    <Button
-                        v-if="
-                            updateStore.updateState === 'idle' ||
-                            updateStore.updateState === 'unavailable'
-                        "
-                        variant="outline_default"
-                        @click="() => updateStore.checkForUpdates()"
-                    >
-                        Check for Updates
-                    </Button>
-
-                    <Button
-                        v-if="updateStore.updateState === 'available'"
-                        variant="outline_info"
-                        @click="() => updateStore.downloadUpdate()"
-                    >
-                        Download Update
-                    </Button>
-                    <Button
-                        v-if="updateStore.updateState === 'downloaded'"
-                        variant="default"
-                        @click="() => updateStore.installUpdate()"
-                    >
-                        Install Update
-                    </Button>
-                    <Alert
-                        v-if="updateStore.updateState === 'error'"
-                        variant="destructive"
-                        title="Update Error"
-                        description="An error occurred while checking for updates."
-                    >
-                        <AlertTitle>Error with updater</AlertTitle>
-                        <AlertDescription>
-                            {{ updateStore.errorMessage }}
-                        </AlertDescription>
-                    </Alert>
-                    <div>
+    <div class="grid grid-cols-1 gap-2">
+        <CardForm title="Theme settings">
+            <template #body>
+                <div class="grid grid-cols-2">
+                    <div class="space-y-2">
+                        <Label for="theme">Theme</Label>
+                        <Select v-model="form.theme.type" required>
+                            <SelectTrigger id="theme" class="w-[200px]">
+                                <SelectValue placeholder="Select theme" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="light">Light</SelectItem>
+                                <SelectItem value="dark">Dark</SelectItem>
+                                <SelectItem value="system">System</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <p class="text-sm text-muted-foreground">
-                            Current Version: {{ updateStore.currentVersion }}
-                        </p>
-                        <p class="text-sm text-muted-foreground">
-                            Latest Version:
-                            {{ updateStore.updateInfo ? updateStore.updateInfo.version : 'N/A' }}
+                            Choose between light, dark, or system theme.
                         </p>
                     </div>
+                    <div class="space-y-2">
+                        <Label for="date-formats">Date format</Label>
+                        <Select v-model="form.theme.datesLocale" required>
+                            <SelectTrigger id="date-formats" class="w-[250px]">
+                                <SelectValue placeholder="Select date format" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="us-US">mm/dd/yyyy hh:mm:ss AM</SelectItem>
+                                <SelectItem value="nl-NL">dd-mm-yyyy hh:mm:ss</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
+            </template>
+        </CardForm>
 
-                <div class="grid grid-cols-3 space-y-2 mt-4 gap-2">
+        <CardForm title="System tray options">
+            <template #body>
+                <div class="flex items-center justify-between">
+                    <div class="space-y-0.5">
+                        <Label for="show-tray-icon">Show system tray icon</Label>
+                        <p class="text-sm text-muted-foreground">
+                            When enabled, the system tray icon will be shown.
+                        </p>
+                    </div>
+                    <SwitchInput id="show-tray-icon" v-model="form.theme.showTrayIcon" />
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="space-y-0.5">
+                        <Label for="minimize-to-tray">Minimize to System Tray</Label>
+                        <p class="text-sm text-muted-foreground">
+                            When enabled, closing the window will minimize the app to the system
+                            tray instead of quitting. Requires "Show system tray icon" to be
+                            enabled.
+                        </p>
+                    </div>
                     <SwitchInput
-                        id="auto-check-updates"
-                        v-model="form.updateCheckAutomatically"
-                        label="Automatically check updates at startup"
-                    />
-                    <SwitchInput
-                        id="auto-download-updates"
-                        v-model="form.updateDownloadAutomatically"
-                        label="Automatically download updates"
-                    />
-                    <SwitchInput
-                        id="auto-install-updates"
-                        v-model="form.updateInstallAutomatically"
-                        label="Automatically install updates"
+                        :disabled="!form.theme.showTrayIcon"
+                        id="minimize-to-tray"
+                        v-model="form.theme.minimizeToTray"
                     />
                 </div>
-            </div>
-        </template>
-    </CardForm>
+            </template>
+        </CardForm>
+        <CardForm title="Folders">
+            <template #body>
+                <FileSelectInput
+                    id="rarpar-folder"
+                    label="RAR/PAR temp folder"
+                    v-model="form.rarparFolder"
+                    placeholder="Select RAR/PAR temp folder"
+                >
+                    <template #append>
+                        <Button
+                            size="lg"
+                            variant="outline_default"
+                            @click="
+                                () =>
+                                    (form.rarparFolder = settingsStore.defaultFolders.rarparFolder)
+                            "
+                        >
+                            Default
+                        </Button>
+                    </template>
+                </FileSelectInput>
+                <FileSelectInput
+                    id="nzb-folder"
+                    label="NZB output folder"
+                    v-model="form.nzbOutputFolder"
+                    placeholder="Select NZB output folder"
+                >
+                    <template #append>
+                        <Button
+                            size="lg"
+                            variant="outline_default"
+                            @click="
+                                () =>
+                                    (form.nzbOutputFolder =
+                                        settingsStore.defaultFolders.nzbOutputFolder)
+                            "
+                        >
+                            Default
+                        </Button>
+                    </template>
+                </FileSelectInput>
+                <FileSelectInput
+                    id="history-folder"
+                    label="Task history folder"
+                    v-model="form.taskHistoryFolder"
+                    help="Post logs are stored in this folder."
+                    placeholder="Select Task history folder"
+                >
+                    <template #append>
+                        <Button
+                            size="lg"
+                            variant="outline_default"
+                            @click="
+                                () =>
+                                    (form.taskHistoryFolder =
+                                        settingsStore.defaultFolders.taskHistoryFolder)
+                            "
+                        >
+                            Default
+                        </Button>
+                    </template>
+                </FileSelectInput>
+            </template>
+        </CardForm>
+
+        <CardForm title="Updates">
+            <template #body>
+                <div class="space-y-2">
+                    <div class="grid grid-cols-2 gap-4 space-y-2">
+                        <Button
+                            v-if="
+                                updateStore.updateState === 'checking' ||
+                                updateStore.updateState === 'downloading'
+                            "
+                            variant="outline_default"
+                            disabled
+                        >
+                            {{
+                                updateStore.updateState === 'checking'
+                                    ? 'Checking for updates...'
+                                    : 'Downloading update...'
+                            }}
+                            <LoaderCircle class="animate-spin" />
+                        </Button>
+                        <Button
+                            v-if="
+                                updateStore.updateState === 'idle' ||
+                                updateStore.updateState === 'unavailable'
+                            "
+                            variant="outline_default"
+                            @click="() => updateStore.checkForUpdates()"
+                        >
+                            Check for Updates
+                        </Button>
+
+                        <Button
+                            v-if="updateStore.updateState === 'available'"
+                            variant="outline_info"
+                            @click="() => updateStore.downloadUpdate()"
+                        >
+                            Download Update
+                        </Button>
+                        <Button
+                            v-if="updateStore.updateState === 'downloaded'"
+                            variant="default"
+                            @click="() => updateStore.installUpdate()"
+                        >
+                            Install Update
+                        </Button>
+                        <Alert
+                            v-if="updateStore.updateState === 'error'"
+                            variant="destructive"
+                            title="Update Error"
+                            description="An error occurred while checking for updates."
+                        >
+                            <AlertTitle>Error with updater</AlertTitle>
+                            <AlertDescription>
+                                {{ updateStore.errorMessage }}
+                            </AlertDescription>
+                        </Alert>
+                        <div>
+                            <p class="text-sm text-muted-foreground">
+                                Current Version: {{ updateStore.currentVersion }}
+                            </p>
+                            <p class="text-sm text-muted-foreground">
+                                Latest Version:
+                                {{
+                                    updateStore.updateInfo ? updateStore.updateInfo.version : 'N/A'
+                                }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 space-y-2 mt-4 gap-2">
+                        <SwitchInput
+                            id="auto-check-updates"
+                            v-model="form.updateCheckAutomatically"
+                            label="Automatically check updates at startup"
+                        />
+                        <SwitchInput
+                            id="auto-download-updates"
+                            v-model="form.updateDownloadAutomatically"
+                            label="Automatically download updates"
+                        />
+                        <SwitchInput
+                            id="auto-install-updates"
+                            v-model="form.updateInstallAutomatically"
+                            label="Automatically install updates"
+                        />
+                    </div>
+                </div>
+            </template>
+        </CardForm>
+    </div>
 </template>

@@ -130,7 +130,7 @@ export default class BaseCommand {
 
         this.commandData.lastKnownProgress = this.checkIsProgress(message)
 
-        Settings.mainWindow?.webContents.send('command-progress-percentage', {
+        Settings.sendWebcontentUpdate('command-progress-percentage', {
             id: this.taskId,
             currentStep: this._settings.currentStep,
             percentage: this.commandData.lastKnownProgress

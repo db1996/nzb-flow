@@ -17,6 +17,7 @@ const api = {
     reloadSettings: (callback: () => void) =>
         electronAPI.ipcRenderer.on('reload-settings', () => callback()),
     copy: async (text: string) => electronAPI.ipcRenderer.invoke('copy', text),
+    getUUID: () => electronAPI.ipcRenderer.invoke('get-uuid'),
 
     getDefaultFolders: () => electronAPI.ipcRenderer.invoke('get-default-folders'),
 

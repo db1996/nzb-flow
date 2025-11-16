@@ -16,6 +16,8 @@ declare global {
             reloadSettings: (callback: () => void) => void
             settingsLoaded: (callback: (settings: AllSettings) => void) => void
 
+            getUUID: () => Promise<string>
+
             generateEmptyTask: (profileId?: string, files?: string[]) => Promise<TaskConfig>
             queueTask: (task: TaskConfig) => Promise<void>
             unQueueTask: (id: string) => Promise<void>

@@ -15,6 +15,8 @@ import Utils from './Utils'
 import Updater from './Updater'
 import ncp from 'copy-paste'
 import { ApiServer } from '../api/ApiServer'
+import { randomUUID } from 'crypto'
+import { WebSocketApiServer } from '../api/WebSocketApiServer'
 
 export default class AppState {
     public taskManager: TaskManager
@@ -22,13 +24,15 @@ export default class AppState {
     public tray: Tray | null = null
     public updaterInstance: Updater | null = null
     public apiServer: ApiServer
+    public websocketService: WebSocketApiServer
 
     constructor() {
         this.taskManager = new TaskManager()
         this.updaterInstance = new Updater()
         this.updaterInstance.setupAutoUpdater()
 
-        this.apiServer = new ApiServer(3000, this.taskManager)
+        this.apiServer = new ApiServer(this.taskManager)
+        this.websocketService = new WebSocketApiServer()
     }
 
     public async init() {
@@ -39,7 +43,8 @@ export default class AppState {
             this.createTray()
         }
 
-        this.apiServer.start()
+        if (Settings.allSettings.httpServerEnabled) this.apiServer.start()
+        if (Settings.allSettings.wsServerEnabled) this.websocketService.start()
     }
 
     public registerWindowHandlers() {
@@ -71,6 +76,8 @@ export default class AppState {
 
     private registerIpcHandlers() {
         ipcMain.handle('save-allsettings', (_event, allSettings: AllSettings) => {
+            console.log('save allsettings', allSettings.httpServerEnabled)
+
             Settings.saveAllSettings(allSettings)
 
             // Handle tray setting changes
@@ -83,6 +90,14 @@ export default class AppState {
                 // If showTrayIcon is disabled, destroy tray
                 this.destroyTray()
             }
+
+            this.websocketService.stop()
+            this.apiServer.stop()
+
+            setTimeout(() => {
+                if (allSettings.httpServerEnabled) this.apiServer.start()
+                if (allSettings.wsServerEnabled) this.websocketService.start()
+            }, 500)
         })
         ipcMain.handle('get-allsettings', () => {
             return Settings.allSettings
@@ -141,6 +156,11 @@ export default class AppState {
         ipcMain.handle('save-approval-task', (_event, taskSettings: TaskConfig) => {
             this.taskManager.saveApprovalTaskConfig(taskSettings)
             return true
+        })
+
+        // Queue control handlers
+        ipcMain.handle('get-uuid', () => {
+            return randomUUID().toString()
         })
 
         // Queue control handlers
@@ -368,6 +388,14 @@ export default class AppState {
                 Settings.saveFolder(folder)
             })
             return
+        })
+
+        ipcMain.handle('start-http-server', async () => {
+            this.apiServer.start()
+        })
+
+        ipcMain.handle('stop-http-server', async () => {
+            this.apiServer.stop()
         })
     }
 

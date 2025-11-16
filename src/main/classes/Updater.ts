@@ -14,25 +14,25 @@ export default class Updater {
 
         // Auto-updater events
         autoUpdater.on('checking-for-update', () => {
-            Settings.mainWindow?.webContents.send('update-checking')
+            Settings.sendWebcontentUpdate('update-checking', null)
         })
 
         autoUpdater.on('update-available', (info) => {
             console.log('Update available:', info.version)
             this.currentUpdateInfo = info
-            Settings.mainWindow?.webContents.send('update-available', info)
+            Settings.sendWebcontentUpdate('update-available', info)
         })
 
         autoUpdater.on('update-not-available', (info) => {
             console.log('Update not available:', info.version)
             this.currentUpdateInfo = info
-            Settings.mainWindow?.webContents.send('update-not-available', info)
+            Settings.sendWebcontentUpdate('update-not-available', info)
         })
 
         autoUpdater.on('error', (err) => {
             this.lastError = err
             console.log('Error in auto-updater:', err)
-            Settings.mainWindow?.webContents.send('update-error', err)
+            Settings.sendWebcontentUpdate('update-error', err)
         })
 
         autoUpdater.on('download-progress', (progressObj) => {
@@ -41,12 +41,12 @@ export default class Updater {
             log_message =
                 log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
             console.log(log_message)
-            Settings.mainWindow?.webContents.send('update-download-progress', progressObj)
+            Settings.sendWebcontentUpdate('update-download-progress', progressObj)
         })
 
         autoUpdater.on('update-downloaded', (info) => {
             this.currentUpdateInfo = info
-            Settings.mainWindow?.webContents.send('update-downloaded', info)
+            Settings.sendWebcontentUpdate('update-downloaded', info)
         })
     }
 

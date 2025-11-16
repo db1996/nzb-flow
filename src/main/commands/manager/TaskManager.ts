@@ -355,7 +355,7 @@ export default class TaskManager {
         }
 
         task.currentlyRunning = true
-        Settings.mainWindow?.webContents.send('queue-update', this.getQueueStatus())
+        Settings.sendWebcontentUpdate('queue-update', this.getQueueStatus())
 
         try {
             const stepSuccess = await task.runNextStep()
@@ -389,8 +389,8 @@ export default class TaskManager {
         this.removeTaskFromCompressionQueue(task.taskConfig.id)
         this.removeTaskFromUploadQueue(task.taskConfig.id)
 
-        Settings.mainWindow?.webContents.send('command-finish', task.taskConfig)
-        Settings.mainWindow?.webContents.send('queue-update', this.getQueueStatus())
+        Settings.sendWebcontentUpdate('command-finish', task.taskConfig)
+        Settings.sendWebcontentUpdate('queue-update', this.getQueueStatus())
     }
 
     private async runUploadStep(task: Task): Promise<void> {
@@ -401,7 +401,7 @@ export default class TaskManager {
         }
 
         task.currentlyRunning = true
-        Settings.mainWindow?.webContents.send('queue-update', this.getQueueStatus())
+        Settings.sendWebcontentUpdate('queue-update', this.getQueueStatus())
         try {
             const stepSuccess = await task.runNextStep()
             this.finishTask(task, !stepSuccess)
@@ -474,7 +474,7 @@ export default class TaskManager {
 
     private sendApprovalQueueUpdate(): void {
         const approvalQueue = this.getApprovalTaskConfig()
-        Settings.mainWindow?.webContents.send('approval-queue-updated', approvalQueue)
+        Settings.sendWebcontentUpdate('approval-queue-updated', approvalQueue)
     }
 
     public queueApprovalTask(id: string): void {
@@ -514,7 +514,7 @@ export default class TaskManager {
             task.taskConfig.created_at = Date.now()
         }
         this.compressionQueue.push(task)
-        Settings.mainWindow?.webContents.send('queue-update', this.getQueueStatus())
+        Settings.sendWebcontentUpdate('queue-update', this.getQueueStatus())
     }
 
     // Updated methods for new queue system

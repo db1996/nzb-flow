@@ -64,7 +64,7 @@ app.whenReady().then(() => {
 
     fs.watchFile(Settings.allSettingsPath, async () => {
         await Settings.loadMainSettings()
-        Settings.mainWindow?.webContents.send('settings-loaded', Settings.allSettings)
+        Settings.sendWebcontentUpdate('settings-updated', Settings.allSettings)
     })
 
     app.on('activate', function () {

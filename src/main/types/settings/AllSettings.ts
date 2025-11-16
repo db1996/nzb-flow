@@ -14,6 +14,14 @@ export type AllSettings = {
     profilesSettingsFolder: string
     folderMonitoringFolder: string
 
+    httpServerEnabled: boolean
+    httpServerPort: number
+    httpServerApiToken: string
+
+    wsServerEnabled: boolean
+    wsServerPort: number
+    wsServerApiToken: string
+
     updateCheckAutomatically: boolean
     updateDownloadAutomatically: boolean
     updateInstallAutomatically: boolean
@@ -36,6 +44,12 @@ export const AllSettingsYupSchema = yup.object({
     taskHistoryFolder: yup.string().default(''),
     profilesSettingsFolder: yup.string().default(''),
     folderMonitoringFolder: yup.string().default(''),
+    httpServerEnabled: yup.boolean().default(false),
+    httpServerPort: yup.number().default(3000),
+    httpServerApiToken: yup.string().default(''),
+    wsServerEnabled: yup.boolean().default(false),
+    wsServerPort: yup.number().default(3001),
+    wsServerApiToken: yup.string().default(''),
     updateCheckAutomatically: yup.boolean().default(true),
     updateDownloadAutomatically: yup.boolean().default(false),
     updateInstallAutomatically: yup.boolean().default(false),

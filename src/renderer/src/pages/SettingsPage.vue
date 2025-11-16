@@ -27,6 +27,7 @@ import Alert from '@renderer/components/ui/alert/Alert.vue'
 import AlertTitle from '@renderer/components/ui/alert/AlertTitle.vue'
 import AlertDescription from '@renderer/components/ui/alert/AlertDescription.vue'
 import { AllSettings } from '@main/types/settings/AllSettings'
+import AutomationSettings from './_partials/AutomationSettings.vue'
 
 const settingsStore = useSettingsStore()
 
@@ -46,6 +47,12 @@ const sections = ref([
     {
         id: 'servers',
         label: 'Servers',
+        badgeVariant: 'destructive' as BadgeVariants['variant'],
+        badgeIcon: X
+    },
+    {
+        id: 'automation',
+        label: 'Automation',
         badgeVariant: 'destructive' as BadgeVariants['variant'],
         badgeIcon: X
     },
@@ -118,12 +125,16 @@ watch(
 <template>
     <AppLayout>
         <Tabs default-value="general" class="flex flex-col gap-4">
-            <TabsList class="grid w-full grid-cols-[1fr_1fr_2fr_2fr_1fr_1fr]">
+            <TabsList class="grid w-full grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
                 <TabsTriggerSection :section="sections.find(s => s.id === 'general')!" />
                 <TabsTriggerSection :section="sections.find(s => s.id === 'queues')!" />
                 <TabsTriggerSection
                     :badge="badgeSections['servers']"
                     :section="sections.find(s => s.id === 'servers')!"
+                />
+                <TabsTriggerSection
+                    :badge="badgeSections['automation']"
+                    :section="sections.find(s => s.id === 'automation')!"
                 />
                 <TabsTriggerSection
                     :badge="badgeSections['rar']"
@@ -442,6 +453,9 @@ watch(
                         </AlertDescription>
                     </Alert>
                 </div>
+            </TabsContent>
+            <TabsContent value="automation">
+                <AutomationSettings v-if="settingsStore.form" :form="settingsStore.form" />
             </TabsContent>
             <TabsContent value="servers">
                 <ServersSettings v-if="settingsStore.form" :form="settingsStore.form.servers" />
