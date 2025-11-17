@@ -17,6 +17,10 @@ import Migrator from './Migrator'
 import { FolderSettings, FolderSettingsYupSchema } from '../types/settings/FolderSettings'
 import { FolderWatched } from '../types/FolderWatched'
 import TaskManager from '../commands/manager/TaskManager'
+import {
+    ContentTemplateSettings,
+    ContentTemplateSettingsYupSchema
+} from '../types/settings/ContenTemplateSettings'
 
 export default class Settings {
     private static loaded: boolean = false
@@ -27,11 +31,16 @@ export default class Settings {
     static defaultTaskHistoryPath = path.join(app.getPath('userData'), 'history-log')
     static defaultProfileSettingsPath = path.join(app.getPath('userData'), 'profiles')
     static defaultFolderSettingsPath = path.join(app.getPath('userData'), 'folder-monitoring')
+    static defaultContentTemplateSettingsPath = path.join(
+        app.getPath('userData'),
+        'content-templates'
+    )
 
     static profiles: ProfileSettings[] = []
 
     static folders: FolderSettings[] = []
     static folderWatched: Record<string, FolderWatched> = {}
+    static contentTemplates: ContentTemplateSettings[] = []
 
     static historyTasks: TaskConfig[] = []
 
@@ -79,6 +88,7 @@ export default class Settings {
         await Settings.loadProfiles()
         Settings.loadFolders()
         Settings.loadHistoryTasks()
+        Settings.loadContentTemplates()
     }
 
     static makePaths() {
@@ -100,6 +110,10 @@ export default class Settings {
 
         if (!fs.existsSync(Settings.folderSettingsPath)) {
             fs.mkdirSync(Settings.folderSettingsPath, { recursive: true })
+        }
+
+        if (!fs.existsSync(Settings.defaultContentTemplateSettingsPath)) {
+            fs.mkdirSync(Settings.defaultContentTemplateSettingsPath, { recursive: true })
         }
     }
 
@@ -373,6 +387,35 @@ export default class Settings {
             Settings.historyTasksPromise = Promise.resolve(Settings.historyTasks)
             return Settings.historyTasks
         }
+    }
+
+    static loadContentTemplates(): ContentTemplateSettings[] {
+        const templates: ContentTemplateSettings[] = []
+
+        const files = fs.readdirSync(Settings.defaultContentTemplateSettingsPath)
+        for (const file of files) {
+            if (file.endsWith('.json')) {
+                const filePath = path.join(Settings.defaultContentTemplateSettingsPath, file)
+                const data = fs.readFileSync(filePath, 'utf-8')
+
+                try {
+                    const parsedTemplate = JSON.parse(data) as ContentTemplateSettings
+                    const validatedSettings = ContentTemplateSettingsYupSchema.validateSync(
+                        parsedTemplate,
+                        {
+                            stripUnknown: true,
+                            abortEarly: false
+                        }
+                    )
+                    templates.push(validatedSettings)
+                } catch (error) {
+                    console.error('Error parsing content template file', error)
+                }
+            }
+        }
+
+        Settings.contentTemplates = templates
+        return templates
     }
 
     static clearHistoryTasks(): void {
