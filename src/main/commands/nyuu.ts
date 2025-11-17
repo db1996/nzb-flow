@@ -6,8 +6,6 @@ import Settings from '../classes/Settings'
 import { randomUUID } from 'crypto'
 
 export default class Nyuu extends BaseCommand {
-    public nzbFile: string = ''
-
     public args(): string[] {
         const server = Settings.allSettings.servers.find(
             (s) => s.id === this._settings.taskSettings.serverId
@@ -121,9 +119,7 @@ export default class Nyuu extends BaseCommand {
         args.push('--nzb-file-mode', 'defer')
         args.push('--progress', 'stdout')
 
-        const outputPath = path.join(Settings.nzbOutputPath, this.name)
-        this.nzbFile = outputPath + '.nzb'
-        args.push('-o', this.cmdString(this.nzbFile), '-O')
+        args.push('-o', this.cmdString(this._settings.nzbFile), '-O')
 
         // Collect all files in the rarparFolder for upload
         const files = fs

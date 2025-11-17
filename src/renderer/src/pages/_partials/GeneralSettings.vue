@@ -73,18 +73,18 @@ watch(
         <CardForm title="System tray options">
             <template #body>
                 <div class="flex items-center justify-between">
-                    <div class="space-y-0.5">
+                    <div class="space-y-2">
                         <Label for="show-tray-icon">Show system tray icon</Label>
-                        <p class="text-sm text-muted-foreground">
+                        <p class="text-sm text-muted-foreground mr-2">
                             When enabled, the system tray icon will be shown.
                         </p>
                     </div>
                     <SwitchInput id="show-tray-icon" v-model="form.theme.showTrayIcon" />
                 </div>
                 <div class="flex items-center justify-between">
-                    <div class="space-y-0.5">
+                    <div class="space-y-2">
                         <Label for="minimize-to-tray">Minimize to System Tray</Label>
-                        <p class="text-sm text-muted-foreground">
+                        <p class="text-sm text-muted-foreground mr-2">
                             When enabled, closing the window will minimize the app to the system
                             tray instead of quitting. Requires "Show system tray icon" to be
                             enabled.
@@ -98,8 +98,14 @@ watch(
                 </div>
             </template>
         </CardForm>
-        <CardForm title="Folders">
+        <CardForm title="Folders and files">
             <template #body>
+                <SwitchInput
+                    id="replace-existing-posted-files"
+                    v-model="form.replaceExistingPostedFiles"
+                    label="Replace existing posted files"
+                    help="If existing rar/par/nzb files exist, they will be replaced. If you turn this off the post will be renamed to {name} - 1 etc"
+                />
                 <FileSelectInput
                     id="rarpar-folder"
                     label="RAR/PAR temp folder"

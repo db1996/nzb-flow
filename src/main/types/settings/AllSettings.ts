@@ -25,6 +25,7 @@ export type AllSettings = {
     updateCheckAutomatically: boolean
     updateDownloadAutomatically: boolean
     updateInstallAutomatically: boolean
+    replaceExistingPostedFiles: boolean
     commands: {
         rar: string
         par: string
@@ -53,6 +54,7 @@ export const AllSettingsYupSchema = yup.object({
     updateCheckAutomatically: yup.boolean().default(true),
     updateDownloadAutomatically: yup.boolean().default(false),
     updateInstallAutomatically: yup.boolean().default(false),
+    replaceExistingPostedFiles: yup.boolean().default(false),
     commands: yup
         .object({
             rar: yup.string().default('rar'),

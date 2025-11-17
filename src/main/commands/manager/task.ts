@@ -78,10 +78,69 @@ export default class Task {
             this.taskConfig.name
         )
 
+        this.taskConfig.nzbFile = path.join(Settings.nzbOutputPath, `${this.taskConfig.name}.nzb`)
+
+        if (Settings.allSettings.replaceExistingPostedFiles) {
+            if (fs.existsSync(this.taskConfig.rarParFolderPath)) {
+                console.log('Removing existing rarpar folder as per settings')
+                fs.rmdirSync(this.taskConfig.rarParFolderPath, { recursive: true })
+            }
+            if (fs.existsSync(this.taskConfig.nzbFile)) {
+                console.log('Removing existing NZB file as per settings')
+                fs.unlinkSync(this.taskConfig.nzbFile)
+            }
+        } else {
+            if (
+                fs.existsSync(this.taskConfig.rarParFolderPath) ||
+                fs.existsSync(this.taskConfig.nzbFile)
+            ) {
+                console.log('Conflict detected with existing folder or NZB file')
+
+                const baseFolder = this.taskConfig.rarParFolderPath
+                const baseNzbFile = this.taskConfig.nzbFile.replace('.nzb', '')
+
+                let foundUnique = false
+                let currentNumber = 0
+                let newFolderPath = `${baseFolder} - ${currentNumber}`
+                let newNzbFile = `${baseNzbFile} - ${currentNumber}.nzb`
+                while (!foundUnique) {
+                    currentNumber++
+                    newFolderPath = `${baseFolder} - ${currentNumber}`
+                    newNzbFile = `${baseNzbFile} - ${currentNumber}.nzb`
+
+                    const folderPathExists = fs.existsSync(newFolderPath)
+                    const nzbFileExists = fs.existsSync(newNzbFile)
+                    if (!folderPathExists && !nzbFileExists) {
+                        foundUnique = true
+                    } else {
+                        if (nzbFileExists) {
+                            continue
+                        }
+
+                        if (folderPathExists) {
+                            const existingFiles = fs
+                                .readdirSync(this.taskConfig.rarParFolderPath)
+                                .filter((file) => file.endsWith('.rar') || file.endsWith('.par2'))
+
+                            if (existingFiles.length === 0) {
+                                foundUnique = true
+                            }
+                        }
+                    }
+                }
+                console.log(
+                    'Renaming task to avoid conflicts:',
+                    `${this.taskConfig.name} - ${currentNumber}`
+                )
+
+                this.taskConfig.name = `${this.taskConfig.name} - ${currentNumber}`
+                return this.preRunChecks()
+            }
+        }
+
         if (!fs.existsSync(this.taskConfig.rarParFolderPath)) {
             fs.mkdirSync(this.taskConfig.rarParFolderPath, { recursive: true })
         }
-
         return true
     }
 
@@ -312,8 +371,6 @@ export default class Task {
         this.taskConfig.nyuuCommandOutput.started = true
         const nyuuCommand = new Nyuu(this.taskConfig)
         const success = await nyuuCommand.id(this.taskConfig.id).set(this.taskConfig.name).run()
-
-        this.taskConfig.nzbFile = nyuuCommand.nzbFile
 
         this.taskConfig.nyuuCommandOutput.executedCommand = nyuuCommand.commandData.executedCommand
         this.taskConfig.nyuuCommandOutput.output = nyuuCommand.commandData.output
