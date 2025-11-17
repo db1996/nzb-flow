@@ -48,6 +48,12 @@ You will have a default profile for posting settings with sensible defaults. You
 
 [In the profile settings docs](docs/profiles.md) you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
 
+## Causes of errors
+
+### Special characters in the post name
+
+Please do not use any special characters in the post name (rar/par/nzb file names). This results in errors in the process due to files not being made.
+
 ## still a work in progress
 
 This is a little passion project of mine, so it's never really done.
