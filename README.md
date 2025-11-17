@@ -37,10 +37,15 @@ You will have a default profile for posting settings with sensible defaults. You
 - fully customizable nyuu command options like post checks, retry attempts and a lot more
 - custom arguments for all CLIs
 - Automatically update application (can be turned on)
+- Optional API server for remote control
+- Optional Websocket server for live updates
 
-## Quick docs & links
+## Docs
 
-- For almost all task settings, check the profile settings doc (link below)
+- [profile settings](docs/profiles.md): Details about what every option affects under the hood. These are the settings that generate the info you see in the pop-up when you drop in files
+- [Queues docs](docs/Queues.md): Details about how the queue system works. And how the settings affect them.
+- [API Server docs](docs/API%20server.md): Has a link to the postman collection and some general notes
+- [Websocket server docs](docs/Websocket%20server.md): Details about received events
 
 ### Replace existing files
 
@@ -52,8 +57,6 @@ If this setting is on, it will delete these files before starting the job
 If this is turned off, it will rename the task to "{name-of-post} - 1" etc until it finds a new name. This will also alter the name of the post of course
 
 ### Links
-
-[In the profile settings docs](docs/profiles.md) you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
 
 [Rar cli help](https://gist.github.com/YenForYang/5953ad8355cf32188aa75c0139cc9261)
 
