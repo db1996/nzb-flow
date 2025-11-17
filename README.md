@@ -53,13 +53,14 @@ If this is turned off, it will rename the task to "{name-of-post} - 1" etc until
 
 ### Links
 
+[In the profile settings docs](docs/profiles.md) you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
+
 [Rar cli help](https://gist.github.com/YenForYang/5953ad8355cf32188aa75c0139cc9261)
 
 [ParPar cli help](https://github.com/animetosho/ParPar/blob/master/help-full.txt)
 
 [Nyuu cli help](https://github.com/animetosho/Nyuu/blob/master/help-full.txt)
 
-[In the profile settings docs](docs/profiles.md) you can find detailed explanations of what every option affects. These are the settings that generate the info you see in the pop-up when you drop in files
 
 ## Causes of errors
 
