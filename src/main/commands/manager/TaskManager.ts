@@ -354,7 +354,6 @@ export default class TaskManager {
             task.taskConfig.started = true
         }
 
-        task.currentlyRunning = true
         Settings.sendWebcontentUpdate('queue-update', this.getQueueStatus())
 
         try {

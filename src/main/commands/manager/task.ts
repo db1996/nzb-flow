@@ -47,14 +47,31 @@ export default class Task {
             this.taskConfig.taskSettings.postingSettings.post_from = `${Settings.generateString(6)}@${Settings.generateString(4)}.${Settings.generateString(2)}`
         }
 
-        this.taskConfig.rarParFilename = this.taskConfig.name
-
         if (this.taskConfig.taskSettings.postingSettings.files.length > 0) {
-            const fname = path
-                .basename(this.taskConfig.taskSettings.postingSettings.files[0])
-                .replace(path.extname(this.taskConfig.taskSettings.postingSettings.files[0]), '')
-            this.taskConfig.taskVariables.fname = fname
+            const duplicate = JSON.parse(
+                JSON.stringify(this.taskConfig.taskSettings.postingSettings.files)
+            )
+
+            const fname = path.basename(duplicate[0])
+            const isFile = fs.lstatSync(duplicate[0]).isFile()
+            if (isFile) {
+                this.taskConfig.taskVariables.fname = fname.replace(path.extname(duplicate[0]), '')
+            } else {
+                this.taskConfig.taskVariables.fname = fname
+            }
         }
+
+        this.replaceVariables()
+
+        return this
+    }
+
+    private preRunChecks(): boolean {
+        if (this.taskConfig === null) {
+            return false
+        }
+
+        this.taskConfig.rarParFilename = this.taskConfig.name
 
         this.taskConfig.rarParFolderPath = path.join(
             Settings.rarparOutputPath,
@@ -65,9 +82,7 @@ export default class Task {
             fs.mkdirSync(this.taskConfig.rarParFolderPath, { recursive: true })
         }
 
-        this.replaceVariables()
-
-        return this
+        return true
     }
 
     public replaceSizeVariable(variable: string, sizeInBytes: number) {
@@ -98,6 +113,16 @@ export default class Task {
     public async runNextStep(): Promise<boolean> {
         if (this.taskConfig === null) {
             throw new Error('Task settings not set')
+        }
+
+        if (!this.currentlyRunning) {
+            this.currentlyRunning = true
+
+            const preRun = this.preRunChecks()
+            if (!preRun) {
+                this.currentlyRunning = false
+                return false
+            }
         }
 
         console.log('Running step:', this.taskConfig.currentStep)
@@ -368,12 +393,6 @@ export default class Task {
                 this.taskConfig.taskVariables.total_time.toString()
             )
             this.replaceVariableInConfigs('total_time_min_sec', minutesSeconds)
-        }
-
-        for (const [key, value] of Object.entries(this.taskConfig.taskVariables)) {
-            if (value !== null) {
-                this.replaceVariableInConfigs(key, value.toString())
-            }
         }
     }
 }
