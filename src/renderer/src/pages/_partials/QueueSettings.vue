@@ -4,6 +4,8 @@ import CardForm from '@renderer/components/form/CardForm.vue'
 import { QueueSettings } from '@main/types/settings/QueueSettings'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
+import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 
 const props = defineProps({
     form: {
@@ -14,19 +16,25 @@ const props = defineProps({
 </script>
 
 <template>
-    <CardForm
-        title="Queue Settings"
-        description="Configure queue behavior and limits. Upload and compression queues run simultaneously."
-    >
+    <CardForm>
+        <template #header>
+            <div class="flex gap-2 justify-between">
+                <CardTitle>Queue Settings</CardTitle>
+                <Button
+                    as="a"
+                    target="_blank"
+                    href="https://github.com/db1996/nzb-flow/blob/main/docs/Queues.md"
+                    variant="link"
+                    class="inline m-0 p-0 h-4"
+                    >Check the queue docs here</Button
+                >
+            </div>
+            <CardDescription>
+                Configure queue behavior and limits. Upload and compression queues run
+                simultaneously.
+            </CardDescription>
+        </template>
         <template #body>
-            <Button
-                as="a"
-                target="_blank"
-                href="https://github.com/db1996/nzb-flow/blob/main/docs/Queues.md"
-                variant="link"
-                class="inline m-0 p-0"
-                >Check the docs here</Button
-            >
             <TextInput
                 id="max-compression-workers"
                 label="Max compression workers"

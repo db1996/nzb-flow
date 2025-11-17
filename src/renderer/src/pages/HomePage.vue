@@ -33,7 +33,17 @@ const setEditTask = (task: any) => {
 
         <Card>
             <CardHeader>
-                <CardTitle>In-Progress Tasks</CardTitle>
+                <div class="flex gap-2 justify-between">
+                    <CardTitle>In-Progress Tasks</CardTitle>
+                    <Button
+                        as="a"
+                        target="_blank"
+                        href="https://github.com/db1996/nzb-flow/blob/main/docs/Queues.md"
+                        variant="link"
+                        class="inline m-0 p-0"
+                        >Check the queue docs here</Button
+                    >
+                </div>
             </CardHeader>
             <CardContent>
                 <Table :columns="4">

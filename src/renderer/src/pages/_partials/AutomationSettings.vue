@@ -9,6 +9,7 @@ import { useAppearance } from '@renderer/composables/useAppearance'
 import { Appearance } from '@renderer/types/appearance'
 import Input from '@renderer/components/ui/input/Input.vue'
 import CopyInput from '@renderer/components/form/CopyInput.vue'
+import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
 
 const props = defineProps({
     form: {
@@ -37,16 +38,21 @@ async function getWSUUID() {
 
 <template>
     <div class="grid grid-cols-1 gap-2">
-        <CardForm title="HTTP Server">
+        <CardForm>
+            <template #header>
+                <div class="flex gap-2 justify-between">
+                    <CardTitle>HTTP API Server</CardTitle>
+                    <Button
+                        as="a"
+                        target="_blank"
+                        href="https://github.com/db1996/nzb-flow/blob/main/docs/API%20server.md"
+                        variant="link"
+                        class="inline m-0 p-0 h-4"
+                        >Check the API server docs here</Button
+                    >
+                </div>
+            </template>
             <template #body>
-                <Button
-                    as="a"
-                    target="_blank"
-                    href="https://github.com/db1996/nzb-flow/blob/main/docs/API%20server.md"
-                    variant="link"
-                    class="inline m-0 p-0"
-                    >Check the docs here</Button
-                >
                 <div class="flex items-center justify-between">
                     <div class="space-y-0.5">
                         <Label for="show-tray-icon">Turn on HTTP server</Label>
@@ -90,16 +96,21 @@ async function getWSUUID() {
             </template>
         </CardForm>
 
-        <CardForm title="Websocket Server">
+        <CardForm>
+            <template #header>
+                <div class="flex gap-2 justify-between">
+                    <CardTitle>Websocket Server</CardTitle>
+                    <Button
+                        as="a"
+                        target="_blank"
+                        href="https://github.com/db1996/nzb-flow/blob/main/docs/Websocket%20server.md"
+                        variant="link"
+                        class="inline m-0 p-0 h-4"
+                        >Check the Websocket server docs here</Button
+                    >
+                </div>
+            </template>
             <template #body>
-                <Button
-                    as="a"
-                    target="_blank"
-                    href="https://github.com/db1996/nzb-flow/blob/main/docs/Websocket%20server.md"
-                    variant="link"
-                    class="inline m-0 p-0"
-                    >Check the docs here</Button
-                >
                 <div class="flex items-center justify-between">
                     <div class="space-y-0.5">
                         <Label for="show-tray-icon">Turn on Websocket server</Label>

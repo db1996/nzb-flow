@@ -45,7 +45,17 @@ async function setDefaultProfile(id: string, isDefault: boolean) {
 
         <Card>
             <CardHeader>
-                <CardTitle>Posting profiles</CardTitle>
+                <div class="flex gap-2 justify-between">
+                    <CardTitle>Posting profiles</CardTitle>
+                    <Button
+                        as="a"
+                        target="_blank"
+                        href="https://github.com/db1996/nzb-flow/blob/main/docs/profiles.md"
+                        variant="link"
+                        class="inline m-0 p-0"
+                        >Check the profiles docs here</Button
+                    >
+                </div>
             </CardHeader>
             <CardContent>
                 <Table :columns="4">
