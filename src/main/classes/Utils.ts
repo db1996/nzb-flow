@@ -2,6 +2,30 @@ import { spawn } from 'child_process'
 import fs from 'fs'
 
 export default class Utils {
+    static shouldIgnoreFileOrFolder(
+        filename: string,
+        ignorePrefixes: string[],
+        ignoreFileExtensions: string[]
+    ): boolean {
+        if (ignorePrefixes.length > 0) {
+            for (const prefix of ignorePrefixes) {
+                if (filename.startsWith(prefix)) {
+                    return true
+                }
+            }
+        }
+
+        const isFile = fs.lstatSync(filename).isFile()
+        if (isFile && ignoreFileExtensions.length > 0) {
+            for (const ext of ignoreFileExtensions) {
+                if (filename.endsWith(ext)) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
     public static runInstallInTerminal(commandToRun: string): void {
         switch (process.platform) {
             case 'win32': {

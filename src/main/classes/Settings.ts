@@ -261,6 +261,20 @@ export default class Settings {
 
         const isFolder = fs.lstatSync(fname).isDirectory()
         const isFile = fs.lstatSync(fname).isFile()
+
+        if (
+            Utils.shouldIgnoreFileOrFolder(
+                fname,
+                updatedFolder.ignorePrefixes,
+                updatedFolder.ignoreFileExtensions
+            )
+        ) {
+            console.log(
+                `Ignoring item due to prefix or extension settings: ${filename} in ${updatedFolder.fullPath}`
+            )
+            return
+        }
+
         if ((isFolder && updatedFolder.uploadFolder) || (isFile && updatedFolder.uploadFiles)) {
             // New folder added
             console.log(
@@ -310,11 +324,9 @@ export default class Settings {
                     folder.fullPath,
                     { persistent: true },
                     (eventType, filename) => {
-                        if (!filename) return
+                        if (!filename || eventType !== 'rename') return
 
-                        if (eventType == 'rename') {
-                            Settings.processWatchFolderItem(folder.id, filename)
-                        }
+                        Settings.processWatchFolderItem(folder.id, filename)
                     }
                 )
 
