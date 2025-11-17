@@ -18,6 +18,17 @@ export default class ParCommand extends BaseCommand {
             this._settings.rarParFolderPath,
             `${this._settings.rarParFilename}.par2`
         )
+
+        if (fs.existsSync(parFile)) {
+            // unlink all par2 files first
+            const existingParFiles = fs
+                .readdirSync(this._settings.rarParFolderPath)
+                .filter((file) => file.endsWith('.par2'))
+            for (const file of existingParFiles) {
+                fs.unlinkSync(path.join(this._settings.rarParFolderPath, file))
+            }
+        }
+
         if (this._settings.taskSettings.rarSettings.skipRarCreation) {
             // par the files directly
             console.log('Skipping RAR creation as per settings, paring files directly')
