@@ -451,8 +451,6 @@ export default class AppState {
     }
 
     public destroyTray(): void {
-        console.log('destroyTray called')
-
         if (this.tray) {
             this.tray.destroy()
             this.tray = null
