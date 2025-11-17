@@ -5,8 +5,8 @@ In NZB flow there are 2 queues running simultaniously.
 ## General behaviour
 
 - Pausing/Resuming the queue from the UI/API will pause both of these queues.
-- If a command is currently running (rar, parpar, nyuu), the command will finish before it is queued.
-- If a command is queued inbetween steps, it will pause and continue after you've resumed
+- If a command is currently running (rar, parpar, nyuu), the command will finish before it is paused.
+- If a command is paused inbetween steps, it will pause and continue after you've resumed
 
 ## Upload queue
 
