@@ -151,16 +151,12 @@ export default class BaseCommand {
 
     // Sanitize a string for shell safety and wrap in quotes
     protected cmdString(str: string): string {
-        // 1. Escape double quotes always
         let sanitized = str.replace(/"/g, '\\"')
 
-        // 2. Only escape Windows shell metacharacters for non-POST steps
         if (process.platform === 'win32' && this._settings.currentStep !== CommandStep.POST) {
-            // Escape &, |, <, >, ^, % (percent for env vars)
             sanitized = sanitized.replace(/([&|<>^%])/g, '^$1')
         }
 
-        // 3. Wrap in quotes to allow spaces in paths or arguments
         return `"${sanitized}"`
     }
 

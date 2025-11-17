@@ -8,11 +8,9 @@ export default class Updater {
     public constructor() {}
 
     public setupAutoUpdater(): void {
-        // Configure auto-updater
         autoUpdater.forceDevUpdateConfig = true
         autoUpdater.autoDownload = false
 
-        // Auto-updater events
         autoUpdater.on('checking-for-update', () => {
             Settings.sendWebcontentUpdate('update-checking', null)
         })

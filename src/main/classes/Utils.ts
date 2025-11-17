@@ -2,6 +2,7 @@ import { spawn } from 'child_process'
 import fs from 'fs'
 
 export default class Utils {
+    // Check if a file or folder should be ignored based on prefixes and extensions
     static shouldIgnoreFileOrFolder(
         filename: string,
         ignorePrefixes: string[],
@@ -26,15 +27,16 @@ export default class Utils {
 
         return false
     }
+
+    // Install using a pop-up terminal based on OS
     public static runInstallInTerminal(commandToRun: string): void {
         switch (process.platform) {
             case 'win32': {
-                // Use cmd.exe with /k to keep the window open after command finishes
                 const child = spawn('cmd.exe', ['/k', commandToRun], {
                     detached: true,
-                    stdio: 'ignore' // Detach from parent's stdio
+                    stdio: 'ignore'
                 })
-                child.unref() // Allow parent (Electron) to exit independently
+                child.unref()
                 break
             }
 
@@ -58,9 +60,8 @@ export default class Utils {
             }
 
             case 'linux': {
-                // 1. Try the most common modern default (GNOME)
-                // 2. If it fails (due to error event), try the standard symlink
-
+                // Try GNOME
+                // If it fails, try x-terminal-emulator
                 const terminals = [
                     {
                         name: 'gnome-terminal',
@@ -70,8 +71,6 @@ export default class Utils {
                         name: 'x-terminal-emulator',
                         args: ['-e', `bash -c "${commandToRun}; exec bash"`]
                     }
-                    // You could optionally add Konsole here
-                    // { name: 'konsole', args: ['-e', `bash -c "${commandToRun}; exec bash"`] }
                 ]
 
                 let currentTerminalIndex = 0
@@ -101,11 +100,10 @@ export default class Utils {
 
             default:
                 console.error(`Unsupported platform: ${process.platform}`)
-            // As a last resort, you could notify the user
-            // to run the command manually.
         }
     }
 
+    // Recursively diff two objects and return added, removed, and changed keys
     public static diffObjects(
         original: any,
         validated: any,
@@ -136,7 +134,6 @@ export default class Utils {
             const originalVal = original[key]
             const validatedVal = validated[key]
 
-            // Compare nested objects recursively
             if (
                 typeof originalVal === 'object' &&
                 typeof validatedVal === 'object' &&
@@ -150,7 +147,6 @@ export default class Utils {
                 continue
             }
 
-            // Compare values (handle NaN, type mismatch, etc.)
             const valuesDiffer =
                 typeof originalVal !== typeof validatedVal ||
                 (Number.isNaN(originalVal) && !Number.isNaN(validatedVal)) ||
@@ -166,6 +162,7 @@ export default class Utils {
         return { added, removed, changed }
     }
 
+    // Determine default RAR executable path based on OS
     public static defaultRarPath(): string {
         const platform = process.platform
 
