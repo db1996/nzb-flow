@@ -3,6 +3,7 @@ import { PropType } from 'vue'
 import CardForm from '@renderer/components/form/CardForm.vue'
 import { QueueSettings } from '@main/types/settings/QueueSettings'
 import TextInput from '@renderer/components/form/TextInput.vue'
+import Button from '@renderer/components/ui/button/Button.vue'
 
 const props = defineProps({
     form: {
@@ -15,9 +16,17 @@ const props = defineProps({
 <template>
     <CardForm
         title="Queue Settings"
-        description="Configure queue behavior and limits. There are effectively 2 seperate queues. One for processing uploads (compression, parring, etc) and one for uploading to usenet. These settings allow you to control how many uploads can be processed and uploaded at once, as well as pausing compression when the upload queue gets too full."
+        description="Configure queue behavior and limits. Upload and compression queues run simultaneously."
     >
         <template #body>
+            <Button
+                as="a"
+                target="_blank"
+                href="https://github.com/db1996/nzb-flow/blob/main/docs/Queues.md"
+                variant="link"
+                class="inline m-0 p-0"
+                >Check the docs here</Button
+            >
             <TextInput
                 id="max-compression-workers"
                 label="Max compression workers"

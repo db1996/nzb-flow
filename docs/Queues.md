@@ -15,7 +15,7 @@ The upload queue processing posting jobs with the nyuu CLI after all files have 
 - In the settings -> queues you can set `max upload workers`.
   - If you set this to more than 1, if the same server is involved, the amount of connections will be: (server connections + post check connections) x amount of workers
 - In the settings -> queues you can set `Max uploads in queue before pausing compression`
-  - If set to 1 or higher, it will auto pause the compression queue until an upload has been processed.
+  - If set to 1 or higher, it will auto pause the compression queue when the upload queue has this amount. It will auto resume when enough uploads have been processed
   - If set to 0, compression queue will never be auto paused
 
 NOTE:
