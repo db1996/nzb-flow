@@ -47,6 +47,7 @@ You will have a default profile for posting settings with sensible defaults. You
 under general settings, there is a setting "Replace existing files"
 
 When a job starts it now checks if the rar/par folder already exists, and if the nzb exists.
+
 If this setting is on, it will delete these files before starting the job
 If this is turned off, it will rename the task to "{name-of-post} - 1" etc until it finds a new name. This will also alter the name of the post of course
 
