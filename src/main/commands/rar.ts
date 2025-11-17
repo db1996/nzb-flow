@@ -26,11 +26,6 @@ export default class RarCommand extends BaseCommand {
             fileName += '.rar'
         }
 
-        const outputDir = path.join(this._settings.rarParFolderPath, this._settings.rarParFilename)
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir, { recursive: true })
-        }
-
         // Output archive
         args.push(this.cmdString(path.join(this._settings.rarParFolderPath, fileName)))
 

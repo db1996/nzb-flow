@@ -501,9 +501,9 @@ export default class Settings {
         if (nameSettings.useNumbers) {
             characters += '0123456789'
         }
-        if (nameSettings.useSpecialCharacters) {
-            characters += '!@#$%^&*()_+'
-        }
+        // if (nameSettings.useSpecialCharacters) {
+        //     characters += '!@#$%^&*()_+'
+        // }
 
         let name = ''
         for (let i = 0; i < nameSettings.randomNameLength; i++) {

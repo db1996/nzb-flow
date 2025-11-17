@@ -61,6 +61,15 @@ export default class Task {
             this.taskConfig.name
         )
 
+        const outputDir = path.join(
+            this.taskConfig.rarParFolderPath,
+            this.taskConfig.rarParFilename
+        )
+
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true })
+        }
+
         this.replaceVariables()
 
         return this

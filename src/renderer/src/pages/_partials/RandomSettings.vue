@@ -110,19 +110,6 @@ defineProps({
                             0-9
                         </label>
                     </div>
-                    <div class="flex items-center space-x-2" v-if="useSpecialChars">
-                        <Checkbox
-                            :disabled="!form.useSpecialCharacters || disabled"
-                            id="0-9"
-                            v-model="form.useSpecialCharacters"
-                        />
-                        <label
-                            for="0-9"
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                            !@#$%^&*
-                        </label>
-                    </div>
                 </div>
             </div>
             <div class="grid gap-2 grid-cols-3" v-if="form.randomNameMode">
