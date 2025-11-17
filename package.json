@@ -1,7 +1,7 @@
 {
     "name": "nzb-flow",
     "productName": "NZB Flow",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "NZB flow",
     "main": "./out/main/index.js",
     "author": "db1996",
