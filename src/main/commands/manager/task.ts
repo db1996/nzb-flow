@@ -177,10 +177,12 @@ export default class Task {
         if (!this.currentlyRunning) {
             this.currentlyRunning = true
 
-            const preRun = this.preRunChecks()
-            if (!preRun) {
-                this.currentlyRunning = false
-                return false
+            if (this.taskConfig.currentStep === CommandStep.RAR) {
+                const preRun = this.preRunChecks()
+                if (!preRun) {
+                    this.currentlyRunning = false
+                    return false
+                }
             }
         }
 
