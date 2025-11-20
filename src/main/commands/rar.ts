@@ -121,6 +121,13 @@ export default class RarCommand extends BaseCommand {
         if (!match) return 0
 
         const percent = parseInt(match[1], 10)
-        return isNaN(percent) ? 0 : percent
+
+        if (isNaN(percent) || percent < 0 || percent > 100) {
+            return 0
+        }
+
+        console.log('RAR Progress:', percent + '%')
+
+        return percent
     }
 }

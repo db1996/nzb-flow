@@ -67,26 +67,6 @@ export const useTasksStore = defineStore('tasks', () => {
             uploadRunning.value = status.uploadRunningConfigs
             compressionQueued.value = status.compressionQueuedConfigs
             compressionRunning.value = status.compressionRunningConfigs
-            uploadRunning.value.forEach((task) => {
-                taskPercentages.value[task.id] = {
-                    percentage: task.nyuuCommandOutput.lastKnownProgress,
-                    currentStep: CommandStep.POST
-                }
-            })
-
-            compressionRunning.value.forEach((task) => {
-                let percentage = 0
-                if (task.rarCommandOutput.lastKnownProgress > 0) {
-                    percentage = task.rarCommandOutput.lastKnownProgress
-                } else if (task.parCommandOutput.lastKnownProgress > 0) {
-                    percentage = task.parCommandOutput.lastKnownProgress
-                }
-
-                taskPercentages.value[task.id] = {
-                    percentage: percentage,
-                    currentStep: CommandStep.POST
-                }
-            })
         } catch (error) {
             console.error('Error polling queue status:', error)
         }
