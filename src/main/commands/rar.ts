@@ -126,8 +126,6 @@ export default class RarCommand extends BaseCommand {
             return 0
         }
 
-        console.log('RAR Progress:', percent + '%')
-
         return percent
     }
 }
