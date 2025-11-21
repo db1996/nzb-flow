@@ -24,7 +24,7 @@ defineProps({
 </script>
 <template>
     <Card class="shadow-sm">
-        <CardHeader v-if="title || description">
+        <CardHeader v-if="title || description || $slots.header">
             <CardTitle v-if="title">{{ title }}</CardTitle>
             <CardDescription v-if="description" :class="description_class">{{
                 description

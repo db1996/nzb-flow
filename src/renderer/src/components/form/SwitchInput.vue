@@ -78,7 +78,7 @@ const proxyId = useId()
         </div>
 
         <!-- default variant -->
-        <div v-else class="min-h-[2.5rem]">
+        <div v-else :class="heightClass">
             <Switch
                 :id="proxyId"
                 v-bind:model-value="proxyValue"

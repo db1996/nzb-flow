@@ -52,21 +52,18 @@ export default class AppState {
         Settings.mainWindow.on('ready-to-show', () => {
             Settings.mainWindow?.show()
 
-            // Create tray icon on startup if showTrayIcon is enabled
             if (Settings.allSettings.theme.showTrayIcon && !this.tray) {
                 this.createTray()
             }
         })
 
         Settings.mainWindow.on('close', (event) => {
-            // Only hijack close event if both showTrayIcon and minimizeToTray are true
             if (
                 Settings.allSettings.theme.showTrayIcon &&
                 Settings.allSettings.theme.minimizeToTray
             ) {
                 event.preventDefault()
                 Settings.mainWindow?.hide()
-                // Create tray if it doesn't exist (shouldn't happen, but safety check)
                 if (!this.tray) {
                     this.createTray()
                 }
@@ -80,14 +77,11 @@ export default class AppState {
 
             Settings.saveAllSettings(allSettings)
 
-            // Handle tray setting changes
             if (allSettings.theme.showTrayIcon) {
-                // If showTrayIcon is enabled, create tray if it doesn't exist
                 if (!this.tray) {
                     this.createTray()
                 }
             } else {
-                // If showTrayIcon is disabled, destroy tray
                 this.destroyTray()
             }
 
@@ -158,12 +152,10 @@ export default class AppState {
             return true
         })
 
-        // Queue control handlers
         ipcMain.handle('get-uuid', () => {
             return randomUUID().toString()
         })
 
-        // Queue control handlers
         ipcMain.handle('pause-queue', () => {
             this.taskManager.pauseAllQueues()
             return true
@@ -306,11 +298,9 @@ export default class AppState {
             }
         })
 
-        // Auto-updater IPC handlers
         ipcMain.handle('check-for-updates', async () => {
             console.log('Check for update icp')
             try {
-                // return null
                 return await autoUpdater.checkForUpdatesAndNotify()
             } catch (error) {
                 console.error('Error checking for updates:', error)
@@ -437,7 +427,6 @@ export default class AppState {
         this.tray.setContextMenu(contextMenu)
         this.tray.setToolTip('NZB Flow')
 
-        // Double-click to show/hide window
         this.tray.on('double-click', () => {
             if (Settings.mainWindow) {
                 if (Settings.mainWindow.isVisible()) {

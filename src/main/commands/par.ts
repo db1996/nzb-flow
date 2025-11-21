@@ -90,16 +90,14 @@ export default class ParCommand extends BaseCommand {
     }
 
     public checkIsProgress(line: string): number {
-        // Trim to remove stray newlines/spaces
         const trimmed = line.trim()
 
-        // Match only "Calculating" lines like:
+        // parpar output example:
         // Calculating       :  10,85%
         const match = trimmed.match(/^Calculating\s*:\s*([\d.,]+)%/)
 
         if (!match) return 0
 
-        // Convert comma to dot and parse as float
         const percent = parseFloat(match[1].replace(',', '.'))
         return isNaN(percent) ? 0 : percent
     }

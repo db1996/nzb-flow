@@ -33,11 +33,11 @@ Here I will go through each setting individually and explain in more technical d
   - [Nyuu Settings (posting)](#nyuu-settings-posting)
     - [Article size](#article-size)
     - [Include password in NZB](#include-password-in-nzb)
-    - [Post checking - check connections](#post-checking-check-connections)
-    - [Post checking - check tries](#post-checking-check-tries)
-    - [Post checking - check delay](#post-checking-check-delay)
-    - [Post checking - check post tries](#post-checking-check-post-tries)
-    - [Post checking - Check queue size](#post-checking-check-queue-size)
+    - [Post checking - check connections](#post-checking---check-connections)
+    - [Post checking - check tries](#post-checking---check-tries)
+    - [Post checking - check delay](#post-checking---check-delay)
+    - [Post checking - check post tries](#post-checking---check-post-tries)
+    - [Post checking - Check queue size](#post-checking---check-queue-size)
     - [Nyuu advanced templates](#nyuu-advanced-templates)
       - [Subject override](#subject-override)
       - [Filename override](#filename-override)
@@ -88,11 +88,18 @@ Nyuu CLI with the option:
 
 ### Save Rar and Par2 files
 
-Generated files are not deleted after the job if you turn this on. Folder path can be found and changed in the general settings. IF you open a task log and go to the files tab you will find the exact folder for that task.
+Generated files are not deleted after the job if you turn this on. Folder path can be found and changed in the general settings. If you open a task log and go to the files tab you will find the exact folder for that task.
 
 ### Obfuscation
 
 All 3 obfuscation methods will generate a UUID if turned on (Seperate one for each).
+
+NOTE: Obfuscation can break certain functionality such as:
+
+- The ability to index your post
+- Correctly identifying par2 files as repair files. Making it download the par2 files to your disk directly as if it was part of the post (you can turn off par2 creation)
+  - If you know how I could fix this issue, please open an issue to let me know!
+- If par2 files are not correctly identified, it is possible it can't repair your files when downloading
 
 #### Subject
 

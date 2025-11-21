@@ -9,6 +9,8 @@ export type FolderSettings = {
     uploadFiles: boolean
     uploadFolder: boolean
     deleteUploadedFiles: boolean
+    ignorePrefixes: string[]
+    ignoreFileExtensions: string[]
 
     profileId: string
 }
@@ -22,6 +24,8 @@ export const FolderSettingsYupSchema = yup.object({
     uploadFiles: yup.boolean().default(false),
     uploadFolder: yup.boolean().default(true),
     deleteUploadedFiles: yup.boolean().default(false),
+    ignorePrefixes: yup.array().of(yup.string()).default([]),
+    ignoreFileExtensions: yup.array().of(yup.string()).default([]),
 
     profileId: yup.string().default('')
 }) as yup.Schema<FolderSettings>

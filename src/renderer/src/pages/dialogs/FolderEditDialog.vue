@@ -112,6 +112,20 @@ const updatedFolder = (data: { path: string; basename: string }) => {
                     help="Each individual file placed in the watched folder will be uploaded as separate jobs. Folders are ignored if the other option is disabled."
                 />
 
+                <TextInput
+                    v-model="settingsStore.activeFolderEdit.ignorePrefixes"
+                    label="Ignore folder/file prefixes"
+                    :disabled="disabled"
+                    help="Comma separated list of prefixes to ignore when scanning the folder, both files and folders are checked. Example: temp_, .partial"
+                />
+
+                <TextInput
+                    v-model="settingsStore.activeFolderEdit.ignoreFileExtensions"
+                    label="Ignore file extensions"
+                    :disabled="disabled || !settingsStore.activeFolderEdit.uploadFiles"
+                    help="Comma separated list of file extensions to ignore when scanning the folder, only files are checked. Example: .tmp, .bak"
+                />
+
                 <SwitchInput
                     :disabled="disabled"
                     label="Delete uploaded files"

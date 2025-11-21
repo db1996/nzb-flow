@@ -6,8 +6,6 @@ import Settings from '../classes/Settings'
 import { randomUUID } from 'crypto'
 
 export default class Nyuu extends BaseCommand {
-    public nzbFile: string = ''
-
     public args(): string[] {
         const server = Settings.allSettings.servers.find(
             (s) => s.id === this._settings.taskSettings.serverId
@@ -42,7 +40,6 @@ export default class Nyuu extends BaseCommand {
         }
 
         if (this._settings.name !== '') {
-            // args.push('--subject', this.cmdString(this._settings.name))
             args.push('--nzb-title', this.cmdString(this._settings.name))
         }
 
@@ -119,16 +116,10 @@ export default class Nyuu extends BaseCommand {
 
         args.push('--article-size', this._settings.taskSettings.nyuuSettings.articleSize)
 
-        // if (this._settings.defaultParameters.length > 0) {
-        //     args.push(...this._settings.defaultParameters)
-        // }
-
         args.push('--nzb-file-mode', 'defer')
         args.push('--progress', 'stdout')
 
-        const outputPath = path.join(Settings.nzbOutputPath, this.name)
-        this.nzbFile = outputPath + '.nzb'
-        args.push('-o', this.cmdString(this.nzbFile), '-O')
+        args.push('-o', this.cmdString(this._settings.nzbFile), '-O')
 
         // Collect all files in the rarparFolder for upload
         const files = fs
@@ -167,12 +158,12 @@ export default class Nyuu extends BaseCommand {
     }
 
     public checkIsProgress(line: string): number {
-        // Match both actual ANSI sequences and escaped/logged versions
+        // Nyuu percentage line example:
+        // [0G[0K  2.67%  [..
         const isProgress = line.startsWith('\u001b[0G\u001b[0K') || line.startsWith('[0G[0K')
-
         if (!isProgress) return 0
 
-        // Extract percentage (e.g., 42.06)
+        // Get the exact percentage
         const match = line.match(/(\d{1,3}\.\d{2})%/)
         if (match) {
             return parseFloat(match[1])

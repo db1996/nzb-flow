@@ -255,10 +255,6 @@ export default class TaskManager {
             config.maxUploadQueueBeforePause > 0
         ) {
             this.compressionAutoPaused = true
-            console.log(
-                `Compression auto-paused: Upload queue has ${uploadQueueSize} tasks waiting`,
-                config
-            )
             return
         }
 
@@ -354,7 +350,6 @@ export default class TaskManager {
             task.taskConfig.started = true
         }
 
-        task.currentlyRunning = true
         Settings.sendWebcontentUpdate('queue-update', this.getQueueStatus())
 
         try {

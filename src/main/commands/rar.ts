@@ -29,7 +29,7 @@ export default class RarCommand extends BaseCommand {
         // Output archive
         args.push(this.cmdString(path.join(this._settings.rarParFolderPath, fileName)))
 
-        // Password (escaped)
+        // Password (optional header encryption)
         if (this._settings.password !== '') {
             const pass = this._settings.password
 
@@ -38,12 +38,14 @@ export default class RarCommand extends BaseCommand {
             )
         }
 
-        // Volume size (manual or automatic)
+        // Volume size
         if (
             !this._settings.taskSettings.rarSettings.automaticVolumes &&
             this._settings.taskSettings.rarSettings.volumes !== ''
         ) {
             args.push(`-v${this._settings.taskSettings.rarSettings.volumes}`)
+        } else if (this._settings.taskSettings.rarSettings.automaticVolumes) {
+            args.push(`-v`)
         }
 
         if (this._settings.taskSettings.rarSettings.solidArchive) {
@@ -73,14 +75,6 @@ export default class RarCommand extends BaseCommand {
             return new Promise<boolean>((resolve) => {
                 try {
                     const sp = spawn(customCommand || Settings.allSettings.commands.rar)
-                    // sp.stdout.on('data', (data) => {
-                    //     // console.log(`${data}`)
-                    // })
-
-                    // sp.stderr.on('data', (data) => {
-                    //     // console.error(`${data}`)
-                    // })
-
                     sp.on('close', (code) => {
                         console.log(`RAR process exited with code ${code}`)
                         resolve(code === 0)
@@ -118,22 +112,20 @@ export default class RarCommand extends BaseCommand {
     }
 
     public checkIsProgress(line: string): number {
-        // Trim right but not left (RAR lines start with space)
         const trimmed = line.trim()
 
-        // Match a pure percentage line like "0%", " 42%", or "100%"
+        // RAR output example:
+        // 42%
         const match = trimmed.match(/^(\d{1,3})%$/)
 
         if (!match) return 0
 
         const percent = parseInt(match[1], 10)
-        return isNaN(percent) ? 0 : percent
-    }
 
-    public getVolumeSize(fileSizeMB: number): string {
-        if (fileSizeMB < 100) return '50m'
-        if (fileSizeMB < 1000) return '100m'
-        if (fileSizeMB < 10000) return '200m'
-        return '500m'
+        if (isNaN(percent) || percent < 0 || percent > 100) {
+            return 0
+        }
+
+        return percent
     }
 }

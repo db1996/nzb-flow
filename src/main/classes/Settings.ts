@@ -269,48 +269,44 @@ export default class Settings {
 
         const updatedFolder = Settings.folders.find((f) => f.id === folderId)
         if (!updatedFolder || !Settings.taskManager) return
-        if (!fs.existsSync(path.join(updatedFolder.fullPath, filename))) return
 
-        const isFolder = fs.lstatSync(path.join(updatedFolder.fullPath, filename)).isDirectory()
-        const isFile = fs.lstatSync(path.join(updatedFolder.fullPath, filename)).isFile()
-        if (isFolder && updatedFolder.uploadFolder) {
+        const fname = path.join(updatedFolder.fullPath, filename)
+        if (!fs.existsSync(fname)) return
+
+        const isFolder = fs.lstatSync(fname).isDirectory()
+        const isFile = fs.lstatSync(fname).isFile()
+
+        if (
+            Utils.shouldIgnoreFileOrFolder(
+                fname,
+                updatedFolder.ignorePrefixes,
+                updatedFolder.ignoreFileExtensions
+            )
+        ) {
+            console.log(
+                `Ignoring item due to prefix or extension settings: ${filename} in ${updatedFolder.fullPath}`
+            )
+            return
+        }
+
+        if ((isFolder && updatedFolder.uploadFolder) || (isFile && updatedFolder.uploadFiles)) {
             // New folder added
             console.log(
-                `New folder detected: ${filename} in ${updatedFolder.fullPath}, ${updatedFolder.profileId}`
+                `New folder monitoring item detected: ${filename} in ${updatedFolder.fullPath}, ${updatedFolder.profileId}`
             )
-            const taskSettings = Settings.getNewTaskSettings(updatedFolder.profileId)
-            taskSettings.postingSettings.files = [path.join(updatedFolder.fullPath, filename)]
 
-            const config = Settings.getNewTaskConfig(taskSettings, updatedFolder.profileId)
-            config.folderWatchId = updatedFolder.id
+            const newTask = Settings.taskManager.getFreshTask(updatedFolder.profileId, [fname])
+            if (!newTask || !newTask.taskConfig) return
+
+            newTask.taskConfig.folderWatchId = updatedFolder.id
 
             if (updatedFolder.deleteUploadedFiles) {
-                config.taskSettings.postingSettings.deleteUploadedFiles = true
+                newTask.taskConfig.taskSettings.postingSettings.deleteUploadedFiles = true
             }
             if (updatedFolder.autoApprove) {
-                Settings.taskManager.queueTaskConfig(config)
+                Settings.taskManager.queueTaskConfig(newTask.taskConfig)
             } else {
-                Settings.taskManager.addApprovalTaskConfig(config)
-            }
-        } else if (isFile && updatedFolder.uploadFiles) {
-            // New file added
-            console.log(
-                `New file detected: ${filename} in ${updatedFolder.fullPath}, ${updatedFolder.profileId}`
-            )
-            const taskSettings = Settings.getNewTaskSettings(updatedFolder.profileId)
-            taskSettings.postingSettings.files = [path.join(updatedFolder.fullPath, filename)]
-
-            const config = Settings.getNewTaskConfig(taskSettings, updatedFolder.profileId)
-
-            config.folderWatchId = updatedFolder.id
-
-            if (updatedFolder.deleteUploadedFiles) {
-                config.taskSettings.postingSettings.deleteUploadedFiles = true
-            }
-            if (updatedFolder.autoApprove) {
-                Settings.taskManager.queueTaskConfig(config)
-            } else {
-                Settings.taskManager.addApprovalTaskConfig(config)
+                Settings.taskManager.addApprovalTaskConfig(newTask.taskConfig)
             }
         }
     }
@@ -342,11 +338,9 @@ export default class Settings {
                     folder.fullPath,
                     { persistent: true },
                     (eventType, filename) => {
-                        if (!filename) return
+                        if (!filename || eventType !== 'rename') return
 
-                        if (eventType == 'rename') {
-                            Settings.processWatchFolderItem(folder.id, filename)
-                        }
+                        Settings.processWatchFolderItem(folder.id, filename)
                     }
                 )
 
@@ -531,7 +525,7 @@ export default class Settings {
 
     static generateName(nameSettings: RandomSettings): string {
         if (!nameSettings.randomNameMode) {
-            return nameSettings.prefix + nameSettings.customName + nameSettings.suffix
+            return nameSettings.customName
         }
 
         let characters = ''
