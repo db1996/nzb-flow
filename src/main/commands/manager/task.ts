@@ -80,6 +80,7 @@ export default class Task {
 
         this.taskConfig.nzbFile = path.join(Settings.nzbOutputPath, `${this.taskConfig.name}.nzb`)
 
+        // What to do if the folder or NZB file already exists
         if (Settings.allSettings.replaceExistingPostedFiles) {
             if (fs.existsSync(this.taskConfig.rarParFolderPath)) {
                 console.log('Removing existing rarpar folder as per settings')
@@ -141,7 +142,32 @@ export default class Task {
         if (!fs.existsSync(this.taskConfig.rarParFolderPath)) {
             fs.mkdirSync(this.taskConfig.rarParFolderPath, { recursive: true })
         }
+
+        // Get stats for raw files
+        const totalSize = this.recursiveFileSize(
+            this.taskConfig.taskSettings.postingSettings.files
+        )
+
+        this.taskConfig.taskVariables.raw_size = totalSize
         return true
+    }
+
+    public recursiveFileSize(files: string[]): number {
+        let totalSize = 0
+        for (const file of files) {
+            const isDir = fs.lstatSync(file).isDirectory()
+            if (isDir) {
+                const dirFiles = fs
+                    .readdirSync(file)
+                    .map((f) => path.join(file, f))
+                totalSize += this.recursiveFileSize(dirFiles)
+            } else {
+                const stats = fs.statSync(file)
+                totalSize += stats.size
+            }
+        }
+
+        return totalSize
     }
 
     public replaceSizeVariable(variable: string, sizeInBytes: number) {
@@ -211,6 +237,7 @@ export default class Task {
                 success = await this.runRar()
                 break
             case CommandStep.PAR:
+                this.fileSizes()
                 success = await this.runPar()
                 this.fileSizes()
                 break

@@ -41,7 +41,7 @@ defineProps({
                 <SwitchInput
                     :disabled="disabled || form.skipParCreation"
                     label="Automatic redundancy"
-                    description="Automatically determine redundancy level for PAR files. Based on file size"
+                    description="Always uses 8% redundancy for PAR files."
                     v-model="form.automaticRedundancy"
                 />
                 <TextInput
@@ -56,14 +56,29 @@ defineProps({
                 <SwitchInput
                     :disabled="disabled || form.skipParCreation"
                     label="Automatic slices"
-                    description="Automatically determine number of slices for PAR files. Based on file size"
+                    help="Automatically determine number of slices for PAR files. Uses par2J's default: 0.5w*10"
                     v-model="form.automaticSlices"
                 />
                 <TextInput
                     :disabled="form.automaticSlices || disabled || form.skipParCreation"
                     label="Slices"
-                    description="The number of slices for PAR files."
+                    help="The number of slices for PAR files. You can use expressions like '0.5w*10', or 700k, 5m, 1g."
                     v-model="form.slices"
+                />
+            </div>
+
+            <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
+                <TextInput
+                    :disabled="disabled || form.skipParCreation"
+                    label="Min Slices"
+                    help="The minimum number of slices for PAR files."
+                    v-model="form.minSlices"
+                />
+                <TextInput
+                    :disabled="disabled || form.skipParCreation"
+                    label="Max Slices"
+                    help="The maximum number of slices for PAR files. Watch out: parpar's internal limit is 32767 slices."
+                    v-model="form.maxSlices"
                 />
             </div>
         </template>

@@ -61,6 +61,10 @@ export default class ParCommand extends BaseCommand {
         const args: string[] = [
             `-r${redundancy}`, // Set redundancy percentage
             `-s${sliceSize}`,
+            '--min-input-slices',
+            this._settings.taskSettings.parSettings.minSlices,
+            '--max-input-slices',
+            this._settings.taskSettings.parSettings.maxSlices,
             '--out',
             this.cmdString(parFile), // Specify output base name
             ...this.cmdStringArray(files)
@@ -71,7 +75,7 @@ export default class ParCommand extends BaseCommand {
 
     public calculateParParams(): { sliceSize: string; redundancy: string } {
         let sliceSize: string = '0.5w*10'
-        let redundancy: string = '15%'
+        let redundancy: string = '8%'
 
         if (!this._settings.taskSettings.parSettings.automaticSlices) {
             sliceSize = this._settings.taskSettings.parSettings.slices

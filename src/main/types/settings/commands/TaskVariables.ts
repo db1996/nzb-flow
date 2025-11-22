@@ -2,6 +2,7 @@ import * as yup from 'yup'
 
 export type TaskVariables = {
     fname: string | null
+    raw_size: number | null
     rar_size: number | null
     rar_count: number | null
     rar_time: number | null
@@ -16,6 +17,7 @@ export type TaskVariables = {
 
 export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     fname: yup.string().nullable().default(null),
+    raw_size: yup.number().nullable().default(null),
     rar_size: yup.number().nullable().default(null),
     rar_count: yup.number().nullable().default(null),
     rar_time: yup.number().nullable().default(null),
