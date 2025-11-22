@@ -144,9 +144,7 @@ export default class Task {
         }
 
         // Get stats for raw files
-        const totalSize = this.recursiveFileSize(
-            this.taskConfig.taskSettings.postingSettings.files
-        )
+        const totalSize = this.recursiveFileSize(this.taskConfig.taskSettings.postingSettings.files)
 
         this.taskConfig.taskVariables.raw_size = totalSize
         return true
@@ -157,9 +155,7 @@ export default class Task {
         for (const file of files) {
             const isDir = fs.lstatSync(file).isDirectory()
             if (isDir) {
-                const dirFiles = fs
-                    .readdirSync(file)
-                    .map((f) => path.join(file, f))
+                const dirFiles = fs.readdirSync(file).map((f) => path.join(file, f))
                 totalSize += this.recursiveFileSize(dirFiles)
             } else {
                 const stats = fs.statSync(file)
@@ -220,7 +216,7 @@ export default class Task {
             this.taskConfig.currentStep === CommandStep.RAR
         ) {
             console.log('Skipping RAR creation as per settings')
-            this.taskConfig.currentStep = CommandStep.PAR
+            return true
         }
 
         if (
@@ -228,7 +224,7 @@ export default class Task {
             this.taskConfig.currentStep === CommandStep.PAR
         ) {
             console.log('Skipping PAR creation as per settings')
-            this.taskConfig.currentStep = CommandStep.POST
+            return true
         }
 
         let success = false
