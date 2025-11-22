@@ -4,6 +4,7 @@ import AppSidebarLayout from '@layout/app/AppSidebarLayout.vue'
 import { useAppearance } from '@renderer/composables/useAppearance'
 import { useTasksStore } from '@renderer/composables/useTasksStore'
 import { useUpdateStore } from '@renderer/composables/useUpdateStore'
+import ReleasenotesDialog from '@renderer/pages/dialogs/ReleasenotesDialog.vue'
 import UploadNewDialog from '@renderer/pages/dialogs/UploadNewDialog.vue'
 import { BreadcrumbItem } from '@renderer/types/navigation'
 import { PlusCircle } from 'lucide-vue-next'
@@ -53,6 +54,7 @@ onMounted(() => {
     <Toaster :theme="(appearanceStore.appearance.value as Theme)" />
     <UploadNewDialog />
     <ConfirmDialog />
+    <ReleasenotesDialog />
 
     <div
         v-if="taskStore.isDraggingOver"

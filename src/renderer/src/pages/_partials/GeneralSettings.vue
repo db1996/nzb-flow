@@ -2,7 +2,7 @@
 import { Label } from '@ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select'
 import { AllSettings } from '@main/types/settings/AllSettings'
-import { PropType, ref, watch } from 'vue'
+import { PropType, watch } from 'vue'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
 import CardForm from '@renderer/components/form/CardForm.vue'
 import { Button } from '@components/ui/button'
@@ -15,13 +15,6 @@ import { useAppearance } from '@renderer/composables/useAppearance'
 import { Appearance } from '@renderer/types/appearance'
 import FileSelectInput from '@renderer/components/form/FileSelectInput.vue'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
-import Dialog from '@renderer/components/ui/dialog/Dialog.vue'
-import DialogContent from '@renderer/components/ui/dialog/DialogContent.vue'
-import DialogHeader from '@renderer/components/ui/dialog/DialogHeader.vue'
-import DialogTitle from '@renderer/components/ui/dialog/DialogTitle.vue'
-import DialogDescription from '@renderer/components/ui/dialog/DialogDescription.vue'
-import { marked } from 'marked'
-
 const updateStore = useUpdateStore()
 
 const props = defineProps({
@@ -38,38 +31,9 @@ watch(
         appearanceStore.updateAppearance(newVal as Appearance)
     }
 )
-
-const showReleaseNotes = ref(false)
 </script>
 
 <template>
-    <Dialog :open="showReleaseNotes" class="overflow-auto" @update:open="showReleaseNotes = false">
-        <DialogContent class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col">
-            <DialogHeader>
-                <DialogTitle>Release notes</DialogTitle>
-                <DialogDescription>
-                    Version {{ updateStore.currentVersion }} -
-                    {{ updateStore.updateInfo ? updateStore.updateInfo.version : 'N/A' }}
-                </DialogDescription>
-            </DialogHeader>
-
-            <div
-                v-if="
-                    updateStore.updateInfo &&
-                    updateStore.updateInfo.releaseNotes &&
-                    typeof updateStore.updateInfo.releaseNotes === 'object'
-                "
-                v-for="releasenote in updateStore.updateInfo.releaseNotes"
-                :key="releasenote.version"
-                class="mb-4"
-            >
-                <h3 class="text-lg font-semibold mb-2">Version {{ releasenote.version }}</h3>
-                <div class="markdown-output" v-html="marked.parse(releasenote.note || '')" />
-
-                <hr class="my-4" />
-            </div>
-        </DialogContent>
-    </Dialog>
     <div class="grid grid-cols-1 gap-2">
         <CardForm title="Theme settings">
             <template #body>
@@ -209,7 +173,7 @@ const showReleaseNotes = ref(false)
             <template #body>
                 <div class="space-y-2">
                     <div class="grid grid-cols-2 gap-4 space-y-2">
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 gap-2">
                             <Button
                                 v-if="
                                     updateStore.updateState === 'checking' ||
@@ -260,7 +224,7 @@ const showReleaseNotes = ref(false)
                                     updateStore.updateState !== 'checking'
                                 "
                                 variant="outline_default"
-                                @click="showReleaseNotes = true"
+                                @click="updateStore.showReleaseNotes = true"
                             >
                                 See release notes
                             </Button>

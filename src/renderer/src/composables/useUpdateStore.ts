@@ -21,6 +21,7 @@ export const useUpdateStore = defineStore('update', () => {
     const startupChecked = ref(false)
     const currentToastId = ref<string | number | null>(null)
     const toastIsDownloading = ref(false)
+    const showReleaseNotes = ref(false)
 
     // --- Handlers for electron-updater events ---
 
@@ -53,6 +54,13 @@ export const useUpdateStore = defineStore('update', () => {
                 label: 'Download',
                 onClick: () => window.api.downloadUpdate()
             },
+            cancel: {
+                label: 'Show release notes',
+                onClick: () => {
+                    showReleaseNotes.value = true
+                }
+            },
+
             onAutoClose: (t) => {
                 if (t.id === currentToastId.value) {
                     currentToastId.value = null
@@ -226,6 +234,7 @@ export const useUpdateStore = defineStore('update', () => {
         downloadProgress,
         errorMessage,
         currentVersion,
+        showReleaseNotes,
 
         checkForUpdates,
         downloadUpdate,
