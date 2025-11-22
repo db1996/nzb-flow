@@ -33,36 +33,26 @@ defineProps({
             <SwitchInput
                 :disabled="disabled"
                 label="Skip PAR Creation"
-                help="Disable PAR file creation. If disabled, rar files will be uploaded directly. Default: off"
+                help="Default: off <br>Disable PAR file creation. If disabled, rar files will be uploaded directly."
                 v-model="form.skipParCreation"
             />
-
+            <SwitchInput
+                :disabled="disabled || form.skipParCreation"
+                label="Automatic redundancy and slices"
+                help="Default: on <br>Automatically determine the best PAR2 parameters based on the size of the files being processed. <br>This also uses the nyuu article size to create a multiple of that for the slice size."
+                v-model="form.automaticParams"
+            />
             <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
-                <SwitchInput
-                    :disabled="disabled || form.skipParCreation"
-                    label="Automatic redundancy"
-                    description="Always uses 8% redundancy for PAR files."
-                    v-model="form.automaticRedundancy"
-                />
                 <TextInput
-                    :disabled="form.automaticRedundancy || disabled || form.skipParCreation"
+                    :disabled="form.automaticParams || disabled || form.skipParCreation"
                     label="Redundancy"
-                    description="The redundancy level for PAR files."
+                    help="Default: 8% <br>The redundancy level for PAR files."
                     v-model="form.redundancy"
                 />
-            </div>
-
-            <div class="grid gap-2 md:grid-cols-2 grid-cols-1">
-                <SwitchInput
-                    :disabled="disabled || form.skipParCreation"
-                    label="Automatic slices"
-                    help="Automatically determine number of slices for PAR files. Uses par2J's default: 0.5w*10"
-                    v-model="form.automaticSlices"
-                />
                 <TextInput
-                    :disabled="form.automaticSlices || disabled || form.skipParCreation"
+                    :disabled="form.automaticParams || disabled || form.skipParCreation"
                     label="Slices"
-                    help="The number of slices for PAR files. You can use expressions like '0.5w*10', or 700k, 5m, 1g."
+                    help="Default: 0.5w*10 (unused) <br>The number of slices for PAR files. <br>You can use expressions like '0.5w*10', or 700k, 5m, 1g."
                     v-model="form.slices"
                 />
             </div>
@@ -77,7 +67,7 @@ defineProps({
                 <TextInput
                     :disabled="disabled || form.skipParCreation"
                     label="Max Slices"
-                    help="The maximum number of slices for PAR files. Watch out: parpar's internal limit is 32767 slices."
+                    help="The maximum number of slices for PAR files<br> Watch out: parpar's internal limit is 32767 slices."
                     v-model="form.maxSlices"
                 />
             </div>

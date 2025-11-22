@@ -88,6 +88,6 @@ const proxyId = useId()
         </div>
 
         <span v-if="error" class="text-sm text-red-600">{{ error }}</span>
-        <span v-if="help" class="ms-1 mt-0 text-xs text-gray-500 italic">{{ help }}</span>
+        <span v-if="help" class="ms-1 mt-0 text-xs text-gray-500 italic" v-html="help" />
     </div>
 </template>
