@@ -61,13 +61,13 @@ defineProps({
                 <TextInput
                     :disabled="disabled || form.skipParCreation"
                     label="Min Slices"
-                    help="The minimum number of slices for PAR files."
+                    help="Default: 1 <br>The minimum number of slices for PAR files."
                     v-model="form.minSlices"
                 />
                 <TextInput
                     :disabled="disabled || form.skipParCreation"
                     label="Max Slices"
-                    help="The maximum number of slices for PAR files<br> Watch out: parpar's internal limit is 32767 slices."
+                    help="Default: 32000 <br>The maximum number of slices for PAR files<br> Watch out: parpar's internal limit is 32767 slices."
                     v-model="form.maxSlices"
                 />
             </div>
