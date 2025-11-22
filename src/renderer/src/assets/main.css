@@ -17,3 +17,9 @@
 .orderby-active.DESC:after {
     transform: rotate(180deg);
 }
+
+
+.markdown-output ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+}
