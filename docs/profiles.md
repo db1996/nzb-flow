@@ -28,8 +28,12 @@ Here I will go through each setting individually and explain in more technical d
     - [Volume sizes](#volume-sizes)
   - [Par settings](#par-settings)
     - [Turn off par creation](#turn-off-par-creation)
+    - [Automatic Redundancy and slices](#automatic-redundancy-and-slices)
     - [Redundancy](#redundancy)
     - [Slices](#slices)
+    - [Minimum slkices](#minimum-slkices)
+    - [Maximum slkices](#maximum-slkices)
+    - [](#)
   - [Nyuu Settings (posting)](#nyuu-settings-posting)
     - [Article size](#article-size)
     - [Include password in NZB](#include-password-in-nzb)
@@ -183,6 +187,23 @@ Rar CLI parameter:
 
 Not recommended, but in the spirit of full control there's still an option
 
+### Automatic Redundancy and slices
+
+If you turn this option on, it will determine some opinionated list of slices/redundancy based on the post size (either the rar file, or the posted files directly if not using RAR)
+
+The target slice count is used as a calculation tool, and it will get to the closest multiple of the article size used in nyuu settings
+
+| Total Upload Size | Target Slice Count | Redundancy (%) |
+| ----------------- | ------------------ | -------------- |
+| 0 – 2 GB          | 8,000              | 18%            |
+| 2 GB – 10 GB      | 15,000             | 12%            |
+| 10 GB – 50 GB     | 20,000             | 10%            |
+| 50 GB – 200 GB    | 25,000             | 7%             |
+| 200 GB – 500 GB   | 20,000             | 5%             |
+| 500 GB and above  | 18,000             | 2%             |
+
+NOTE: In the future I might add settings to change tiers yourself, not sure yet
+
 ### Redundancy
 
 Set a redundancy percentage.  You can use a ton of different values here. Check the parpar cli help text for more info
@@ -199,6 +220,30 @@ ParPar CLI parameter:
 
 `-s{slice_size}`
 
+
+### Minimum slkices
+
+Default 1
+
+Set the minimum number of slices
+
+ParPar CLI parameter:
+
+`--min-input-slices {input}`
+
+### Maximum slkices
+
+Default 32000
+
+Set the maximum number of slices. parpar's internal limit is 32767 slices. So keep this below that at least
+
+The more slices the longer it will take
+
+ParPar CLI parameter:
+
+`--max-input-slices {input}`
+
+###
 
 ## Nyuu Settings (posting)
 
