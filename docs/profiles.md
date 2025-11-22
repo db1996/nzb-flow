@@ -31,8 +31,8 @@ Here I will go through each setting individually and explain in more technical d
     - [Automatic Redundancy and slices](#automatic-redundancy-and-slices)
     - [Redundancy](#redundancy)
     - [Slices](#slices)
-    - [Minimum slkices](#minimum-slkices)
-    - [Maximum slkices](#maximum-slkices)
+    - [Minimum slices](#minimum-slices)
+    - [Maximum slices](#maximum-slices)
     - [](#)
   - [Nyuu Settings (posting)](#nyuu-settings-posting)
     - [Article size](#article-size)
@@ -221,7 +221,7 @@ ParPar CLI parameter:
 `-s{slice_size}`
 
 
-### Minimum slkices
+### Minimum slices
 
 Default 1
 
@@ -231,7 +231,7 @@ ParPar CLI parameter:
 
 `--min-input-slices {input}`
 
-### Maximum slkices
+### Maximum slices
 
 Default 32000
 
