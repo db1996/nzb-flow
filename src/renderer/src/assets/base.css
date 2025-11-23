@@ -164,3 +164,24 @@ sm:max-w-xxl {
 body{
   overflow-y: scroll;
 }
+
+
+.markdown-output ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-bottom: 2rem;
+}
+
+.markdown-output table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+    margin-top: 1rem;
+}
+
+.markdown-output th,
+.markdown-output td {
+    border: 1px solid var(--color-border);
+    padding: 0.5em 1em;
+    text-align: left;
+}

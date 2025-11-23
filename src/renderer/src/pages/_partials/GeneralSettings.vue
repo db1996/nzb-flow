@@ -173,46 +173,62 @@ watch(
             <template #body>
                 <div class="space-y-2">
                     <div class="grid grid-cols-2 gap-4 space-y-2">
-                        <Button
-                            v-if="
-                                updateStore.updateState === 'checking' ||
-                                updateStore.updateState === 'downloading'
-                            "
-                            variant="outline_default"
-                            disabled
-                        >
-                            {{
-                                updateStore.updateState === 'checking'
-                                    ? 'Checking for updates...'
-                                    : 'Downloading update...'
-                            }}
-                            <LoaderCircle class="animate-spin" />
-                        </Button>
-                        <Button
-                            v-if="
-                                updateStore.updateState === 'idle' ||
-                                updateStore.updateState === 'unavailable'
-                            "
-                            variant="outline_default"
-                            @click="() => updateStore.checkForUpdates()"
-                        >
-                            Check for Updates
-                        </Button>
+                        <div class="grid grid-cols-1 gap-2">
+                            <Button
+                                v-if="
+                                    updateStore.updateState === 'checking' ||
+                                    updateStore.updateState === 'downloading'
+                                "
+                                variant="outline_default"
+                                disabled
+                            >
+                                {{
+                                    updateStore.updateState === 'checking'
+                                        ? 'Checking for updates...'
+                                        : 'Downloading update...'
+                                }}
+                                <LoaderCircle class="animate-spin" />
+                            </Button>
+                            <Button
+                                v-if="
+                                    updateStore.updateState === 'idle' ||
+                                    updateStore.updateState === 'unavailable'
+                                "
+                                variant="outline_default"
+                                @click="() => updateStore.checkForUpdates()"
+                            >
+                                Check for Updates
+                            </Button>
 
-                        <Button
-                            v-if="updateStore.updateState === 'available'"
-                            variant="outline_info"
-                            @click="() => updateStore.downloadUpdate()"
-                        >
-                            Download Update
-                        </Button>
-                        <Button
-                            v-if="updateStore.updateState === 'downloaded'"
-                            variant="default"
-                            @click="() => updateStore.installUpdate()"
-                        >
-                            Install Update
-                        </Button>
+                            <Button
+                                v-if="updateStore.updateState === 'available'"
+                                variant="outline_info"
+                                @click="() => updateStore.downloadUpdate()"
+                            >
+                                Download Update
+                            </Button>
+                            <Button
+                                v-if="updateStore.updateState === 'downloaded'"
+                                variant="default"
+                                @click="() => updateStore.installUpdate()"
+                            >
+                                Install Update
+                            </Button>
+
+                            <Button
+                                v-if="
+                                    updateStore.updateInfo &&
+                                    updateStore.updateState !== 'unavailable' &&
+                                    updateStore.updateState !== 'error' &&
+                                    updateStore.updateState !== 'idle' &&
+                                    updateStore.updateState !== 'checking'
+                                "
+                                variant="outline_default"
+                                @click="updateStore.showReleaseNotes = true"
+                            >
+                                See release notes
+                            </Button>
+                        </div>
                         <Alert
                             v-if="updateStore.updateState === 'error'"
                             variant="destructive"

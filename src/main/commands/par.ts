@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import BaseCommand from './Base/BaseCommand'
 import Settings from '../classes/Settings'
+import { computePar2Parameters } from '../classes/Par2Utils'
 
 export default class ParCommand extends BaseCommand {
     public command(): string {
@@ -10,7 +11,6 @@ export default class ParCommand extends BaseCommand {
     }
 
     public args(): string[] {
-        let _totalsize: number = 0
         let files: string[] = []
         console.log('par args', this._settings.rarParFolderPath)
 
@@ -19,69 +19,74 @@ export default class ParCommand extends BaseCommand {
             `${this._settings.rarParFilename}.par2`
         )
 
-        if (fs.existsSync(parFile)) {
-            // unlink all par2 files first
-            const existingParFiles = fs
-                .readdirSync(this._settings.rarParFolderPath)
-                .filter((file) => file.endsWith('.par2'))
-            for (const file of existingParFiles) {
-                fs.unlinkSync(path.join(this._settings.rarParFolderPath, file))
-            }
-        }
-
         if (this._settings.taskSettings.rarSettings.skipRarCreation) {
             // par the files directly
             console.log('Skipping RAR creation as per settings, paring files directly')
             files = this._settings.taskSettings.postingSettings.files
-            try {
-                _totalsize = files.reduce((acc, file) => {
-                    const stats = fs.statSync(file)
-                    return acc + stats.size
-                }, 0)
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (error: any) {
-                this.commandData.error = error.message
-            }
         } else {
             files = fs
                 .readdirSync(this._settings.rarParFolderPath)
                 .map((file) => path.join(this._settings.rarParFolderPath, file))
-            try {
-                _totalsize = files.reduce((acc, file) => {
-                    const stats = fs.statSync(file)
-                    return acc + stats.size
-                }, 0)
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (error: any) {
-                this.commandData.error = error.message
+        }
+
+        let rawSize = 0
+
+        if (this._settings.taskVariables.rar_size !== null) {
+            rawSize = this._settings.taskVariables.rar_size
+            console.log('size found by rar_size')
+        } else {
+            if (this._settings.taskVariables.raw_size !== null) {
+                rawSize = this._settings.taskVariables.raw_size
+                console.log('size found by raw_size')
             }
         }
-        const { sliceSize, redundancy } = this.calculateParParams()
+
+        if (rawSize === 0) {
+            // Fallback: calculate size from files
+            rawSize = files.reduce((acc, file) => {
+                try {
+                    const stats = fs.statSync(file)
+                    return acc + stats.size
+                } catch (err) {
+                    console.error(`Error getting size for file ${file}:`, err)
+                    return acc
+                }
+            }, 0)
+            console.log('size calculated from files as fallback')
+        }
+
+        const sizes = {
+            sliceSize: this._settings.taskSettings.parSettings.slices,
+            redundancy: this._settings.taskSettings.parSettings.redundancy
+        }
+
+        if (this._settings.taskSettings.parSettings.automaticParams) {
+            const { sliceSize, redundancy } = computePar2Parameters(
+                rawSize,
+                this._settings.taskSettings.nyuuSettings.articleSize
+            )
+
+            sizes.sliceSize = sliceSize
+            sizes.redundancy = redundancy
+        }
+
+        console.log(`Calculated PAR2 params with size ${rawSize}:`, sizes)
+
+        // const { sliceSize, redundancy } =
 
         const args: string[] = [
-            `-r${redundancy}`, // Set redundancy percentage
-            `-s${sliceSize}`,
+            `-r${sizes.redundancy}`, // Set redundancy percentage
+            `-s${sizes.sliceSize}`,
+            '--min-input-slices',
+            this._settings.taskSettings.parSettings.minSlices,
+            '--max-input-slices',
+            this._settings.taskSettings.parSettings.maxSlices,
             '--out',
             this.cmdString(parFile), // Specify output base name
             ...this.cmdStringArray(files)
         ]
 
         return args
-    }
-
-    public calculateParParams(): { sliceSize: string; redundancy: string } {
-        let sliceSize: string = '0.5w*10'
-        let redundancy: string = '15%'
-
-        if (!this._settings.taskSettings.parSettings.automaticSlices) {
-            sliceSize = this._settings.taskSettings.parSettings.slices
-        }
-
-        if (!this._settings.taskSettings.parSettings.automaticRedundancy) {
-            redundancy = this._settings.taskSettings.parSettings.redundancy
-        }
-
-        return { sliceSize, redundancy }
     }
 
     public checkStderr(message: string): boolean {

@@ -30,8 +30,6 @@ export default class BaseCommand {
         if (this.taskId === '') this.taskId = randomUUID().toString()
 
         try {
-            console.log('making rarpar', Settings.rarparOutputPath)
-
             if (!fs.existsSync(Settings.rarparOutputPath)) {
                 fs.mkdirSync(Settings.rarparOutputPath, { recursive: true })
             }

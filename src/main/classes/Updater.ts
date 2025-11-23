@@ -9,6 +9,7 @@ export default class Updater {
 
     public setupAutoUpdater(): void {
         autoUpdater.forceDevUpdateConfig = true
+        autoUpdater.fullChangelog = true
         autoUpdater.autoDownload = false
 
         autoUpdater.on('checking-for-update', () => {

@@ -44,7 +44,7 @@ defineProps({
                     height-class="min-h-[2.5rem]"
                     label-height-class="min-h-[1rem]"
                     label="Article Size"
-                    help="Article size, default: 700K"
+                    help="Default: 700K <br>Article size in bytes. You can use suffixes like k, m, g for kilobytes, megabytes and gigabytes."
                     v-model="form.articleSize"
                 />
                 <SwitchInput
@@ -52,7 +52,7 @@ defineProps({
                     height-class="min-h-[2.5rem]"
                     label-height-class="min-h-[1rem]"
                     label="Include password in NZB"
-                    help="Download clients will use this password when downloading the NZB if it is password protected."
+                    help="Default: off <br>Download clients will use this password when downloading the NZB if it is password protected. <br>This allows indexers to see the password in the NZB file."
                     v-model="form.includePasswordInNzb"
                 />
             </div>
@@ -65,7 +65,7 @@ defineProps({
                     label-height-class="min-h-[1rem]"
                     label="Check connections"
                     type="number"
-                    help="Number of connections to use when checking posts, if set to 0 then no checking will be done. This will result in total server connections to be increased. Default: 0"
+                    help="Default: 0 <br>Number of connections to use when checking posts <br>This will result in total server connections to be increased <br>If set to 0 then no checking will be done."
                     v-model="form.checkConnections"
                 />
                 <TextInput
@@ -74,7 +74,7 @@ defineProps({
                     label-height-class="min-h-[1rem]"
                     label="Check tries"
                     type="number"
-                    help="Number of tries checking posts, if set to 0 then no checking will be done. Default: 2"
+                    help="Default: 2 <br>Number of tries checking posts, if set to 0 then no checking will be done."
                     v-model="form.checkTries"
                 />
                 <TextInput
@@ -82,7 +82,7 @@ defineProps({
                     height-class="min-h-[2.5rem]"
                     label-height-class="min-h-[1rem]"
                     label="Check delay"
-                    help="Delay between posting and checking, example: 5s, 5000ms, 1m, 1h. Default: 5s"
+                    help="Default: 5s <br>Delay between posting and checking, example: 5s, 5000ms, 1m, 1h."
                     v-model="form.checkDelay"
                 />
                 <TextInput
@@ -90,7 +90,7 @@ defineProps({
                     height-class="min-h-[2.5rem]"
                     label-height-class="min-h-[1rem]"
                     label="Check retry delay"
-                    help="Delay between check retry attempts, example: 5s, 5000ms, 1m, 1h. Default: 30s"
+                    help="Default: 30s <br>Delay between check retry attempts, example: 5s, 5000ms, 1m, 1h."
                     v-model="form.checkRetryDelay"
                 />
                 <TextInput
@@ -99,7 +99,7 @@ defineProps({
                     label-height-class="min-h-[1rem]"
                     label="Check post tries"
                     type="number"
-                    help="Maximum number of attempts to re-post articles that failed checking, set to 0 to disable. Default: 1"
+                    help="Default: 1 <br>Maximum number of attempts to re-post articles that failed checking, set to 0 to disable."
                     v-model="form.checkPostTries"
                 />
                 <TextInput
@@ -108,7 +108,7 @@ defineProps({
                     label-height-class="min-h-[1rem]"
                     label="Check queue size"
                     type="number"
-                    help="Max number of articles queued for checking. Default: 10000"
+                    help="Default: 10000 <br>Max number of articles queued for checking."
                     v-model="form.checkQueueSize"
                 />
             </div>

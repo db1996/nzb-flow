@@ -35,7 +35,7 @@ defineProps({
             <SwitchInput
                 :disabled="disabled"
                 label="Skip RAR Creation"
-                help="Disable RAR compression for creating RAR archives. If disabled, password protection is not available. Par files will be created directly from the source files. Default: off"
+                help="Default: off <br>Disable RAR compression for creating RAR archives. <br>If disabled, password protection is not available. Par files will be created directly from the source files."
                 v-model="form.skipRarCreation"
             />
             <Label class="font-medium text-sm">RAR Command Line Tool</Label>
@@ -44,7 +44,7 @@ defineProps({
                 <TextInput
                     :disabled="disabled || form.skipRarCreation"
                     label="Exclude files"
-                    help="These files will not be uploaded. Comma separated: Example: *.nfo, *.txt, or hello.txt"
+                    help="Default: empty <br>These files will not be uploaded. <br>Comma separated: Example: *.nfo, *.txt, or hello.txt"
                     class="flex-1"
                     label-height-class="min-h-[2rem]"
                     height-class="min-h-[2.5rem]"
@@ -55,13 +55,13 @@ defineProps({
                     label-height-class="min-h-[2rem]"
                     height-class="min-h-[2.5rem]"
                     label="Recursion"
-                    help="Recursively add files from subdirectories, maintains subdirectory structure"
+                    help="Default: on <br>Recursively add files from subdirectories, maintains subdirectory structure"
                     v-model="form.recursion"
                 />
                 <SwitchInput
                     :disabled="disabled || form.skipRarCreation"
                     label="Encrypt headers"
-                    help="Encrypt file names and headers in the RAR archive, only done if a password is set"
+                    help="Default: on <br>Encrypt file names and headers in the RAR archive, only done if a password is set"
                     label-height-class="min-h-[2rem]"
                     height-class="min-h-[2.5rem]"
                     v-model="form.encryptHeaders"
@@ -71,7 +71,7 @@ defineProps({
                     label-height-class="min-h-[2rem]"
                     height-class="min-h-[2.5rem]"
                     label="Solid Archive"
-                    help="Create a single solid archive"
+                    help="Default: off <br>Create a single solid archive"
                     v-model="form.solidArchive"
                 />
                 <SwitchInput
@@ -79,7 +79,7 @@ defineProps({
                     label-height-class="min-h-[2rem]"
                     height-class="min-h-[2.5rem]"
                     label="Automatic Volume size"
-                    help="Automatically determine volume size based on file size"
+                    help="Default: off <br>Automatically determine volume size based on file size <br>If both this and 'volume size' are not set, a single archive is created."
                     v-model="form.automaticVolumes"
                 />
                 <TextInput
@@ -87,7 +87,7 @@ defineProps({
                     label-height-class="min-h-[2rem]"
                     height-class="min-h-[2.5rem]"
                     label="Volume Size (split archive)"
-                    help="The size of each volume, end in: b = bytes, k = kilobytes, m = megabytes, M = millions of bytes, g = gigabytes, G = billions of bytes"
+                    help="Default: empty <br>The size of each volume, end in: b = bytes, k = kilobytes, m = megabytes, M = millions of bytes, g = gigabytes, G = billions of bytes"
                     v-model="form.volumes"
                 />
             </div>
