@@ -6,6 +6,7 @@ import CommandData, { CommandDataYupSchema } from './commandData'
 import { NyuuSettings, NyuuSettingsYupSchema } from './NyuuSettings'
 import { PostingSettings, PostingSettingsYupSchema } from './PostingSettings'
 import { TaskVariables, TaskVariablesYupSchema } from './TaskVariables'
+import { ContentTemplateData, ContentTemplateDataYupSchema } from '../ContentTemplateData'
 
 export type TaskConfig = {
     id: string
@@ -31,6 +32,7 @@ export type TaskConfig = {
 
     taskSettings: TaskSettings
     taskVariables: TaskVariables
+    contentTemplateData: ContentTemplateData[]
 }
 
 export type TaskSettings = {
@@ -76,5 +78,9 @@ export const TaskConfigYupSchema: yup.Schema<TaskConfig> = yup.object({
     nyuuCommandOutput: CommandDataYupSchema.default(() => CommandDataYupSchema.cast({})),
 
     taskSettings: TaskSettingsYupSchema.default(() => TaskSettingsYupSchema.cast({})),
-    taskVariables: TaskVariablesYupSchema.default(() => TaskVariablesYupSchema.cast({}))
+    taskVariables: TaskVariablesYupSchema.default(() => TaskVariablesYupSchema.cast({})),
+    contentTemplateData: yup
+        .array()
+        .of(ContentTemplateDataYupSchema)
+        .default(() => [])
 }) as yup.Schema<TaskConfig>

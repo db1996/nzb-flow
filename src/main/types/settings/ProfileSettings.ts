@@ -6,11 +6,13 @@ export type ProfileSettings = {
     name: string
     isDefault: boolean
     taskSettings: TaskSettings
+    contentTemplates: Record<string, boolean> // Map of content template IDs to enabled/disabled status
 }
 
 export const ProfileSettingsYupSchema = yup.object({
     id: yup.string().default(''),
     name: yup.string().min(1).max(50).default('New Profile'),
     isDefault: yup.boolean().default(false),
-    taskSettings: TaskSettingsYupSchema.default(() => TaskSettingsYupSchema.cast({}))
+    taskSettings: TaskSettingsYupSchema.default(() => TaskSettingsYupSchema.cast({})),
+    contentTemplates: yup.object().default({}),
 }) as yup.Schema<ProfileSettings>
