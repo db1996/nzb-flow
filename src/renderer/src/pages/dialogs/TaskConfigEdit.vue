@@ -93,14 +93,15 @@ const copyUtil = copyToClipboard()
                 @update:model-value="updateModelValue($event)"
             />
             <Tabs default-value="posting" class="flex flex-col gap-4">
-                <TabsList class="grid w-full grid-cols-6">
+                <TabsList class="grid w-full grid-cols-7">
                     <slot name="tablist-before"></slot>
-                    <TabsTrigger value="posting"> Posting </TabsTrigger>
-                    <TabsTrigger value="files"> Files </TabsTrigger>
-                    <TabsTrigger value="server"> Server </TabsTrigger>
-                    <TabsTrigger value="rar"> RAR </TabsTrigger>
-                    <TabsTrigger value="par"> PAR </TabsTrigger>
-                    <TabsTrigger value="nyuu"> Nyuu </TabsTrigger>
+                    <TabsTrigger value="posting">Posting</TabsTrigger>
+                    <TabsTrigger value="files">Files</TabsTrigger>
+                    <TabsTrigger value="server">Server</TabsTrigger>
+                    <TabsTrigger value="rar">RAR</TabsTrigger>
+                    <TabsTrigger value="par">PAR</TabsTrigger>
+                    <TabsTrigger value="nyuu">Nyuu</TabsTrigger>
+                    <TabsTrigger value="variables">Data</TabsTrigger>
                     <slot name="tablist-after"></slot>
                 </TabsList>
                 <slot name="tabscontent"></slot>
@@ -221,6 +222,14 @@ const copyUtil = copyToClipboard()
                         :form="form.taskSettings.nyuuSettings"
                         :disabled="disabled"
                         :command-data="(disabled ? (form.nyuuCommandOutput as CommandData | undefined) : undefined)"
+                    />
+                </TabsContent>
+                <TabsContent value="variables">
+                    <TextareaInput
+                        label="Task Variables (JSON Format, these are used in the post templates)"
+                        :model-value="JSON.stringify(form.taskVariables, null, 2)"
+                        :rows="20"
+                        :disabled="true"
                     />
                 </TabsContent>
             </Tabs>
