@@ -10,26 +10,7 @@ The file contents can be found in the task logs, and saved as a file there.
 
 ## How to use
 
-For details on helpers and per-variable explanations, check the variables docs
-
-The contents of the file is generated using Handlebars: https://handlebarsjs.com/
-
-To use any variable, you can use `{{variable_name}}`
-
-For any variables that contain files, like raw_files. You can loop over each one:
-
-```
-{{#each raw_files}}
-  {{this.relativePath}} - {{this.size}}
-{{/raw_files}}
-```
-
-A file variable will always contain these sub variables (this.*)
-
-- name: Contains the file name without any path (with extension)
-- relativePath: Contains the relative path of the file to the post. this will consider the rar archive/post files to be the root
-- absolutePath: Contains the absolute path of the file. This contains your machine's paths
-- size: size in bytes (use helpers to make this human readable)
+For docs on each variables, the helpers you can use, and examples. [Check these docs](<Content Templates Variables.md>)
 
 ## General Settings
 

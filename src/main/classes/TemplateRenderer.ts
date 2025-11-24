@@ -7,9 +7,9 @@ export class TemplateRenderer {
     }
 
     /** Render the template string using task variables */
-    render(template: string, variables: TaskVariables): string {
+    render(template: string, variables: TaskVariables, customVariables: Record<string, any>): string {
         const compiled = Handlebars.compile(template)
-        return compiled(variables)
+        return compiled({ ...variables, ...customVariables })
     }
 
     static getCustomVariables(template: string): string[] {
@@ -87,6 +87,11 @@ export class TemplateRenderer {
             return ms == null ? '' : Math.floor(ms / 1000 / 3600).toString()
         })
 
+        Handlebars.registerHelper('totalMS', (ms: number) => {
+            return ms == null ? '' : ms.toString()
+        })
+
+
         // Modular HH:MM:SS
         Handlebars.registerHelper('timeH', (ms: number) => {
             return ms == null ? '' : Math.floor(ms / 1000 / 3600).toString()
@@ -108,12 +113,6 @@ export class TemplateRenderer {
                       .padStart(2, '0')
         })
 
-        // Total milliseconds (raw)
-        Handlebars.registerHelper('totalMS', (ms: number) => {
-            return ms == null ? '' : ms.toString()
-        })
-
-        // Leftover milliseconds after HH:MM:SS
         Handlebars.registerHelper('timeMS', (ms: number) => {
             return ms == null ? '' : (ms % 1000).toString().padStart(3, '0')
         })
