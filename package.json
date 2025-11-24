@@ -65,6 +65,7 @@
         "copy-paste": "^2.2.0",
         "electron-updater": "^6.3.9",
         "express": "^5.1.0",
+        "handlebars": "^4.7.8",
         "lucide-vue-next": "^0.546.0",
         "marked": "^17.0.1",
         "moment": "^2.30.1",

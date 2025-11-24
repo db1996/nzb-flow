@@ -7,6 +7,7 @@ import { TaskConfig, TaskSettings } from '../../types/settings/commands/taskSett
 import Settings from '../../classes/Settings'
 import path from 'path'
 import fs from 'fs'
+import { TaskVariableFile } from '../../types/settings/commands/TaskVariables'
 
 export default class Task {
     public currentlyRunning: boolean = false
@@ -144,10 +145,61 @@ export default class Task {
         }
 
         // Get stats for raw files
-        const totalSize = this.recursiveFileSize(this.taskConfig.taskSettings.postingSettings.files)
+        const rawFiles = this.recursiveListFiles(this.taskConfig.taskSettings.postingSettings.files)
+        const totalSize = rawFiles.reduce((acc, file) => acc + file.size, 0)
 
         this.taskConfig.taskVariables.raw_size = totalSize
+        this.taskConfig.taskVariables.raw_files = rawFiles
         return true
+    }
+
+    public recursiveListFiles(filesFolders: string[]): TaskVariableFile[] {
+        const result: TaskVariableFile[] = []
+
+        // Helper: walk a directory and push files into result
+        const walkDir = (rootDir: string, currentDir: string) => {
+            const entries = fs.readdirSync(currentDir)
+            for (const entry of entries) {
+                const full = path.join(currentDir, entry)
+                const stats = fs.statSync(full)
+                if (stats.isDirectory()) {
+                    walkDir(rootDir, full)
+                } else {
+                    // archive-relative: <basename(rootDir)>/<path-inside-root>
+                    // For files selected as root (rootDir === full) we handle that earlier,
+                    // but this logic still works because path.relative(rootDir, full) === entry
+                    const relativeInside = path.relative(rootDir, full)
+                    // join with the root folder name so the folder becomes top-level in the archive
+                    const topName = path.basename(rootDir)
+                    // Use posix-style separators for archives (forward slashes)
+                    const rel = path.posix.join(topName, ...relativeInside.split(path.sep))
+                    result.push({
+                        name: path.basename(full),
+                        absolutePath: path.resolve(full),
+                        relativePath: rel,
+                        size: stats.size
+                    })
+                }
+            }
+        }
+
+        for (const selected of filesFolders) {
+            const stat = fs.statSync(selected)
+            if (stat.isDirectory()) {
+                // Directory selected: include all files under it, rooted at the directory name
+                walkDir(selected, selected)
+            } else {
+                // File selected: it should appear in the archive root as basename
+                result.push({
+                    name: path.basename(selected),
+                    absolutePath: path.resolve(selected),
+                    relativePath: path.basename(selected), // file goes into archive root
+                    size: stat.size
+                })
+            }
+        }
+
+        return result
     }
 
     public recursiveFileSize(files: string[]): number {
@@ -164,31 +216,6 @@ export default class Task {
         }
 
         return totalSize
-    }
-
-    public replaceSizeVariable(variable: string, sizeInBytes: number) {
-        const sizeInMB = Math.ceil(sizeInBytes / (1024 * 1024))
-        const sizeInKb = Math.ceil(sizeInBytes / 1024)
-        const sizeInGb = Math.ceil(sizeInBytes / (1024 * 1024 * 1024))
-        this.replaceVariableInConfigs(`${variable}_gb`, sizeInGb.toString())
-        this.replaceVariableInConfigs(`${variable}_kb`, sizeInKb.toString())
-        this.replaceVariableInConfigs(`${variable}_mb`, sizeInMB.toString())
-    }
-
-    public replaceVariableInConfigs(variable: string, value: string) {
-        if (this.taskConfig === null) {
-            throw new Error('Task settings not set')
-        }
-
-        this.taskConfig.name = this.taskConfig.name.split(`{${variable}}`).join(value)
-        this.taskConfig.taskSettings.nyuuSettings.subject =
-            this.taskConfig.taskSettings.nyuuSettings.subject.split(`{${variable}}`).join(value)
-        this.taskConfig.rarParFilename = this.taskConfig.rarParFilename
-            .split(`{${variable}}`)
-            .join(value)
-        this.taskConfig.rarParFolderPath = this.taskConfig.rarParFolderPath
-            .split(`{${variable}}`)
-            .join(value)
     }
 
     public async runNextStep(): Promise<boolean> {
@@ -231,11 +258,11 @@ export default class Task {
         switch (this.taskConfig.currentStep) {
             case CommandStep.RAR:
                 success = await this.runRar()
+                this.betweenSteps()
                 break
             case CommandStep.PAR:
-                this.fileSizes()
                 success = await this.runPar()
-                this.fileSizes()
+                this.betweenSteps()
                 break
             case CommandStep.POST:
                 success = await this.post()
@@ -249,6 +276,28 @@ export default class Task {
         return success
     }
 
+    private betweenSteps() {
+        if (this.taskConfig === null) {
+            throw new Error('Task settings not set')
+        }
+
+        switch (this.taskConfig.currentStep) {
+            case CommandStep.RAR:
+                this.fileSizes()
+                break
+            case CommandStep.PAR:
+                this.fileSizes()
+                break
+            case CommandStep.POST:
+                const totalTime =
+                    this.taskConfig.taskVariables.rar_time! +
+                    this.taskConfig.taskVariables.par_time! +
+                    this.taskConfig.taskVariables.nyuu_time!
+                this.taskConfig.taskVariables.total_time = totalTime
+                break
+        }
+    }
+
     public fileSizes() {
         if (this.taskConfig === null) {
             throw new Error('Task settings not set')
@@ -258,32 +307,74 @@ export default class Task {
 
         this.taskConfig.taskVariables.par_size = 0
         this.taskConfig.taskVariables.par_count = 0
-        this.taskConfig.taskVariables.total_size = 0
-        const files = fs
+        this.taskConfig.taskVariables.nyuu_size = 0
+
+        const taskVariableFiles: TaskVariableFile[] = fs
             .readdirSync(this.taskConfig.rarParFolderPath)
             .map((file) => {
                 if (this.taskConfig === null) {
                     return null
                 }
-                const ext = path.extname(file).toLowerCase()
-                if (ext.startsWith('par') || ext.startsWith('.r')) {
-                    const stats = fs.statSync(path.join(this.taskConfig.rarParFolderPath, file))
-                    if (ext.startsWith('.r')) {
-                        this.taskConfig.taskVariables.rar_size! += stats.size
-                        this.taskConfig.taskVariables.rar_count! += 1
-                    } else {
-                        this.taskConfig.taskVariables.par_size! += stats.size
-                        this.taskConfig.taskVariables.par_count! += 1
-                    }
+                const absolutePath = path.join(this.taskConfig.rarParFolderPath, file)
+                if (!fs.existsSync(absolutePath)) {
+                    return null
                 }
 
-                return path.join(this.taskConfig.rarParFolderPath, file)
-            })
-            .filter((file) => file !== null) as string[]
+                const relativePath = path.relative(this.taskConfig.rarParFolderPath, absolutePath)
 
-        this.taskConfig.taskVariables.total_size =
-            this.taskConfig.taskVariables.rar_size + this.taskConfig.taskVariables.par_size
-        this.taskConfig.rarParFiles = files
+                const stats = fs.statSync(absolutePath)
+                return {
+                    name: file,
+                    absolutePath: absolutePath,
+                    relativePath: relativePath,
+                    size: stats.size
+                } as TaskVariableFile
+            })
+            .filter((file) => file !== null) as TaskVariableFile[]
+
+        this.taskConfig.taskVariables.rar_files = taskVariableFiles.filter((file) => {
+            const ext = path.extname(file.absolutePath).toLowerCase()
+            if (ext.startsWith('.r')) {
+                return true
+            }
+            return false
+        })
+
+        this.taskConfig.taskVariables.par_files = taskVariableFiles.filter((file) => {
+            const ext = path.extname(file.absolutePath).toLowerCase()
+            if (ext.startsWith('.par')) {
+                return true
+            }
+            return false
+        })
+
+        this.taskConfig.taskVariables.nyuu_files = [
+            ...this.taskConfig.taskVariables.rar_files,
+            ...this.taskConfig.taskVariables.par_files
+        ]
+
+        if (this.taskConfig.taskSettings.rarSettings.skipRarCreation) {
+            this.taskConfig.taskVariables.nyuu_files.push(
+                ...this.taskConfig.taskVariables.raw_files
+            )
+        }
+
+        this.taskConfig.taskVariables.rar_size = this.taskConfig.taskVariables.rar_files.reduce(
+            (acc, file) => acc + file.size,
+            0
+        )
+        this.taskConfig.taskVariables.rar_count = this.taskConfig.taskVariables.rar_files.length
+
+        this.taskConfig.taskVariables.par_size = this.taskConfig.taskVariables.par_files.reduce(
+            (acc, file) => acc + file.size,
+            0
+        )
+        this.taskConfig.taskVariables.par_count = this.taskConfig.taskVariables.par_files.length
+
+        this.taskConfig.taskVariables.nyuu_size = this.taskConfig.taskVariables.nyuu_files.reduce(
+            (acc, file) => acc + file.size,
+            0
+        )
 
         this.replaceVariables()
     }
@@ -348,8 +439,12 @@ export default class Task {
             throw new Error('Task settings not set')
         }
         this.taskConfig.rarCommandOutput.started = true
+        const totalTime = Date.now()
+
         const rarCommand = new RarCommand(this.taskConfig)
         const success = await rarCommand.id(this.taskConfig.id).set(this.taskConfig.name).run()
+
+        this.taskConfig.taskVariables.rar_time = Math.floor(Date.now() - totalTime)
 
         this.taskConfig.rarCommandOutput.executedCommand = rarCommand.commandData.executedCommand
         this.taskConfig.rarCommandOutput.output = rarCommand.commandData.output
@@ -369,9 +464,11 @@ export default class Task {
             return Promise.resolve(false)
         }
         this.taskConfig.parCommandOutput.started = true
+        const startTime = Date.now()
         const parCommand = new ParCommand(this.taskConfig)
         const success = await parCommand.id(this.taskConfig.id).set(this.taskConfig.name).run()
 
+        this.taskConfig.taskVariables.par_time = Math.floor(Date.now() - startTime)
         this.taskConfig.parCommandOutput.executedCommand = parCommand.commandData.executedCommand
         this.taskConfig.parCommandOutput.output = parCommand.commandData.output
         this.taskConfig.parCommandOutput.error = parCommand.commandData.error
@@ -394,8 +491,12 @@ export default class Task {
             return Promise.resolve(false)
         }
         this.taskConfig.nyuuCommandOutput.started = true
+        const startTime = Date.now()
         const nyuuCommand = new Nyuu(this.taskConfig)
         const success = await nyuuCommand.id(this.taskConfig.id).set(this.taskConfig.name).run()
+
+        const totalTime = Math.floor(Date.now() - startTime)
+        this.taskConfig.taskVariables.nyuu_time = totalTime
 
         this.taskConfig.nyuuCommandOutput.executedCommand = nyuuCommand.commandData.executedCommand
         this.taskConfig.nyuuCommandOutput.output = nyuuCommand.commandData.output
@@ -423,8 +524,8 @@ export default class Task {
             this.replaceSizeVariable('par_size', this.taskConfig.taskVariables.par_size)
         }
 
-        if (this.taskConfig.taskVariables.total_size !== null) {
-            this.replaceSizeVariable('total_size', this.taskConfig.taskVariables.total_size)
+        if (this.taskConfig.taskVariables.nyuu_size !== null) {
+            this.replaceSizeVariable('total_size', this.taskConfig.taskVariables.nyuu_size)
         }
 
         if (this.taskConfig.taskVariables.rar_count !== null) {
@@ -442,39 +543,61 @@ export default class Task {
         }
 
         if (this.taskConfig.taskVariables.rar_time !== null) {
-            const minutesSeconds = `${Math.floor(this.taskConfig.taskVariables.rar_time / 60)}m ${this.taskConfig.taskVariables.rar_time % 60}s`
-            this.replaceVariableInConfigs(
-                'rar_time',
-                this.taskConfig.taskVariables.rar_time.toString()
-            )
-            this.replaceVariableInConfigs('rar_time_min_sec', minutesSeconds)
+            this.replaceTimeVariable('rar_time', this.taskConfig.taskVariables.rar_time)
         }
 
         if (this.taskConfig.taskVariables.par_time !== null) {
-            const minutesSeconds = `${Math.floor(this.taskConfig.taskVariables.par_time / 60)}m ${this.taskConfig.taskVariables.par_time % 60}s`
-            this.replaceVariableInConfigs(
-                'par_time',
-                this.taskConfig.taskVariables.par_time.toString()
-            )
-            this.replaceVariableInConfigs('par_time_min_sec', minutesSeconds)
+            this.replaceTimeVariable('par_time', this.taskConfig.taskVariables.par_time)
         }
 
         if (this.taskConfig.taskVariables.nyuu_time !== null) {
-            const minutesSeconds = `${Math.floor(this.taskConfig.taskVariables.nyuu_time / 60)}m ${this.taskConfig.taskVariables.nyuu_time % 60}s`
-            this.replaceVariableInConfigs(
-                'nyuu_time',
-                this.taskConfig.taskVariables.nyuu_time.toString()
-            )
-            this.replaceVariableInConfigs('nyuu_time_min_sec', minutesSeconds)
+            this.replaceTimeVariable('nyuu_time', this.taskConfig.taskVariables.nyuu_time)
         }
 
         if (this.taskConfig.taskVariables.total_time !== null) {
-            const minutesSeconds = `${Math.floor(this.taskConfig.taskVariables.total_time / 60)}m ${this.taskConfig.taskVariables.total_time % 60}s`
-            this.replaceVariableInConfigs(
-                'total_time',
-                this.taskConfig.taskVariables.total_time.toString()
-            )
-            this.replaceVariableInConfigs('total_time_min_sec', minutesSeconds)
+            this.replaceTimeVariable('total_time', this.taskConfig.taskVariables.total_time)
         }
+    }
+
+    private replaceTimeVariable(variable: string, timeInMs: number) {
+        const timeInSeconds = timeInMs / 1000
+
+        const minutes = Math.floor(timeInSeconds / 60)
+        const seconds = timeInSeconds % 60
+        this.replaceVariableInConfigs(`${variable}_human`, `${minutes}m ${seconds}s`)
+        this.replaceVariableInConfigs(`${variable}`, timeInMs.toString())
+    }
+
+    public replaceSizeVariable(variable: string, sizeInBytes: number) {
+        const sizeInMB = Math.ceil(sizeInBytes / (1024 * 1024))
+        const sizeInKb = Math.ceil(sizeInBytes / 1024)
+        const sizeInGb = Math.ceil(sizeInBytes / (1024 * 1024 * 1024))
+        this.replaceVariableInConfigs(`${variable}_gb`, sizeInGb.toString())
+        this.replaceVariableInConfigs(`${variable}_kb`, sizeInKb.toString())
+        this.replaceVariableInConfigs(`${variable}_mb`, sizeInMB.toString())
+
+        if (sizeInGb > 0) {
+            this.replaceVariableInConfigs(`${variable}_human`, `${sizeInGb} GB`)
+        } else if (sizeInMB > 0) {
+            this.replaceVariableInConfigs(`${variable}_human`, `${sizeInMB} MB`)
+        } else {
+            this.replaceVariableInConfigs(`${variable}_human`, `${sizeInKb} KB`)
+        }
+    }
+
+    public replaceVariableInConfigs(variable: string, value: string) {
+        if (this.taskConfig === null) {
+            throw new Error('Task settings not set')
+        }
+
+        this.taskConfig.name = this.taskConfig.name.split(`{${variable}}`).join(value)
+        this.taskConfig.taskSettings.nyuuSettings.subject =
+            this.taskConfig.taskSettings.nyuuSettings.subject.split(`{${variable}}`).join(value)
+        this.taskConfig.rarParFilename = this.taskConfig.rarParFilename
+            .split(`{${variable}}`)
+            .join(value)
+        this.taskConfig.rarParFolderPath = this.taskConfig.rarParFolderPath
+            .split(`{${variable}}`)
+            .join(value)
     }
 }
