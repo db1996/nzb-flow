@@ -146,7 +146,25 @@ export default class Task {
         }
 
         // Get stats for raw files
-        const rawFiles = this.recursiveListFiles(this.taskConfig.taskSettings.postingSettings.files)
+        const filesOrdered = this.taskConfig.taskSettings.postingSettings.files.sort((a, b) => {
+            const aStat = fs.lstatSync(a)
+            const bStat = fs.lstatSync(b)
+            const aIsDir = aStat.isDirectory()
+            const bIsDir = bStat.isDirectory()
+
+            if (aIsDir && !bIsDir) {
+                return 1
+            } else if (!aIsDir && bIsDir) {
+                return -1
+            } else {
+                // Sort alphabetically
+                if (a.toLowerCase() < b.toLowerCase()) return -1
+                if (a.toLowerCase() > b.toLowerCase()) return 1
+
+                return 0
+            }
+        })
+        const rawFiles = this.recursiveListFiles(filesOrdered)
         const totalSize = rawFiles.reduce((acc, file) => acc + file.size, 0)
 
         this.taskConfig.taskVariables.raw_size = totalSize
@@ -199,6 +217,36 @@ export default class Task {
                 })
             }
         }
+        // sort result by subfolders/filename > filename
+        result.sort((a, b) => {
+            if (a.relativePath === null || b.relativePath === null) {
+                return 0
+            }
+            const aParts = a.relativePath.split('/')
+            const bParts = b.relativePath.split('/')
+
+            const aIsInSubfolder = aParts.length > 1
+            const bIsInSubfolder = bParts.length > 1
+
+            if (aIsInSubfolder && !bIsInSubfolder) {
+                return 1
+            } else if (!aIsInSubfolder && bIsInSubfolder) {
+                return -1
+            } else {
+                // Both in subfolder or both in root, sort by most subfolders first
+                if (aParts.length > bParts.length) {
+                    return -1
+                } else if (aParts.length < bParts.length) {
+                    return 1
+                }
+
+                // Same depth, sort alphabetically
+                if (a.relativePath.toLowerCase() < b.relativePath.toLowerCase()) return -1
+                if (a.relativePath.toLowerCase() > b.relativePath.toLowerCase()) return 1
+
+                return 0
+            }
+        })
 
         return result
     }

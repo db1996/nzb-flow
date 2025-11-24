@@ -12,7 +12,7 @@ Total processing time: {{timeHuman total_time}}
 
 ---
 
-## Original Files ({{raw_files.length}})
+Original Files ({{raw_files.length}})
 
 {{#each raw_files}}
 - {{this.relativePath}} ({{sizeHuman this.size}})
@@ -20,7 +20,7 @@ Total processing time: {{timeHuman total_time}}
 
 ---
 
-## RAR Files ({{rar_files.length}})
+RAR Files ({{rar_files.length}})
 
 {{#each rar_files}}
 - {{this.relativePath}} ({{sizeHuman this.size}})
@@ -28,7 +28,7 @@ Total processing time: {{timeHuman total_time}}
 
 ---
 
-## PAR Files ({{par_files.length}})
+PAR Files ({{par_files.length}})
 
 {{#each par_files}}
 - {{this.relativePath}} ({{sizeHuman this.size}})
@@ -36,7 +36,7 @@ Total processing time: {{timeHuman total_time}}
 
 ---
 
-## Uploaded Files ({{nyuu_files.length}})
+Uploaded Files ({{nyuu_files.length}})
 
 {{#each nyuu_files}}
 - {{this.relativePath}} ({{sizeHuman this.size}})

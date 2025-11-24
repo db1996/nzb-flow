@@ -9,6 +9,7 @@ import {
     ContentTemplateSettings,
     ContentTemplateSettingsYupSchema
 } from '@main/types/settings/ContentTemplateSettings'
+import { contentTemplateExamples } from '@main/classes/ContentTemplate'
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref<AllSettings | null>(null)
@@ -213,6 +214,8 @@ export const useSettingsStore = defineStore('settings', () => {
         const newContentTemplate: ContentTemplateSettings = ContentTemplateSettingsYupSchema.cast(
             {}
         )
+
+        newContentTemplate.templateContent = contentTemplateExamples[0] || ''
 
         activeContentTemplateEdit.value = newContentTemplate
     }
