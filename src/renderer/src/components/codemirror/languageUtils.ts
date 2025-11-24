@@ -17,7 +17,8 @@ export const SupportedLanguages: LanguageInfo[] = [
     { id: 'typescript', name: 'TypeScript' },
     { id: 'python', name: 'Python' },
     { id: 'html', name: 'HTML' },
-    { id: 'css', name: 'CSS' }
+    { id: 'css', name: 'CSS' },
+    { id: 'handlebars', name: 'Handlebars' }
 ]
 
 export function getLanguageExtension(language: LanguageInfo): LanguageSupport {

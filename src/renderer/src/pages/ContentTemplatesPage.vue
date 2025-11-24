@@ -47,7 +47,7 @@ const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
                     <template #head>
                         <TableHead>Name</TableHead>
                         <TableHead>File Type</TableHead>
-                        <TableHead class="w-[270px]"
+                        <TableHead class="w-[150px]"
                             >#
                             <Button class="w-8" @click="settingsStore.newContentTemplate">
                                 <Plus /> </Button

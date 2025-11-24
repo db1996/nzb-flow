@@ -15,7 +15,7 @@ export type ContentTemplateSettings = {
 export const ContentTemplateSettingsYupSchema = yup.object({
     id: yup.string().default(''),
     name: yup.string().default(''),
-    fileName: yup.string().default(''),
+    fileName: yup.string().default('{fname}'),
     templateContent: yup.string().default(''),
     fileType: yup.string().default('.txt'),
 

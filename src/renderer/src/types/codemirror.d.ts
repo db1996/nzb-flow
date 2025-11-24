@@ -7,6 +7,7 @@ export interface CodeMirrorVariable {
     name: string
     key: string
     loopable: boolean
+    customTemplate?: string
     variants?: CodeMirrorVariableVariant[]
 
     loopKeys?: string[]

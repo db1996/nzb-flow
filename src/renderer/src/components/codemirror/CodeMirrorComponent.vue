@@ -7,6 +7,9 @@ import { CodeMirrorVariable, LanguageInfo } from '@renderer/types/codemirror'
 
 import { getLanguageExtension, SupportedLanguages } from './languageUtils'
 import SelectInput, { Option } from '../form/SelectInput.vue'
+import Label from '../ui/label/Label.vue'
+import { EditorView } from '@codemirror/view'
+import SidebarContainer from './SidebarContainer.vue'
 
 const props = defineProps({
     modelValue: {
@@ -31,6 +34,11 @@ const props = defineProps({
     variables: {
         type: Array as PropType<CodeMirrorVariable[]>,
         required: false
+    },
+    showLanguage: {
+        type: Boolean,
+        required: false,
+        default: true
     }
 })
 
@@ -70,17 +78,21 @@ const extensionComp = computed(() => {
     const extensions: any[] = []
 
     extensions.push(currentTheme.value)
+    extensions.push(EditorView.lineWrapping)
 
     const langInfo = supportedLanguages.value.find(lang => lang.id === config.value.language)
+
     if (!langInfo) return extensions
 
     extensions.push(getLanguageExtension(langInfo))
+
     return extensions
 })
 </script>
 <template>
     <div class="grid grid-cols-3">
         <SelectInput
+            v-if="showLanguage"
             class="col-span-1"
             label="Language"
             :disabled="disabled"
@@ -88,7 +100,9 @@ const extensionComp = computed(() => {
             :options="languagesList"
         />
     </div>
-    <div class="h-[400px]">
+
+    <Label class="mb-2">Content</Label>
+    <div class="grid grid-cols-[3fr_1fr] gap-2">
         <codemirror
             v-model="proxyValue"
             :placeholder="placeholder"
@@ -96,13 +110,14 @@ const extensionComp = computed(() => {
             :autofocus="config.autofocus"
             :indent-with-tab="config.indentWithTab"
             :tab-size="2"
-            class="h-[400px]"
+            :style="{ height: '400px' }"
             :extensions="extensionComp"
         />
+        <div v-if="variables" style="height: 400px; overflow-y: auto; overflow-x: clip">
+            <SidebarContainer
+                :variables="variables"
+                @select="template => (proxyValue += template)"
+            />
+        </div>
     </div>
 </template>
-<style lang="scss" scoped>
-.cm-editor {
-    height: 100% !important;
-}
-</style>

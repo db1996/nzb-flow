@@ -6,14 +6,13 @@ import Button from '@renderer/components/ui/button/Button.vue'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import FileSelectInput from '@renderer/components/form/FileSelectInput.vue'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
-import SelectInput from '@renderer/components/form/SelectInput.vue'
 import Tabs from '@renderer/components/ui/tabs/Tabs.vue'
 import TabsList from '@renderer/components/ui/tabs/TabsList.vue'
 import TabsTrigger from '@renderer/components/ui/tabs/TabsTrigger.vue'
 import TabsContent from '@renderer/components/ui/tabs/TabsContent.vue'
 import CodeMirrorComponent from '@renderer/components/codemirror/CodeMirrorComponent.vue'
-import { CodeMirrorVariable } from '@renderer/types/codemirror'
-import { computed } from 'vue'
+import { ref } from 'vue'
+import { CODEMIRROR_VARIABLES } from '@main/types/settings/commands/TaskVariables'
 
 const props = defineProps({
     disabled: {
@@ -33,9 +32,7 @@ const save = () => {
     emits('close')
 }
 
-// const variables: CodeMirrorVariable = computed(() => {
-
-// })
+const variables = ref(CODEMIRROR_VARIABLES)
 </script>
 
 <template>
@@ -98,30 +95,28 @@ const save = () => {
                 </TabsContent>
 
                 <TabsContent value="file">
-                    <TextInput
-                        v-model="settingsStore.activeContentTemplateEdit.fileName"
-                        label="File name"
-                        :disabled="disabled"
-                        class="mb-4"
-                    />
+                    <div class="grid grid-cols-2 gap-2">
+                        <TextInput
+                            v-model="settingsStore.activeContentTemplateEdit.fileName"
+                            label="File name"
+                            :disabled="disabled"
+                            class="mb-4"
+                            help="{fname} is the name of the nzb, rar files, par files and post name if you do not obfuscate"
+                        />
 
-                    <SelectInput
-                        label="File type"
-                        v-model="settingsStore.activeContentTemplateEdit.fileType"
-                        :disabled="disabled"
-                        :options="[
-                            { label: 'Text File', value: '.txt' },
-                            { label: 'HTML File', value: '.html' },
-                            { label: 'JSON File', value: '.json' },
-                            { label: 'XML File', value: '.xml' }
-                        ]"
-                        :disable-clear="true"
-                        class="mb-4"
-                    />
-
+                        <TextInput
+                            v-model="settingsStore.activeContentTemplateEdit.fileType"
+                            label="File extension"
+                            :disabled="disabled"
+                            placeholder=".txt, .nfo, .json"
+                            class="mb-4"
+                        />
+                    </div>
                     <CodeMirrorComponent
                         v-model="settingsStore.activeContentTemplateEdit.templateContent"
+                        :variables="variables"
                         :disabled="disabled"
+                        :show-language="false"
                     />
                 </TabsContent>
             </Tabs>
