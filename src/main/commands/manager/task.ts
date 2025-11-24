@@ -267,6 +267,7 @@ export default class Task {
                 break
             case CommandStep.POST:
                 success = await this.post()
+                this.betweenSteps()
                 break
             case CommandStep.FINISH:
                 return true
