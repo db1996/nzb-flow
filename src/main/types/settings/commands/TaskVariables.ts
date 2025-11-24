@@ -2,18 +2,37 @@ import * as yup from 'yup'
 
 export type TaskVariables = {
     fname: string | null
-    raw_size: number | null
-    rar_size: number | null
-    rar_count: number | null
-    rar_time: number | null
-    par_size: number | null
-    par_count: number | null
-    par_time: number | null
-    nyuu_time: number | null
+    raw_size: number | null // Size of choosen files and folders before RARing
+    rar_size: number | null // Size of the RAR files
+    rar_count: number | null // Number of RAR files created
+    rar_time: number | null // Time taken to RAR the files in seconds
+    par_size: number | null // Size of the PAR files
+    par_count: number | null // Number of PAR files created
+    par_time: number | null // Time taken to PAR the files in seconds
+    nyuu_size: number | null // Size of the NYUU files (RAR + PAR)
+    nyuu_time: number | null // Time taken to NYUU the files in seconds
 
-    total_size: number | null
-    total_time: number | null
+    total_time: number | null // Total processing time (including queue pauses)
+
+    raw_files: TaskVariableFile[] // List of original files selected
+    rar_files: TaskVariableFile[] // List of RAR files created
+    par_files: TaskVariableFile[] // List of PAR files created
+    nyuu_files: TaskVariableFile[] // List of NYUU files created
 }
+
+export type TaskVariableFile = {
+    name: string
+    absolutePath: string
+    relativePath: string | null
+    size: number
+}
+
+export const TaskVariableFileYupSchema: yup.Schema<TaskVariableFile> = yup.object({
+    name: yup.string().default(''),
+    absolutePath: yup.string().default(''),
+    relativePath: yup.string().nullable().default(null),
+    size: yup.number().default(0)
+}) as yup.Schema<TaskVariableFile>
 
 export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     fname: yup.string().nullable().default(null),
@@ -24,8 +43,25 @@ export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     par_size: yup.number().nullable().default(null),
     par_count: yup.number().nullable().default(null),
     par_time: yup.number().nullable().default(null),
+    nyuu_size: yup.number().nullable().default(null),
     nyuu_time: yup.number().nullable().default(null),
 
-    total_size: yup.number().nullable().default(null),
-    total_time: yup.number().nullable().default(null)
+    total_time: yup.number().nullable().default(null),
+
+    raw_files: yup
+        .array()
+        .of(TaskVariableFileYupSchema)
+        .default(() => []),
+    rar_files: yup
+        .array()
+        .of(TaskVariableFileYupSchema)
+        .default(() => []),
+    par_files: yup
+        .array()
+        .of(TaskVariableFileYupSchema)
+        .default(() => []),
+    nyuu_files: yup
+        .array()
+        .of(TaskVariableFileYupSchema)
+        .default(() => [])
 }) as yup.Schema<TaskVariables>
