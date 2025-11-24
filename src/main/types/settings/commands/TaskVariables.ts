@@ -36,24 +36,6 @@ export type TaskVariables = {
     nyuu_files: TaskVariableFile[] // List of NYUU files created
 }
 
-export const BUILT_IN_VARIABLES_KEYS = new Set<string>([
-    'fname',
-    'raw_size',
-    'rar_size',
-    'rar_count',
-    'rar_time',
-    'par_size',
-    'par_count',
-    'par_time',
-    'nyuu_size',
-    'nyuu_time',
-    'total_time',
-    'raw_files',
-    'rar_files',
-    'par_files',
-    'nyuu_files'
-]);
-
 export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     fname: yup.string().nullable().default(null),
     raw_size: yup.number().nullable().default(null),
@@ -85,3 +67,21 @@ export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
         .of(TaskVariableFileYupSchema)
         .default(() => [])
 }) as yup.Schema<TaskVariables>
+
+export const BUILT_IN_VARIABLES_KEYS = new Set<string>([
+    'fname',
+    'raw_size',
+    'rar_size',
+    'rar_count',
+    'rar_time',
+    'par_size',
+    'par_count',
+    'par_time',
+    'nyuu_size',
+    'nyuu_time',
+    'total_time',
+    'raw_files',
+    'rar_files',
+    'par_files',
+    'nyuu_files'
+]);
