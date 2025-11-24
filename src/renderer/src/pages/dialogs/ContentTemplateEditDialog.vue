@@ -124,6 +124,15 @@ const variables = ref(CODEMIRROR_VARIABLES)
                         >You can use custom variables like <code v-html="'{{thisVariable}}'" />. You
                         will be asked to fill these in manually per post
                     </span>
+
+                    <Button
+                        as="a"
+                        target="_blank"
+                        href="https://github.com/db1996/nzb-flow/blob/main/docs/Content%20Templates%20Variables.md"
+                        variant="link"
+                        class="inline m-0 p-0"
+                        >Check the content template variables docs here</Button
+                    >
                     <CodeMirrorComponent
                         v-model="settingsStore.activeContentTemplateEdit.templateContent"
                         :variables="variables"

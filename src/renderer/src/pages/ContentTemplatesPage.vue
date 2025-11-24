@@ -30,7 +30,7 @@ const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
                     <Button
                         as="a"
                         target="_blank"
-                        href="https://github.com/db1996/nzb-flow/blob/main/docs/profiles.md"
+                        href="https://github.com/db1996/nzb-flow/blob/main/docs/Content%20Templates.md"
                         variant="link"
                         class="inline m-0 p-0"
                         >Check the content template docs here</Button
