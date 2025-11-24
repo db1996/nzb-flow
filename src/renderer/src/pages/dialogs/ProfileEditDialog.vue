@@ -126,7 +126,9 @@ const save = () => {
                             v-for="contentTemplate in settingsStore.contentTemplates"
                             :key="contentTemplate.id"
                             v-model="
-                                settingsStore.activeProfileEdit.contentTemplates[contentTemplate.id]
+                                settingsStore.activeProfileEdit.taskSettings.contentTemplates[
+                                    contentTemplate.id
+                                ]
                             "
                             :label="contentTemplate.name"
                             help="Enable content templates for this profile"

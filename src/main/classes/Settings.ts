@@ -167,6 +167,10 @@ export default class Settings {
                         abortEarly: false
                     })
 
+                    if (validatedSettings.taskSettings.contentTemplates === undefined) {
+                        validatedSettings.taskSettings.contentTemplates = {}
+                    }
+
                     const diff = Utils.diffObjects(parsedProfile, validatedSettings)
                     if (
                         diff.added.length > 0 ||
@@ -190,7 +194,7 @@ export default class Settings {
 
                     Settings.profiles.push(validatedSettings)
                 } catch (error) {
-                    console.error('Error parsing settings file', error)
+                    console.error('Error parsing profiles file', error)
                 }
             }
         }
@@ -372,7 +376,7 @@ export default class Settings {
                         })
                         Settings.historyTasks.push(validatedSettings)
                     } catch (error) {
-                        console.error('Error parsing settings file', error)
+                        console.error('Error parsing history file', error)
                     }
                 }
             }

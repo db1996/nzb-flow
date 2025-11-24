@@ -433,7 +433,9 @@ export default class Task {
             const profile = Settings.profiles.find((p) => p.id === this.taskConfig?.used_profile)
 
             if (profile) {
-                for (const [templateId, enabled] of Object.entries(profile.contentTemplates)) {
+                for (const [templateId, enabled] of Object.entries(
+                    this.taskConfig.taskSettings.contentTemplates
+                )) {
                     const contentTemplateSettings = Settings.contentTemplates.find(
                         (ct) => ct.id === templateId
                     )

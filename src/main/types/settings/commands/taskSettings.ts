@@ -42,6 +42,8 @@ export type TaskSettings = {
     postingSettings: PostingSettings
     serverId: string
     backupServerId: string
+
+    contentTemplates: Record<string, boolean> // Map of content template IDs to enabled/disabled status
 }
 
 export const TaskSettingsYupSchema: yup.Schema<TaskSettings> = yup.object({
@@ -50,7 +52,28 @@ export const TaskSettingsYupSchema: yup.Schema<TaskSettings> = yup.object({
     nyuuSettings: NyuuSettingsYupSchema.default(() => NyuuSettingsYupSchema.cast({})),
     postingSettings: PostingSettingsYupSchema.default(() => PostingSettingsYupSchema.cast({})),
     serverId: yup.string().default(''),
-    backupServerId: yup.string().default('')
+    backupServerId: yup.string().default(''),
+    contentTemplates: yup
+        .object()
+        .test('boolean-map', 'contentTemplates must contain boolean values', (obj) => {
+            if (!obj || typeof obj !== 'object') {
+                return true
+            }
+            if (Object.keys(obj).length === 0) {
+                return true
+            }
+
+            for (const key in obj) {
+                if (typeof obj[key] !== 'boolean') {
+                    return false
+                }
+            }
+
+            return true
+        })
+        .strict()
+        .noUnknown(false)
+        .default({})
 }) as yup.Schema<TaskSettings>
 
 export const TaskConfigYupSchema: yup.Schema<TaskConfig> = yup.object({

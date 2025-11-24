@@ -50,8 +50,8 @@ export const useSettingsStore = defineStore('settings', () => {
         contentTemplates.value.forEach((template) => {
             if (!activeProfileEdit.value || activeProfileEdit.value === null) return
 
-            if (!activeProfileEdit.value.contentTemplates[template.id]) {
-                activeProfileEdit.value.contentTemplates[template.id] = false
+            if (!activeProfileEdit.value.taskSettings.contentTemplates[template.id]) {
+                activeProfileEdit.value.taskSettings.contentTemplates[template.id] = false
             }
         })
 

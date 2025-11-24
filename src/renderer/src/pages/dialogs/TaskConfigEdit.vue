@@ -17,6 +17,7 @@ import DialogDescription from '@renderer/components/ui/dialog/DialogDescription.
 import { Copy, Save } from 'lucide-vue-next'
 import { copyToClipboard } from '@renderer/lib/utils'
 import { ContentTemplateData } from '@main/types/settings/ContentTemplateData'
+import SwitchInput from '@renderer/components/form/SwitchInput.vue'
 
 const settingsStore = useSettingsStore()
 
@@ -242,7 +243,18 @@ function saveToFile(content: ContentTemplateData) {
                     />
                 </TabsContent>
                 <TabsContent value="templates">
+                    <div class="flex flex-col gap-4" v-if="!disabled">
+                        <SwitchInput
+                            v-for="contentTemplate in settingsStore.contentTemplates"
+                            :key="contentTemplate.id"
+                            v-model="form.taskSettings.contentTemplates[contentTemplate.id]"
+                            :label="contentTemplate.name"
+                            help="Enable content templates for this profile"
+                            :disabled="disabled"
+                        />
+                    </div>
                     <div
+                        v-else
                         v-for="contentTemplateData in form.contentTemplateData"
                         :key="contentTemplateData.contentTemplateId"
                         class="mb-4"
