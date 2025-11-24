@@ -13,6 +13,7 @@ import TabsContent from '@renderer/components/ui/tabs/TabsContent.vue'
 import CodeMirrorComponent from '@renderer/components/codemirror/CodeMirrorComponent.vue'
 import { ref } from 'vue'
 import { CODEMIRROR_VARIABLES } from '@main/types/settings/commands/TaskVariables'
+import Label from '@renderer/components/ui/label/Label.vue'
 
 const props = defineProps({
     disabled: {
@@ -39,6 +40,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
     <Dialog
         :open="settingsStore.activeContentTemplateEdit !== null"
         class="overflow-auto"
+        aria-describedby="Content template edit dialog"
         @update:open="emits('close')"
     >
         <DialogContent
@@ -106,7 +108,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                             label="File name"
                             :disabled="disabled"
                             class="mb-4"
-                            help="{fname} is the name of the nzb, rar files, par files and post name if you do not obfuscate"
+                            help="'{fname}' is the name of the nzb, rar files, par files and post name if you do not obfuscate"
                         />
 
                         <TextInput
@@ -117,6 +119,11 @@ const variables = ref(CODEMIRROR_VARIABLES)
                             class="mb-4"
                         />
                     </div>
+                    <Label class="mb-2">Content</Label>
+                    <span class="ms-1 mt-0 text-xs text-gray-500 italic mb-2"
+                        >You can use custom variables like <code v-html="'{{thisVariable}}'" />. You
+                        will be asked to fill these in manually per post
+                    </span>
                     <CodeMirrorComponent
                         v-model="settingsStore.activeContentTemplateEdit.templateContent"
                         :variables="variables"

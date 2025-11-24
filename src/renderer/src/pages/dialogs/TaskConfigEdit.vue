@@ -111,7 +111,7 @@ function saveToFile(content: ContentTemplateData) {
                     <TabsTrigger value="par">PAR</TabsTrigger>
                     <TabsTrigger value="nyuu">Nyuu</TabsTrigger>
                     <TabsTrigger value="variables">Data</TabsTrigger>
-                    <TabsTrigger value="templates">Content templates</TabsTrigger>
+                    <TabsTrigger value="templates" class="w-[150px]">Content templates</TabsTrigger>
                     <slot name="tablist-after"></slot>
                 </TabsList>
                 <slot name="tabscontent"></slot>

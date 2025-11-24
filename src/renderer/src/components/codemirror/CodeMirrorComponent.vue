@@ -7,7 +7,6 @@ import { CodeMirrorVariable, LanguageInfo } from '@renderer/types/codemirror'
 
 import { getLanguageExtension, SupportedLanguages } from './languageUtils'
 import SelectInput, { Option } from '../form/SelectInput.vue'
-import Label from '../ui/label/Label.vue'
 import { EditorView } from '@codemirror/view'
 import SidebarContainer from './SidebarContainer.vue'
 
@@ -100,8 +99,6 @@ const extensionComp = computed(() => {
             :options="languagesList"
         />
     </div>
-
-    <Label class="mb-2">Content</Label>
     <div class="grid grid-cols-[3fr_1fr] gap-2">
         <codemirror
             v-model="proxyValue"
