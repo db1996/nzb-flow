@@ -380,6 +380,20 @@ export default class AppState {
             return
         })
 
+        ipcMain.handle('delete-content-template', async (_event, id: string) => {
+            Settings.deleteContentTemplate(id)
+            return
+        })
+
+        ipcMain.handle('save-content-template', async (_event, template: any) => {
+            Settings.saveContentTemplate(template)
+            return
+        })
+
+        ipcMain.handle('get-content-templates', async () => {
+            return await Settings.loadContentTemplates()
+        })
+
         ipcMain.handle('start-http-server', async () => {
             this.apiServer.start()
         })

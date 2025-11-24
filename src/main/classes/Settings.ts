@@ -20,7 +20,8 @@ import TaskManager from '../commands/manager/TaskManager'
 import {
     ContentTemplateSettings,
     ContentTemplateSettingsYupSchema
-} from '../types/settings/ContenTemplateSettings'
+} from '../types/settings/ContentTemplateSettings'
+import slugify from 'slugify'
 
 export default class Settings {
     private static loaded: boolean = false
@@ -383,13 +384,13 @@ export default class Settings {
         }
     }
 
-    static loadContentTemplates(): ContentTemplateSettings[] {
+    static async loadContentTemplates(): Promise<ContentTemplateSettings[]> {
         const templates: ContentTemplateSettings[] = []
 
-        const files = fs.readdirSync(Settings.defaultContentTemplateSettingsPath)
+        const files = fs.readdirSync(Settings.allSettings.contentTemplateSettingsFolder)
         for (const file of files) {
             if (file.endsWith('.json')) {
-                const filePath = path.join(Settings.defaultContentTemplateSettingsPath, file)
+                const filePath = path.join(Settings.allSettings.contentTemplateSettingsFolder, file)
                 const data = fs.readFileSync(filePath, 'utf-8')
 
                 try {
@@ -494,6 +495,35 @@ export default class Settings {
             abortEarly: false
         })
         fs.writeFileSync(filePath, JSON.stringify(validated, null, 4))
+    }
+
+    static saveContentTemplate(template: ContentTemplateSettings) {
+        if (template.id === '') {
+            template.id = slugify(template.name)
+        }
+
+        const filePath = path.join(
+            Settings.allSettings.contentTemplateSettingsFolder,
+            `${template.id}.json`
+        )
+
+        if (!fs.existsSync(Settings.allSettings.contentTemplateSettingsFolder)) {
+            fs.mkdirSync(Settings.allSettings.contentTemplateSettingsFolder, { recursive: true })
+        }
+
+        const validated = ContentTemplateSettingsYupSchema.validateSync(template, {
+            stripUnknown: true,
+            abortEarly: false
+        })
+        fs.writeFileSync(filePath, JSON.stringify(validated, null, 4))
+    }
+
+    static deleteContentTemplate(id: string) {
+        const filePath = path.join(Settings.allSettings.contentTemplateSettingsFolder, `${id}.json`)
+
+        if (fs.existsSync(filePath)) {
+            fs.rmSync(filePath)
+        }
     }
 
     static deleteProfile(id: string) {

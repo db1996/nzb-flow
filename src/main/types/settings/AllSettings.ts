@@ -13,6 +13,7 @@ export type AllSettings = {
     taskHistoryFolder: string
     profilesSettingsFolder: string
     folderMonitoringFolder: string
+    contentTemplateSettingsFolder: string
 
     httpServerEnabled: boolean
     httpServerPort: number
@@ -40,17 +41,22 @@ export const AllSettingsYupSchema = yup.object({
         .array()
         .of(ServerSettingsYupSchema)
         .default(() => []),
+
     rarparFolder: yup.string().default(''),
     nzbOutputFolder: yup.string().default(''),
     taskHistoryFolder: yup.string().default(''),
     profilesSettingsFolder: yup.string().default(''),
     folderMonitoringFolder: yup.string().default(''),
+    contentTemplateSettingsFolder: yup.string().default(''),
+
     httpServerEnabled: yup.boolean().default(false),
     httpServerPort: yup.number().default(3000),
     httpServerApiToken: yup.string().default(''),
+
     wsServerEnabled: yup.boolean().default(false),
     wsServerPort: yup.number().default(3001),
     wsServerApiToken: yup.string().default(''),
+
     updateCheckAutomatically: yup.boolean().default(true),
     updateDownloadAutomatically: yup.boolean().default(false),
     updateInstallAutomatically: yup.boolean().default(false),

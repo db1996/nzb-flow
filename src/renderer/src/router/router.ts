@@ -5,6 +5,7 @@ import FoldersPage from '@renderer/pages/FoldersPage.vue'
 import HistoryPage from '@renderer/pages/HistoryPage.vue'
 import ApprovalPage from '@renderer/pages/ApprovalPage.vue'
 import ProfilesPage from '@renderer/pages/ProfilesPage.vue'
+import ContentTemplatesPage from '@renderer/pages/ContentTemplatesPage.vue'
 
 const routes: RouteRecordRaw[] = [
     {
@@ -46,6 +47,11 @@ const routes: RouteRecordRaw[] = [
         path: '/folders',
         name: 'folders',
         component: FoldersPage
+    },
+    {
+        path: '/content-templates',
+        name: 'content-templates',
+        component: ContentTemplatesPage
     }
     // {
     //     path: '/edit/:index',
@@ -68,7 +74,7 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes,
     linkActiveClass: 'border-indigo-500',
-    linkExactActiveClass: 'border-indigo-700',
+    linkExactActiveClass: 'border-indigo-700'
 })
 
 export default router

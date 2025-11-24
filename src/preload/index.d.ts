@@ -33,6 +33,10 @@ declare global {
             saveFolders: (folders: FolderSettings[]) => Promise<void>
             scanFolder: (id: string) => Promise<void>
 
+            getContentTemplates: () => Promise<ContentTemplateSettings[]>
+            saveContentTemplate: (template: ContentTemplateSettings) => Promise<void>
+            deleteContentTemplate: (id: string) => Promise<void>
+
             getHistoryTasks: () => Promise<TaskConfig[]>
             clearHistoryTasks: () => Promise<void>
             deleteHistoryTask: (id: string) => Promise<void>

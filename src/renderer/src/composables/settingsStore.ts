@@ -5,11 +5,16 @@ import { ProfileSettings, ProfileSettingsYupSchema } from '@main/types/settings/
 import { FolderSettings, FolderSettingsYupSchema } from '@main/types/settings/FolderSettings'
 import { debounce } from 'lodash'
 import { toast } from 'vue-sonner'
+import {
+    ContentTemplateSettings,
+    ContentTemplateSettingsYupSchema
+} from '@main/types/settings/ContentTemplateSettings'
 
 export const useSettingsStore = defineStore('settings', () => {
     const settings = ref<AllSettings | null>(null)
     const profiles = ref<ProfileSettings[]>([])
     const folders = ref<FolderSettings[]>([])
+    const contentTemplates = ref<ContentTemplateSettings[]>([])
 
     const defaultFolders = ref<{
         rarparFolder: string
@@ -32,6 +37,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
     const activeProfileEdit = ref<ProfileSettings | null>(null)
     const activeFolderEdit = ref<FolderSettings | null>(null)
+    const activeContentTemplateEdit = ref<ContentTemplateSettings | null>(null)
 
     const form = ref<AllSettings | null>(null)
     const formErrors = ref<Record<string, string>>({})
@@ -83,6 +89,7 @@ export const useSettingsStore = defineStore('settings', () => {
         checkNyuu()
         getFolders()
         getDefaultFolders()
+        getContentTemplates()
     }
 
     async function getDefaultFolders() {
@@ -186,6 +193,34 @@ export const useSettingsStore = defineStore('settings', () => {
         if (window.api) {
             await window.api.scanFolder(id)
         }
+    }
+
+    async function newContentTemplate() {
+        const newFolder: ContentTemplateSettings = ContentTemplateSettingsYupSchema.cast({})
+        activeContentTemplateEdit.value = newFolder
+    }
+
+    async function saveContentTemplate(contentTemplate: ContentTemplateSettings): Promise<void> {
+        if (window.api) {
+            await window.api.saveContentTemplate(JSON.parse(JSON.stringify(contentTemplate)))
+            await getContentTemplates()
+        }
+    }
+
+    async function deleteContentTemplate(id: string): Promise<void> {
+        if (window.api) {
+            await window.api.deleteContentTemplate(id)
+            await getContentTemplates()
+        }
+    }
+
+    async function getContentTemplates(): Promise<ContentTemplateSettings[]> {
+        if (window.api) {
+            contentTemplates.value = await window.api.getContentTemplates()
+            console.log('Content Templates loaded:', contentTemplates.value)
+        }
+
+        return contentTemplates.value
     }
 
     async function saveSettings(newSettings: AllSettings) {
@@ -413,7 +448,13 @@ export const useSettingsStore = defineStore('settings', () => {
         flashSavedIndicator,
         remainingTimeSaveSettings,
         debounceTime,
-        defaultFolders
+        defaultFolders,
+        contentTemplates,
+        activeContentTemplateEdit,
+        getContentTemplates,
+        saveContentTemplate,
+        deleteContentTemplate,
+        newContentTemplate
     }
 })
 

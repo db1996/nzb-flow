@@ -1,5 +1,7 @@
+import FileBracesIcon from '@renderer/components/FileBracesIcon.vue'
 import { NavItem } from '@renderer/types/navigation'
 import { Clock, FolderSync, Home, ListCheck, UserCog } from 'lucide-vue-next'
+import { markRaw } from 'vue'
 
 const sidebar = [
     {
@@ -36,6 +38,13 @@ const sidebar = [
                 route: 'folders',
                 icon: FolderSync,
                 current: 'folders.*',
+                isVisible: true
+            },
+            {
+                title: 'Content Templates',
+                route: 'content-templates',
+                icon: markRaw(FileBracesIcon),
+                current: 'content-templates.*',
                 isVisible: true
             }
         ] as NavItem[]

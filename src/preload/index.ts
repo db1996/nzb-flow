@@ -6,6 +6,7 @@ import { CommandStep } from '../main/enums/CommandStep'
 import { QueueStatus } from '../main/types/settings/commands/QueueStatus'
 import { ProfileSettings } from '../main/types/settings/ProfileSettings'
 import { FolderSettings } from '../main/types/settings/FolderSettings'
+import { ContentTemplateSettings } from '../main/types/settings/ContentTemplateSettings'
 
 // Custom APIs for renderer
 const api = {
@@ -56,6 +57,12 @@ const api = {
     saveFolders: (folders: FolderSettings[]) =>
         electronAPI.ipcRenderer.invoke('save-folders', folders),
     scanFolder: (id: string) => electronAPI.ipcRenderer.invoke('scan-folder', id),
+
+    getContentTemplates: () => electronAPI.ipcRenderer.invoke('get-content-templates'),
+    saveContentTemplate: (template: ContentTemplateSettings) =>
+        electronAPI.ipcRenderer.invoke('save-content-template', template),
+    deleteContentTemplate: (id: string) =>
+        electronAPI.ipcRenderer.invoke('delete-content-template', id),
 
     // Approval task management APIs
     getApprovalTasks: () => electronAPI.ipcRenderer.invoke('get-approval-tasks'),

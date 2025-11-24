@@ -33,6 +33,13 @@ export default class Migrator {
             validatedConfig.wsServerApiToken = randomUUID().toString()
         }
 
+        if (_diff.added.includes('contentTemplateSettingsFolder')) {
+            validatedConfig.contentTemplateSettingsFolder = path.join(
+                app.getPath('userData'),
+                'content-templates'
+            )
+        }
+
         return validatedConfig
     }
 
