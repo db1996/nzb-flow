@@ -1,5 +1,21 @@
 import * as yup from 'yup'
 
+export type TaskVariableFile = {
+    name: string
+    absolutePath: string
+    relativePath: string | null
+    size: number
+}
+
+export const TaskVariableFileYupSchema: yup.Schema<TaskVariableFile> = yup.object({
+    name: yup.string().default(''),
+    absolutePath: yup.string().default(''),
+    relativePath: yup.string().nullable().default(null),
+    size: yup.number().default(0)
+}) as yup.Schema<TaskVariableFile>
+
+
+
 export type TaskVariables = {
     fname: string | null
     raw_size: number | null // Size of choosen files and folders before RARing
@@ -20,19 +36,23 @@ export type TaskVariables = {
     nyuu_files: TaskVariableFile[] // List of NYUU files created
 }
 
-export type TaskVariableFile = {
-    name: string
-    absolutePath: string
-    relativePath: string | null
-    size: number
-}
-
-export const TaskVariableFileYupSchema: yup.Schema<TaskVariableFile> = yup.object({
-    name: yup.string().default(''),
-    absolutePath: yup.string().default(''),
-    relativePath: yup.string().nullable().default(null),
-    size: yup.number().default(0)
-}) as yup.Schema<TaskVariableFile>
+export const BUILT_IN_VARIABLES_KEYS = new Set<string>([
+    'fname',
+    'raw_size',
+    'rar_size',
+    'rar_count',
+    'rar_time',
+    'par_size',
+    'par_count',
+    'par_time',
+    'nyuu_size',
+    'nyuu_time',
+    'total_time',
+    'raw_files',
+    'rar_files',
+    'par_files',
+    'nyuu_files'
+]);
 
 export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     fname: yup.string().nullable().default(null),
