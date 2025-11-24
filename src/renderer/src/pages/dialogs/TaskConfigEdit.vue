@@ -14,8 +14,9 @@ import { useSettingsStore } from '@renderer/composables/settingsStore'
 import Button from '@renderer/components/ui/button/Button.vue'
 import CopyExplorerInput from '@renderer/components/form/CopyExplorerInput.vue'
 import DialogDescription from '@renderer/components/ui/dialog/DialogDescription.vue'
-import { Copy } from 'lucide-vue-next'
+import { Copy, Save } from 'lucide-vue-next'
 import { copyToClipboard } from '@renderer/lib/utils'
+import { ContentTemplateData } from '@main/types/settings/ContentTemplateData'
 
 const settingsStore = useSettingsStore()
 
@@ -57,6 +58,13 @@ function addFolders() {
 }
 
 const copyUtil = copyToClipboard()
+
+function saveToFile(content: ContentTemplateData) {
+    window.api.saveFile(content.fileName, content.content).then(() => {
+        // Saved
+        console.log('saved')
+    })
+}
 </script>
 
 <template>
@@ -93,7 +101,7 @@ const copyUtil = copyToClipboard()
                 @update:model-value="updateModelValue($event)"
             />
             <Tabs default-value="posting" class="flex flex-col gap-4">
-                <TabsList class="grid w-full grid-cols-7">
+                <TabsList class="grid w-full grid-cols-7 grid-rows-2 h-18">
                     <slot name="tablist-before"></slot>
                     <TabsTrigger value="posting">Posting</TabsTrigger>
                     <TabsTrigger value="files">Files</TabsTrigger>
@@ -102,6 +110,7 @@ const copyUtil = copyToClipboard()
                     <TabsTrigger value="par">PAR</TabsTrigger>
                     <TabsTrigger value="nyuu">Nyuu</TabsTrigger>
                     <TabsTrigger value="variables">Data</TabsTrigger>
+                    <TabsTrigger value="templates">Content templates</TabsTrigger>
                     <slot name="tablist-after"></slot>
                 </TabsList>
                 <slot name="tabscontent"></slot>
@@ -231,6 +240,49 @@ const copyUtil = copyToClipboard()
                         :rows="20"
                         :disabled="true"
                     />
+                </TabsContent>
+                <TabsContent value="templates">
+                    <div
+                        v-for="contentTemplateData in form.contentTemplateData"
+                        :key="contentTemplateData.contentTemplateId"
+                        class="mb-4"
+                    >
+                        <h3 class="text-md font-medium mb-2">
+                            {{
+                                settingsStore.contentTemplates.find(
+                                    ct => ct.id === contentTemplateData.contentTemplateId
+                                )?.name || contentTemplateData.contentTemplateId
+                            }}
+                        </h3>
+
+                        <div class="grid grid-cols-[1fr_200px] gap-4">
+                            <TextareaInput
+                                :model-value="contentTemplateData.content"
+                                :rows="10"
+                                :disabled="true"
+                            />
+                            <div class="flex flex-col gap-2 justify-start">
+                                <Button
+                                    :variant="
+                                        copyUtil.flashCopied.value
+                                            ? copyUtil.copiedSuccess.value
+                                                ? 'outline_success'
+                                                : 'outline_destructive'
+                                            : 'secondary'
+                                    "
+                                    @click="copyUtil.copy(contentTemplateData.content)"
+                                >
+                                    <Copy /> Copy content
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    @click="saveToFile(contentTemplateData)"
+                                >
+                                    <Save /> Save to file
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </TabsContent>
             </Tabs>
         </DialogContent>

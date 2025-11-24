@@ -17,6 +17,7 @@ import ncp from 'copy-paste'
 import { ApiServer } from '../api/ApiServer'
 import { randomUUID } from 'crypto'
 import { WebSocketApiServer } from '../api/WebSocketApiServer'
+import fs from 'fs'
 
 export default class AppState {
     public taskManager: TaskManager
@@ -267,6 +268,30 @@ export default class AppState {
                 }
             }
             return ret
+        })
+
+        ipcMain.handle('save-file', async (_event, filename: string, content: string) => {
+            const result = await dialog.showSaveDialog({
+                defaultPath: filename,
+                filters: [
+                    {
+                        name: 'File',
+                        extensions: [path.extname(filename).replace('.', '')]
+                    }
+                ]
+            })
+
+            if (result.canceled || !result.filePath) {
+                return { success: false, filePath: null }
+            }
+
+            try {
+                fs.writeFileSync(result.filePath, content, 'utf-8')
+                return { success: true, filePath: result.filePath }
+            } catch (err) {
+                console.error('Failed to save file:', err)
+                return { success: false, filePath: null }
+            }
         })
 
         ipcMain.handle('open-folder-in-explorer', async (_event, path: string) => {

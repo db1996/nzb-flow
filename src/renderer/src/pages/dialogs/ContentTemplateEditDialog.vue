@@ -68,21 +68,26 @@ const variables = ref(CODEMIRROR_VARIABLES)
 
                     <hr />
 
-                    <h3 class="text-md font-medium mb-2 mt-4">Where to save</h3>
+                    <h3 class="text-md font-medium mb-2 mb-4">Where to save</h3>
 
-                    <div class="grid grid-cols-2">
+                    <p class="text-sm text-muted-foreground mb-4">
+                        The generated file will always be available in the task log screen
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-2 mb-4">
                         <SwitchInput
                             :disabled="disabled"
                             label="Save with NZB file after posting"
                             v-model="settingsStore.activeContentTemplateEdit.saveWithNzb"
+                            helpt="The generated file will be saved alongside the NZB file after posting."
                         />
 
-                        <SwitchInput
+                        <!-- <SwitchInput
                             :disabled="disabled"
                             label="Include in the post archive"
                             help="Include the generated file in the post archive uploaded to the news server. Some variables can not be used when this is enabled."
                             v-model="settingsStore.activeContentTemplateEdit.includeInPost"
-                        />
+                        /> -->
                     </div>
 
                     <FileSelectInput

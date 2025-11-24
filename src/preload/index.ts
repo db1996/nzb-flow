@@ -31,6 +31,9 @@ const api = {
     openFileInExplorer: (path: string) =>
         electronAPI.ipcRenderer.invoke('open-file-in-explorer', path),
 
+    saveFile: async (filePath: string, content: string) =>
+        electronAPI.ipcRenderer.invoke('save-file', filePath, content),
+
     generateEmptyTask: (profileId?: string, files?: string[]) =>
         electronAPI.ipcRenderer.invoke('generate-empty-task', {
             profileId: profileId,

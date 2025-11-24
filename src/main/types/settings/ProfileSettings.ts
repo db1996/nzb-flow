@@ -14,5 +14,25 @@ export const ProfileSettingsYupSchema = yup.object({
     name: yup.string().default('New Profile'),
     isDefault: yup.boolean().default(false),
     taskSettings: TaskSettingsYupSchema.default(() => TaskSettingsYupSchema.cast({})),
-    contentTemplates: yup.object().default({}),
-}) as yup.Schema<ProfileSettings>
+    contentTemplates: yup
+        .object()
+        .test('boolean-map', 'contentTemplates must contain boolean values', (obj) => {
+            if (!obj || typeof obj !== 'object') {
+                return false
+            }
+            if (Object.keys(obj).length === 0) {
+                return true
+            }
+
+            for (const key in obj) {
+                if (typeof obj[key] !== 'boolean') {
+                    return false
+                }
+            }
+
+            return true
+        })
+        .strict()
+        .noUnknown(false)
+        .default({})
+}) as yup.ObjectSchema<ProfileSettings>

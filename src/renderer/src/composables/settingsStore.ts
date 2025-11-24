@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { AllSettings } from '@main/types/settings/AllSettings'
 import { ProfileSettings, ProfileSettingsYupSchema } from '@main/types/settings/ProfileSettings'
 import { FolderSettings, FolderSettingsYupSchema } from '@main/types/settings/FolderSettings'
@@ -43,6 +43,20 @@ export const useSettingsStore = defineStore('settings', () => {
     const formErrors = ref<Record<string, string>>({})
     const formInitialized = ref(false)
     const formIsSaving = ref(false)
+
+    watch(activeProfileEdit, () => {
+        console.log('Active profile edit changed:', activeProfileEdit.value)
+
+        contentTemplates.value.forEach((template) => {
+            if (!activeProfileEdit.value || activeProfileEdit.value === null) return
+
+            if (!activeProfileEdit.value.contentTemplates[template.id]) {
+                activeProfileEdit.value.contentTemplates[template.id] = false
+            }
+        })
+
+        console.log('Updated active profile edit content templates:', activeProfileEdit.value)
+    })
 
     const commands = ref<{
         rar: {
@@ -196,8 +210,11 @@ export const useSettingsStore = defineStore('settings', () => {
     }
 
     async function newContentTemplate() {
-        const newFolder: ContentTemplateSettings = ContentTemplateSettingsYupSchema.cast({})
-        activeContentTemplateEdit.value = newFolder
+        const newContentTemplate: ContentTemplateSettings = ContentTemplateSettingsYupSchema.cast(
+            {}
+        )
+
+        activeContentTemplateEdit.value = newContentTemplate
     }
 
     async function saveContentTemplate(contentTemplate: ContentTemplateSettings): Promise<void> {

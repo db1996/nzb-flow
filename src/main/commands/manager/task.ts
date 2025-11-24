@@ -8,6 +8,7 @@ import Settings from '../../classes/Settings'
 import path from 'path'
 import fs from 'fs'
 import { TaskVariableFile } from '../../types/settings/commands/TaskVariables'
+import { ContentTemplate } from '../../classes/ContentTemplate'
 
 export default class Task {
     public currentlyRunning: boolean = false
@@ -428,8 +429,32 @@ export default class Task {
             }
         }
 
-        this.replaceVariables()
+        if (!err) {
+            const profile = Settings.profiles.find((p) => p.id === this.taskConfig?.used_profile)
 
+            if (profile) {
+                for (const [templateId, enabled] of Object.entries(profile.contentTemplates)) {
+                    if (enabled) {
+                        const contentTemplateSettings = Settings.contentTemplates.find(
+                            (ct) => ct.id === templateId
+                        )
+                        if (contentTemplateSettings) {
+                            const contentTemplate = new ContentTemplate(contentTemplateSettings)
+                            const result = contentTemplate.getResult(this.taskConfig.taskVariables)
+
+                            this.taskConfig.contentTemplateData.push({
+                                contentTemplateId: templateId,
+                                content: result,
+                                custom_variables: {},
+                                fileName: contentTemplateSettings.fileName + '.txt'
+                            })
+                        }
+                    }
+                }
+            }
+        }
+
+        this.replaceVariables()
         // save to json file
         Settings.saveTask(this.taskConfig)
     }
@@ -599,5 +624,10 @@ export default class Task {
         this.taskConfig.rarParFolderPath = this.taskConfig.rarParFolderPath
             .split(`{${variable}}`)
             .join(value)
+
+        this.taskConfig.contentTemplateData.map((ct) => {
+            ct.fileName = ct.fileName.split(`{${variable}}`).join(value)
+            return ct
+        })
     }
 }

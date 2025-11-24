@@ -70,6 +70,7 @@ declare global {
             }>
             chooseFiles: () => Promise<string[]>
             chooseFolders: () => Promise<string[]>
+            saveFile: (filePath: string, content: string) => Promise<void>
 
             openFolderInExplorer: (path: string) => Promise<void>
             openFileInExplorer: (path: string) => Promise<void>

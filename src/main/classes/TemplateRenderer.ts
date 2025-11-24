@@ -2,12 +2,12 @@ import Handlebars from 'handlebars'
 import { BUILT_IN_VARIABLES_KEYS, TaskVariables } from '../types/settings/commands/TaskVariables'
 
 export class TemplateRenderer {
-    constructor() {
-        this.registerHelpers()
-    }
-
     /** Render the template string using task variables */
-    render(template: string, variables: TaskVariables, customVariables: Record<string, any>): string {
+    static render(
+        template: string,
+        variables: TaskVariables,
+        customVariables: Record<string, any>
+    ): string {
         const compiled = Handlebars.compile(template)
         return compiled({ ...variables, ...customVariables })
     }
@@ -29,7 +29,7 @@ export class TemplateRenderer {
     }
 
     /** Register custom helpers for sizes and times */
-    private registerHelpers() {
+    static registerHelpers() {
         // ----------- SIZE HELPERS -----------
         Handlebars.registerHelper('sizeHuman', (size: number) => {
             if (size == null) return ''
@@ -90,7 +90,6 @@ export class TemplateRenderer {
         Handlebars.registerHelper('totalMS', (ms: number) => {
             return ms == null ? '' : ms.toString()
         })
-
 
         // Modular HH:MM:SS
         Handlebars.registerHelper('timeH', (ms: number) => {

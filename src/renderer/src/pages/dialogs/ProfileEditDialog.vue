@@ -10,6 +10,7 @@ import DialogTitle from '@renderer/components/ui/dialog/DialogTitle.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import SelectInput from '@renderer/components/form/SelectInput.vue'
+import SwitchInput from '@renderer/components/form/SwitchInput.vue'
 
 const props = defineProps({
     disabled: {
@@ -62,6 +63,7 @@ const save = () => {
                     <TabsTrigger value="rar"> RAR </TabsTrigger>
                     <TabsTrigger value="par"> PAR </TabsTrigger>
                     <TabsTrigger value="nyuu"> Nyuu </TabsTrigger>
+                    <TabsTrigger value="content-templates"> Content Templates </TabsTrigger>
                     <slot name="tablist-after"></slot>
                 </TabsList>
                 <slot name="tabscontent"></slot>
@@ -117,6 +119,20 @@ const save = () => {
                         :form="settingsStore.activeProfileEdit.taskSettings.nyuuSettings"
                         :disabled="disabled"
                     />
+                </TabsContent>
+                <TabsContent value="content-templates">
+                    <div class="flex flex-col gap-4">
+                        <SwitchInput
+                            v-for="contentTemplate in settingsStore.contentTemplates"
+                            :key="contentTemplate.id"
+                            v-model="
+                                settingsStore.activeProfileEdit.contentTemplates[contentTemplate.id]
+                            "
+                            :label="contentTemplate.name"
+                            help="Enable content templates for this profile"
+                            :disabled="disabled"
+                        />
+                    </div>
                 </TabsContent>
             </Tabs>
         </DialogContent>

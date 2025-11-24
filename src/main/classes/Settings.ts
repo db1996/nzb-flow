@@ -183,7 +183,7 @@ export default class Settings {
                             validatedSettings,
                             diff
                         )
-                        console.log('migrated', validatedSettings)
+                        // console.log('migrated', validatedSettings)
                         fs.rmSync(filePath)
                         Settings.saveProfile(validatedSettings)
                     }
@@ -234,7 +234,7 @@ export default class Settings {
                         diff.changed.length > 0
                     ) {
                         console.log(
-                            'Profile file had invalid or missing entries, updating settings file.',
+                            'Folder file had invalid or missing entries, updating settings file.',
                             filePath,
                             diff
                         )
@@ -473,9 +473,9 @@ export default class Settings {
         }
 
         const validated = ProfileSettingsYupSchema.validateSync(profile, {
-            stripUnknown: true,
             abortEarly: false
         })
+
         fs.writeFileSync(filePath, JSON.stringify(validated, null, 4))
     }
 
