@@ -434,21 +434,20 @@ export default class Task {
 
             if (profile) {
                 for (const [templateId, enabled] of Object.entries(profile.contentTemplates)) {
-                    if (enabled) {
-                        const contentTemplateSettings = Settings.contentTemplates.find(
-                            (ct) => ct.id === templateId
-                        )
-                        if (contentTemplateSettings) {
-                            const contentTemplate = new ContentTemplate(contentTemplateSettings)
-                            const result = contentTemplate.getResult(this.taskConfig.taskVariables)
+                    const contentTemplateSettings = Settings.contentTemplates.find(
+                        (ct) => ct.id === templateId
+                    )
+                    if (contentTemplateSettings) {
+                        const contentTemplate = new ContentTemplate(contentTemplateSettings)
+                        const result = contentTemplate.getResult(this.taskConfig.taskVariables)
 
-                            this.taskConfig.contentTemplateData.push({
-                                contentTemplateId: templateId,
-                                content: result,
-                                custom_variables: {},
-                                fileName: contentTemplateSettings.fileName + '.txt'
-                            })
-                        }
+                        this.taskConfig.contentTemplateData.push({
+                            active: enabled,
+                            contentTemplateId: templateId,
+                            content: result,
+                            custom_variables: {},
+                            fileName: contentTemplateSettings.fileName + '.txt'
+                        })
                     }
                 }
             }

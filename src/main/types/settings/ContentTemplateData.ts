@@ -1,6 +1,7 @@
 import * as yup from 'yup'
 
 export type ContentTemplateData = {
+    active: boolean
     contentTemplateId: string
     content: string
     fileName: string
@@ -8,6 +9,7 @@ export type ContentTemplateData = {
 }
 
 export const ContentTemplateDataYupSchema: yup.Schema<ContentTemplateData> = yup.object({
+    active: yup.boolean().default(true),
     contentTemplateId: yup.string().default(''),
     content: yup.string().default(''),
     fileName: yup.string().default(''),
