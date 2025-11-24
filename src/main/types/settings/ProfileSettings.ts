@@ -11,7 +11,7 @@ export type ProfileSettings = {
 
 export const ProfileSettingsYupSchema = yup.object({
     id: yup.string().default(''),
-    name: yup.string().min(1).max(50).default('New Profile'),
+    name: yup.string().default('New Profile'),
     isDefault: yup.boolean().default(false),
     taskSettings: TaskSettingsYupSchema.default(() => TaskSettingsYupSchema.cast({})),
     contentTemplates: yup.object().default({}),
