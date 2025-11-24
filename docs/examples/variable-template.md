@@ -1,6 +1,6 @@
 # Template example
 
-```
+```handlebars
 Post Report for {{fname}}
 
 Original size: {{sizeHuman raw_size}}
