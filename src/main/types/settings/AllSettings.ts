@@ -10,6 +10,7 @@ export type AllSettings = {
     servers: ServerSettings[]
     rarparFolder: string
     nzbOutputFolder: string
+    nzbCreateSubfolders: boolean
     taskHistoryFolder: string
     profilesSettingsFolder: string
     folderMonitoringFolder: string
@@ -44,6 +45,7 @@ export const AllSettingsYupSchema = yup.object({
 
     rarparFolder: yup.string().default(''),
     nzbOutputFolder: yup.string().default(''),
+    nzbCreateSubfolders: yup.boolean().default(true),
     taskHistoryFolder: yup.string().default(''),
     profilesSettingsFolder: yup.string().default(''),
     folderMonitoringFolder: yup.string().default(''),

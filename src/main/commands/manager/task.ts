@@ -63,6 +63,8 @@ export default class Task {
             }
         }
 
+        this.taskConfig.taskVariables.jobname = this.taskConfig.name
+
         this.replaceVariables()
 
         return this
@@ -81,6 +83,13 @@ export default class Task {
         )
 
         this.taskConfig.nzbFile = path.join(Settings.nzbOutputPath, `${this.taskConfig.name}.nzb`)
+        if (Settings.allSettings.nzbCreateSubfolders) {
+            this.taskConfig.nzbFile = path.join(
+                Settings.nzbOutputPath,
+                this.taskConfig.name,
+                `${this.taskConfig.name}.nzb`
+            )
+        }
 
         // What to do if the folder or NZB file already exists
         if (Settings.allSettings.replaceExistingPostedFiles) {
@@ -143,6 +152,11 @@ export default class Task {
 
         if (!fs.existsSync(this.taskConfig.rarParFolderPath)) {
             fs.mkdirSync(this.taskConfig.rarParFolderPath, { recursive: true })
+        }
+
+        const nzbFolder = path.dirname(this.taskConfig.nzbFile)
+        if (!fs.existsSync(nzbFolder)) {
+            fs.mkdirSync(nzbFolder, { recursive: true })
         }
 
         // Get stats for raw files
@@ -478,6 +492,7 @@ export default class Task {
             }
         }
 
+        // Run Content templates
         if (!err) {
             const profile = Settings.profiles.find((p) => p.id === this.taskConfig?.used_profile)
 
@@ -497,7 +512,8 @@ export default class Task {
                             contentTemplateId: templateId,
                             content: result,
                             custom_variables: {},
-                            fileName: contentTemplateSettings.fileName + '.txt'
+                            fileName:
+                                contentTemplateSettings.fileName + contentTemplateSettings.fileType
                         })
                     }
                 }
@@ -505,6 +521,18 @@ export default class Task {
         }
 
         this.replaceVariables()
+
+        // save content templates to disk if needed
+        this.taskConfig.contentTemplateData.forEach((ct) => {
+            const settings = Settings.contentTemplates.find((s) => s.id === ct.contentTemplateId)
+            if (settings && settings.saveWithNzb) {
+                const contentTemplateFilePath = path.join(
+                    path.dirname(this.taskConfig!.nzbFile),
+                    ct.fileName
+                )
+                fs.writeFileSync(contentTemplateFilePath, ct.content, 'utf-8')
+            }
+        })
         // save to json file
         Settings.saveTask(this.taskConfig)
     }
@@ -589,6 +617,10 @@ export default class Task {
 
         if (this.taskConfig.taskVariables.fname !== null) {
             this.replaceVariableInConfigs('fname', this.taskConfig.taskVariables.fname)
+        }
+
+        if (this.taskConfig.name !== null) {
+            this.replaceVariableInConfigs('jobname', this.taskConfig.name)
         }
 
         if (this.taskConfig.taskVariables.rar_size !== null) {

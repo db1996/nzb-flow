@@ -125,26 +125,36 @@ watch(
                         </Button>
                     </template>
                 </FileSelectInput>
-                <FileSelectInput
-                    id="nzb-folder"
-                    label="NZB output folder"
-                    v-model="form.nzbOutputFolder"
-                    placeholder="Select NZB output folder"
-                >
-                    <template #append>
-                        <Button
-                            size="lg"
-                            variant="outline_default"
-                            @click="
-                                () =>
-                                    (form.nzbOutputFolder =
-                                        settingsStore.defaultFolders.nzbOutputFolder)
-                            "
-                        >
-                            Default
-                        </Button>
-                    </template>
-                </FileSelectInput>
+                <div class="grid grid-cols-[1fr_200px] gap-4">
+                    <FileSelectInput
+                        id="nzb-folder"
+                        label="NZB output folder"
+                        v-model="form.nzbOutputFolder"
+                        placeholder="Select NZB output folder"
+                    >
+                        <template #append>
+                            <Button
+                                size="lg"
+                                variant="outline_default"
+                                @click="
+                                    () =>
+                                        (form.nzbOutputFolder =
+                                            settingsStore.defaultFolders.nzbOutputFolder)
+                                "
+                            >
+                                Default
+                            </Button>
+                        </template>
+                    </FileSelectInput>
+                    <div>
+                      <SwitchInput
+                        id="nzb-subfolders"
+                        v-model="form.nzbCreateSubfolders"
+                        label="Use subfolders"
+                        help="When enabled, NZBs will be saved in subfolders named after the post."
+                      />
+                    </div>
+                </div>
                 <FileSelectInput
                     id="history-folder"
                     label="Task history folder"

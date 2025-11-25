@@ -17,6 +17,8 @@ export const TaskVariableFileYupSchema: yup.Schema<TaskVariableFile> = yup.objec
 
 export type TaskVariables = {
     fname: string | null
+    jobname: string | null
+
     raw_size: number | null // Size of choosen files and folders before RARing
     rar_size: number | null // Size of the RAR files
     rar_count: number | null // Number of RAR files created
@@ -37,6 +39,8 @@ export type TaskVariables = {
 
 export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
     fname: yup.string().nullable().default(null),
+    jobname: yup.string().nullable().default(null),
+
     raw_size: yup.number().nullable().default(null),
     rar_size: yup.number().nullable().default(null),
     rar_count: yup.number().nullable().default(null),
@@ -69,6 +73,7 @@ export const TaskVariablesYupSchema: yup.Schema<TaskVariables> = yup.object({
 
 export const BUILT_IN_VARIABLES_KEYS = new Set<string>([
     'fname',
+    'jobname',
 
     'raw_size',
 
@@ -97,6 +102,13 @@ export const CODEMIRROR_VARIABLES: CodeMirrorVariable[] = [
         loopable: false,
         description:
             'The name of the original file or folder selected for processing. This can be the folder or file name'
+    },
+    {
+        name: 'Job Name',
+        key: 'jobname',
+        loopable: false,
+        description:
+            'The name of the job being processed. This will be the same as the name of the rar/par2/nzb files unless manually changed.'
     },
     {
         name: 'Raw Size',
