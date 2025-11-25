@@ -4,8 +4,8 @@ import AppSidebarLayout from '@layout/app/AppSidebarLayout.vue'
 import { useAppearance } from '@renderer/composables/useAppearance'
 import { useTasksStore } from '@renderer/composables/useTasksStore'
 import { useUpdateStore } from '@renderer/composables/useUpdateStore'
-import ReleasenotesDialog from '@renderer/pages/dialogs/ReleasenotesDialog.vue'
-import UploadNewDialog from '@renderer/pages/dialogs/UploadNewDialog.vue'
+import ReleasenotesDialog from '@renderer/pages/editPartials/ReleasenotesDialog.vue'
+import TaskUploadNew from '@renderer/pages/editPartials/TaskUploadNew.vue'
 import { BreadcrumbItem } from '@renderer/types/navigation'
 import { PlusCircle } from 'lucide-vue-next'
 import { onMounted, useSlots } from 'vue'
@@ -47,7 +47,7 @@ onMounted(() => {
                     <slot name="actions" />
                 </div>
             </div>
-            <UploadNewDialog />
+            <TaskUploadNew />
 
             <slot
                 v-if="

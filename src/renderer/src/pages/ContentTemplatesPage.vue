@@ -10,7 +10,7 @@ import { useSettingsStore } from '@renderer/composables/settingsStore'
 import { Plus } from 'lucide-vue-next'
 import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import { ContentTemplateSettings } from '@main/types/settings/ContentTemplateSettings'
-import ContentTemplateEditDialog from './dialogs/ContentTemplateEditDialog.vue'
+import ContentTemplateEditDialog from './editPartials/ContentTemplateEdit.vue'
 
 const settingsStore = useSettingsStore()
 

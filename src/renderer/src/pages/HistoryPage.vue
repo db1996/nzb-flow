@@ -10,7 +10,7 @@ import TableCellHidden from '@renderer/components/table/TableCellHidden.vue'
 import { CheckCircle, Logs, OctagonX, Trash2 } from 'lucide-vue-next'
 import { Button } from '@components/ui/button'
 import { computed, onMounted, ref } from 'vue'
-import TaskSettingsLogDialog from './dialogs/TaskSettingsLogDialog.vue'
+import TaskLog from './editPartials/TaskLog.vue'
 import TableCellOpenFile from '@renderer/components/table/TableCellOpenFile.vue'
 import { timestampToLocale } from '@renderer/lib/utils'
 import Checkbox from '@renderer/components/ui/checkbox/Checkbox.vue'
@@ -62,7 +62,7 @@ function handleChange(taskId: string, isChecked: boolean) {
 
 <template>
     <AppLayout>
-        <TaskSettingsLogDialog />
+        <TaskLog />
 
         <Card v-if="tasksStore.activeTaskLog === null">
             <CardHeader>

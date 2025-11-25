@@ -15,7 +15,7 @@ import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import Checkbox from '@renderer/components/ui/checkbox/Checkbox.vue'
 import { ref } from 'vue'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
-import UploadEditApprovalDialog from './dialogs/UploadEditApprovalDialog.vue'
+import TaskEditApproval from './editPartials/TaskEditApproval.vue'
 import { TaskConfig } from '@main/types/settings/commands/taskSettings'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 
@@ -72,7 +72,7 @@ function getAddedBy(task: TaskConfig): string {
 
 <template>
     <AppLayout>
-        <UploadEditApprovalDialog />
+        <TaskEditApproval />
 
         <TooltipProvider>
             <Card v-if="tasksStore.activeTaskApprovalSettings == null">

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useTasksStore } from '@renderer/composables/useTasksStore'
-import TaskConfigEdit from './TaskConfigEdit.vue'
+import TaskConfigBase from './TaskConfigBase.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
 import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
 import { X } from 'lucide-vue-next'
@@ -16,7 +16,7 @@ const addToApprovals = () => {
 </script>
 
 <template>
-    <TaskConfigEdit
+    <TaskConfigBase
         v-if="tasksStore.activeTaskConfig !== null && !tasksStore.activeTaskConfigIsEdit"
         :open="tasksStore.activeTaskConfig !== null && !tasksStore.activeTaskConfigIsEdit"
         :form="tasksStore.activeTaskConfig"
@@ -38,5 +38,5 @@ const addToApprovals = () => {
                 <Button variant="secondary" @click="tasksStore.removeActiveTask()"> <X /> </Button>
             </div>
         </template>
-    </TaskConfigEdit>
+    </TaskConfigBase>
 </template>

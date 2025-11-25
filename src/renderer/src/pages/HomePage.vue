@@ -10,12 +10,12 @@ import TableCellHidden from '@renderer/components/table/TableCellHidden.vue'
 import { CheckCircle, Logs, OctagonX, Pencil, Trash2 } from 'lucide-vue-next'
 import { Button } from '@components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
-import TaskSettingsLogDialog from './dialogs/TaskSettingsLogDialog.vue'
+import TaskLog from './editPartials/TaskLog.vue'
 import TableCellOpenFile from '@renderer/components/table/TableCellOpenFile.vue'
 import TableCellCopy from '@renderer/components/table/TableCellCopy.vue'
 import { timestampToLocale } from '@renderer/lib/utils'
 import TableCellTaskStatus from '@renderer/components/table/TableCellTaskStatus.vue'
-import UploadEditQueueDialog from './dialogs/UploadEditQueueDialog.vue'
+import TaskEditQueue from './editPartials/TaskEditQueue.vue'
 import { CommandStep } from '@main/enums/CommandStep'
 
 const tasksStore = useTasksStore()
@@ -28,8 +28,8 @@ const setEditTask = (task: any) => {
 
 <template>
     <AppLayout>
-        <TaskSettingsLogDialog />
-        <UploadEditQueueDialog />
+        <TaskLog />
+        <TaskEditQueue />
         <template v-if="tasksStore.activeTaskConfig === null && tasksStore.activeTaskLog === null">
             <Card>
                 <CardHeader>

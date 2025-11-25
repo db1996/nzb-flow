@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useTasksStore } from '@renderer/composables/useTasksStore'
-import TaskConfigEdit from './TaskConfigEdit.vue'
+import TaskConfigBase from './TaskConfigBase.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
 import { X } from 'lucide-vue-next'
 import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
@@ -13,7 +13,7 @@ const openFile = (path: string) => {
 </script>
 
 <template>
-    <TaskConfigEdit
+    <TaskConfigBase
         v-if="tasksStore.activeTaskLog !== null"
         :open="tasksStore.activeTaskLog !== null"
         :form="tasksStore.activeTaskLog"
@@ -33,5 +33,5 @@ const openFile = (path: string) => {
                 </Button>
             </div>
         </template>
-    </TaskConfigEdit>
+    </TaskConfigBase>
 </template>

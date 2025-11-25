@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useTasksStore } from '@renderer/composables/useTasksStore'
 import Button from '@renderer/components/ui/button/Button.vue'
-import TaskConfigEdit from './TaskConfigEdit.vue'
+import TaskConfigBase from './TaskConfigBase.vue'
 import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
 import { X } from 'lucide-vue-next'
 
@@ -24,7 +24,7 @@ async function generateNewWithProfile(profileId: string) {
 </script>
 
 <template>
-    <TaskConfigEdit
+    <TaskConfigBase
         v-if="tasksStore.activeTaskConfig !== null && tasksStore.activeTaskConfigIsEdit"
         :open="tasksStore.activeTaskConfig !== null && tasksStore.activeTaskConfigIsEdit"
         :form="tasksStore.activeTaskConfig"
@@ -43,5 +43,5 @@ async function generateNewWithProfile(profileId: string) {
                 </Button>
             </div>
         </template>
-    </TaskConfigEdit>
+    </TaskConfigBase>
 </template>

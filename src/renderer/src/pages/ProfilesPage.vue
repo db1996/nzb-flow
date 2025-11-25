@@ -8,7 +8,7 @@ import TableCell from '@renderer/components/ui/table/TableCell.vue'
 import { Button } from '@components/ui/button'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 import { ProfileSettings } from '@main/types/settings/ProfileSettings'
-import ProfileEditDialog from './dialogs/ProfileEditDialog.vue'
+import ProfileEditDialog from './editPartials/ProfileEdit.vue'
 import { Plus } from 'lucide-vue-next'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
 
