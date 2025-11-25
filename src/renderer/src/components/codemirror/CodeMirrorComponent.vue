@@ -9,6 +9,7 @@ import { getLanguageExtension, SupportedLanguages } from './languageUtils'
 import SelectInput, { Option } from '../form/SelectInput.vue'
 import { EditorView } from '@codemirror/view'
 import SidebarContainer from './SidebarContainer.vue'
+import Label from '../ui/label/Label.vue'
 
 const props = defineProps({
     modelValue: {
@@ -110,7 +111,13 @@ function insertTextAtCursor(text: string) {
             :options="languagesList"
         />
     </div>
-    <div class="grid grid-cols-[3fr_270px] gap-2">
+    <div
+        class="grid gap-2"
+        :class="{
+            'grid-cols-1': !variables,
+            'grid-cols-[1fr_270px]': variables
+        }"
+    >
         <codemirror
             ref="codeEditor"
             v-model="proxyValue"
@@ -123,6 +130,7 @@ function insertTextAtCursor(text: string) {
             :extensions="extensionComp"
         />
         <div v-if="variables" style="height: 400px; overflow-y: auto; overflow-x: clip">
+            <Label class="mb-2">Use variables</Label>
             <SidebarContainer
                 :variables="variables"
                 @select="template => insertTextAtCursor(template)"

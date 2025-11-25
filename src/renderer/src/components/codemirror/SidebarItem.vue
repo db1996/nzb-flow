@@ -64,10 +64,7 @@ function selectVariant(tpl: string) {
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p class="text-sm">{{ variable.description }}</p>
-                                    <p
-                                        v-if="variable.info"
-                                        class="text-xs mt-1 text-muted-foreground"
-                                    >
+                                    <p v-if="variable.info" class="text-xs mt-1">
                                         {{ variable.info }}
                                     </p>
                                 </TooltipContent>
