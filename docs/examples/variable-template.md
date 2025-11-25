@@ -1,7 +1,7 @@
 # Template example
 
 ```handlebars
-Post Report for {{fname}}
+Post Report for {{jobname}}
 
 Original size: {{sizeHuman raw_size}}
 RAR size: {{sizeHuman rar_size}} ({{rar_count}} files, took {{timeHuman rar_time}})
