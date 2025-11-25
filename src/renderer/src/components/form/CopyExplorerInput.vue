@@ -4,7 +4,7 @@ import { Copy, FolderOpen } from 'lucide-vue-next'
 import { InputGroup, InputGroupInput } from '@components/ui/input-group'
 import Label from '@renderer/components/ui/label/Label.vue'
 import { ButtonGroup, ButtonGroupText } from '@components/ui/button-group'
-import { ref } from 'vue'
+import { copyToClipboard } from '@renderer/lib/utils'
 
 const props = defineProps({
     path: {
@@ -36,21 +36,7 @@ const openFile = (path: string) => {
     window.api.openFileInExplorer(path)
 }
 
-const flashCopied = ref(false)
-const copiedSuccess = ref(false)
-
-async function copyToClipboard(str: string) {
-    const res = await window.api.copy(str)
-    if (res) {
-        copiedSuccess.value = true
-    } else {
-        copiedSuccess.value = false
-    }
-    flashCopied.value = true
-    setTimeout(() => {
-        flashCopied.value = false
-    }, 1500)
-}
+const copyUtils = copyToClipboard()
 </script>
 <template>
     <div class="grid w-full grid-cols-1 gap-2">
@@ -61,13 +47,13 @@ async function copyToClipboard(str: string) {
                     :disabled="disableCopyButton"
                     size="lg"
                     :variant="
-                        flashCopied
-                            ? copiedSuccess
+                        copyUtils.flashCopied.value
+                            ? copyUtils.copiedSuccess.value
                                 ? 'outline_success'
                                 : 'outline_destructive'
                             : 'secondary'
                     "
-                    @click="copyToClipboard(path)"
+                    @click="copyUtils.copy(path)"
                 >
                     <Copy />
                 </Button>
