@@ -32,7 +32,7 @@ const setActiveFolder = (folder: FolderSettings, active: boolean) => {
     <AppLayout>
         <FolderEditDialog @close="settingsStore.activeFolderEdit = null" />
 
-        <Card>
+        <Card v-if="settingsStore.activeFolderEdit === null">
             <CardHeader>
                 <CardTitle>Folders to monitor</CardTitle>
             </CardHeader>
@@ -44,8 +44,7 @@ const setActiveFolder = (folder: FolderSettings, active: boolean) => {
                         <TableHead>Active</TableHead>
                         <TableHead class="w-[270px]"
                             >#
-                            <Button class="w-8" @click="settingsStore.newFolder">
-                                <Plus /> </Button
+                            <Button class="w-8" @click="settingsStore.newFolder"> <Plus /> </Button
                         ></TableHead>
                     </template>
                     <template #body>

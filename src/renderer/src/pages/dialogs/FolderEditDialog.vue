@@ -1,12 +1,17 @@
 <script lang="ts" setup>
-import { Dialog, DialogContent, DialogHeader } from '@components/ui/dialog'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
-import DialogTitle from '@renderer/components/ui/dialog/DialogTitle.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import FileSelectInput from '@renderer/components/form/FileSelectInput.vue'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
 import SelectInput from '@renderer/components/form/SelectInput.vue'
+import CardHeader from '@renderer/components/ui/card/CardHeader.vue'
+import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
+import { Copy, X } from 'lucide-vue-next'
+import CardContent from '@renderer/components/ui/card/CardContent.vue'
+import { copyToClipboard } from '@renderer/lib/utils'
+import Card from '@renderer/components/ui/card/Card.vue'
 
 const props = defineProps({
     disabled: {
@@ -38,27 +43,41 @@ const updatedFolder = (data: { path: string; basename: string }) => {
 
     console.log('opened folder:', data)
 }
+const copyUtils = copyToClipboard()
 </script>
 
 <template>
-    <Dialog
-        :open="settingsStore.activeFolderEdit !== null"
-        class="overflow-auto"
-        @update:open="emits('close')"
-    >
-        <DialogContent
-            class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col"
-            v-if="settingsStore.activeFolderEdit !== null"
-        >
-            <DialogHeader>
-                <div class="flex justify-between mr-8">
-                    <DialogTitle>Folder settings</DialogTitle>
-                    <div class="flex gap-4 align-items-center">
-                        <Button variant="default" @click="save"> Save folder </Button>
-                    </div>
+    <Card v-if="settingsStore.activeFolderEdit">
+        <CardHeader>
+            <div class="flex gap-2 justify-between">
+                <CardTitle
+                    >Folder monitoring Settings -
+                    {{ settingsStore.activeFolderEdit.name }}</CardTitle
+                >
+                <div class="flex gap-2 align-items-center">
+                    <Button variant="default" @click="save"> Save folder </Button>
+                    <Button variant="secondary" @click="emits('close')"> <X /> </Button>
                 </div>
-            </DialogHeader>
-
+            </div>
+            <CardDescription>
+                ID:
+                <code class="mx-1 mt-0 text-xs text-gray-500 italic"
+                    >{{ settingsStore.activeFolderEdit.id }}
+                </code>
+                <Copy
+                    class="inline cursor-pointer"
+                    :class="{
+                        'text-green-500':
+                            copyUtils.flashCopied.value && copyUtils.copiedSuccess.value,
+                        'text-red-500':
+                            copyUtils.flashCopied.value && !copyUtils.copiedSuccess.value
+                    }"
+                    :size="14"
+                    @click="copyUtils.copy(settingsStore.activeFolderEdit.id)"
+                />
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
             <FileSelectInput
                 v-model="settingsStore.activeFolderEdit.fullPath"
                 label="Watched folder path"
@@ -78,6 +97,7 @@ const updatedFolder = (data: { path: string; basename: string }) => {
                     }))
                 "
                 :disable-clear="true"
+                class="mb-4"
             />
             <TextInput
                 v-model="settingsStore.activeFolderEdit.name"
@@ -133,6 +153,6 @@ const updatedFolder = (data: { path: string; basename: string }) => {
                     help="Delete files from the watched folder after they have been uploaded."
                 />
             </div>
-        </DialogContent>
-    </Dialog>
+        </CardContent>
+    </Card>
 </template>
