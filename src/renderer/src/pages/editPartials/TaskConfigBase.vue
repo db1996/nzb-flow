@@ -303,27 +303,4 @@ function saveToFile(content: ContentTemplateData) {
             </Tabs>
         </CardContent>
     </Card>
-    <!-- <Dialog :open="form !== null" class="overflow-auto" @update:open="emits('close')">
-        <DialogContent
-            class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col"
-            v-if="form !== null"
-        >
-            <DialogHeader>
-                <slot name="header"></slot>
-                <DialogDescription
-                    >Task ID: {{ form.id }}
-                    <Copy
-                        @click="copyUtils.copy(form.id)"
-                        :class="{
-                            'text-green-500':
-                                copyUtils.flashCopied.value && copyUtils.copiedSuccess.value
-                        }"
-                        class="cursor-pointer inline-block"
-                        :size="12"
-                    />
-                </DialogDescription>
-            </DialogHeader>
-
-        </DialogContent>
-    </Dialog> -->
 </template>
