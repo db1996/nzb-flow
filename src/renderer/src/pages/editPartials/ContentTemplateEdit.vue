@@ -137,10 +137,10 @@ const variables = ref(CODEMIRROR_VARIABLES)
                         />
                     </div>
                     <Label class="mb-2">Content</Label>
-                    <span class="ms-1 mt-0 text-xs text-gray-500 italic mb-2"
+                    <!-- <span class="ms-1 mt-0 text-xs text-gray-500 italic mb-2"
                         >You can use custom variables like <code v-html="'{{thisVariable}}'" />. You
                         will be asked to fill these in manually per post
-                    </span>
+                    </span> -->
                     <br />
                     <Button
                         as="a"
