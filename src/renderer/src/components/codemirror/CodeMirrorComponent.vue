@@ -60,6 +60,7 @@ const config = ref({
     language: props.default_lang,
     theme: useTheme().theme.value === Theme.Dark ? 'oneDark' : 'default'
 })
+const codeEditor = ref<InstanceType<typeof Codemirror> | null>(null)
 
 const supportedLanguages = ref<LanguageInfo[]>(SupportedLanguages)
 
@@ -87,6 +88,16 @@ const extensionComp = computed(() => {
 
     return extensions
 })
+function insertTextAtCursor(text: string) {
+    const editor = EditorView.findFromDOM(codeEditor.value?.$el as HTMLElement)
+    if (!editor) return
+
+    const cursorPos = editor.state.selection.main.head
+
+    editor.dispatch({
+        changes: { from: cursorPos, to: cursorPos, insert: text }
+    })
+}
 </script>
 <template>
     <div class="grid grid-cols-3">
@@ -99,8 +110,9 @@ const extensionComp = computed(() => {
             :options="languagesList"
         />
     </div>
-    <div class="grid grid-cols-[3fr_1fr] gap-2">
+    <div class="grid grid-cols-[3fr_270px] gap-2">
         <codemirror
+            ref="codeEditor"
             v-model="proxyValue"
             :placeholder="placeholder"
             :disabled="disabled"
@@ -113,7 +125,7 @@ const extensionComp = computed(() => {
         <div v-if="variables" style="height: 400px; overflow-y: auto; overflow-x: clip">
             <SidebarContainer
                 :variables="variables"
-                @select="template => (proxyValue += template)"
+                @select="template => insertTextAtCursor(template)"
             />
         </div>
     </div>

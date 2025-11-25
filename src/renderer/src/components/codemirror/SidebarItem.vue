@@ -7,6 +7,13 @@ import {
 } from '@components/ui/accordion'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@components/ui/tooltip'
 import type { CodeMirrorVariable } from '@renderer/types/codemirror'
+import { Item, ItemContent } from '@components/ui/item'
+import Button from '../ui/button/Button.vue'
+import { ChevronDown } from 'lucide-vue-next'
+import Table from '../table/Table.vue'
+import TableRow from '../ui/table/TableRow.vue'
+import TableHead from '../ui/table/TableHead.vue'
+import TableCell from '../ui/table/TableCell.vue'
 
 const props = defineProps<{
     variable: CodeMirrorVariable
@@ -30,63 +37,87 @@ function selectVariant(tpl: string) {
 </script>
 
 <template>
-    <Accordion type="single" collapsible class="border rounded-lg bg-background">
+    <Accordion type="single" collapsible>
         <AccordionItem :value="variable.key">
-            <!-- Header -->
-            <AccordionTrigger
-                class="flex justify-between items-center px-3 py-2 hover:bg-accent rounded-lg"
-            >
-                <div class="flex items-center gap-2">
-                    <span class="font-medium">{{ variable.name }}</span>
+            <Item variant="outline" class="py-0">
+                <ItemContent>
+                    <div class="flex justify-between items-center relative">
+                        <div class="flex items-center gap-2">
+                            <Button variant="outline_info" size="xs" class="p-3" @click="selectBase"
+                                >Insert</Button
+                            >
+                            <span>{{ variable.name }}</span>
+                        </div>
+                        <div class="h-[35px]">
+                            <AccordionTrigger v-if="variable.variants" class="p-0">
+                                <template #icon>
+                                    <Button variant="ghost" size="xs" class="p-0"
+                                        ><ChevronDown
+                                    /></Button>
+                                </template>
+                            </AccordionTrigger>
+                        </div>
+                        <div>
+                            <Tooltip v-if="variable.description">
+                                <TooltipTrigger>
+                                    <span class="text-xs text-muted-foreground">?</span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p class="text-sm">{{ variable.description }}</p>
+                                    <p
+                                        v-if="variable.info"
+                                        class="text-xs mt-1 text-muted-foreground"
+                                    >
+                                        {{ variable.info }}
+                                    </p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
+                    </div>
 
-                    <!-- Loopable indicator -->
-                    <span
-                        v-if="variable.loopable"
-                        class="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-600 rounded-full"
-                    >
-                        loopable
-                    </span>
-                </div>
+                    <AccordionContent class="">
+                        <span class="ms-1 mt-0 text-xs text-gray-500 italic">{{
+                            getBaseTemplate()
+                        }}</span>
 
-                <!-- Info tooltip -->
-                <Tooltip v-if="variable.description">
-                    <TooltipTrigger>
-                        <span class="text-xs text-muted-foreground">?</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p class="text-sm">{{ variable.description }}</p>
-                        <p v-if="variable.info" class="text-xs mt-1 text-muted-foreground">
-                            {{ variable.info }}
+                        <p class="ms-1 mt-0 text-xs text-gray-500 italic">
+                            {{ variable.description }}
                         </p>
-                    </TooltipContent>
-                </Tooltip>
-            </AccordionTrigger>
 
-            <!-- Content -->
-            <AccordionContent class="px-3 pb-3 space-y-2">
-                <!-- Base variable -->
-                <button
-                    @click="selectBase"
-                    class="w-full text-left px-2 py-1 rounded hover:bg-accent text-sm"
-                >
-                    Insert: <span class="font-mono">{{ getBaseTemplate() }}</span>
-                </button>
-
-                <!-- Variants -->
-                <div v-if="variable.variants" class="pl-2 space-y-1 pt-1 border-l">
-                    <div class="text-xs font-semibold text-muted-foreground">Variants</div>
-
-                    <button
-                        v-for="variant in variable.variants"
-                        :key="variant.template"
-                        @click="selectVariant(variant.template)"
-                        class="w-full text-left px-2 py-1 rounded hover:bg-accent text-sm"
-                    >
-                        {{ variant.name }} —
-                        <span class="font-mono text-xs">{{ variant.template }}</span>
-                    </button>
-                </div>
-            </AccordionContent>
+                        <div v-if="variable.variants" class="mt-2 ms-2">
+                            <div class="text-xs font-semibold text-muted-foreground mb-2">
+                                Variants
+                            </div>
+                            <div class="text-xs font-semibold text-muted-foreground mb-2">
+                                Click the rows to insert
+                            </div>
+                            <Table>
+                                <template #head>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Template</TableHead>
+                                </template>
+                                <template #body>
+                                    <TableRow
+                                        v-for="variant in variable.variants"
+                                        :key="variant.template"
+                                        class="cursor-pointer"
+                                        @click="selectVariant(variant.template)"
+                                    >
+                                        <TableCell class="font-medium">{{
+                                            variant.name
+                                        }}</TableCell>
+                                        <TableCell>
+                                            <span class="font-mono text-xs">{{
+                                                variant.template
+                                            }}</span>
+                                        </TableCell>
+                                    </TableRow>
+                                </template>
+                            </Table>
+                        </div>
+                    </AccordionContent>
+                </ItemContent>
+            </Item>
         </AccordionItem>
     </Accordion>
 </template>
