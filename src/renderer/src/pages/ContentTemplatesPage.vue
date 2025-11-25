@@ -35,14 +35,13 @@ const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
                         target="_blank"
                         href="https://github.com/db1996/nzb-flow/blob/main/docs/Content%20Templates.md"
                         variant="link"
-                        class="inline m-0 p-0"
+                        class="inline m-0 p-0 h-[0px]"
                         >Check the content template docs here</Button
                     >
                 </div>
                 <CardDescription>
                     With content templates, you can generate files with variables from the post,
-                    either include them in the post, save them to disk, or just show them in the
-                    logs.
+                    either include them in the post, save them to disk, or show them in the logs.
                 </CardDescription>
             </CardHeader>
             <CardContent>

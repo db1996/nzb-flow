@@ -15,6 +15,7 @@ import TooltipProvider from '@renderer/components/ui/tooltip/TooltipProvider.vue
 import Tooltip from '@renderer/components/ui/tooltip/Tooltip.vue'
 import TooltipTrigger from '@renderer/components/ui/tooltip/TooltipTrigger.vue'
 import TooltipContent from '@renderer/components/ui/tooltip/TooltipContent.vue'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 
 const settingsStore = useSettingsStore()
 
@@ -35,6 +36,9 @@ const setActiveFolder = (folder: FolderSettings, active: boolean) => {
         <Card v-if="settingsStore.activeFolderEdit === null">
             <CardHeader>
                 <CardTitle>Folders to monitor</CardTitle>
+                <CardDescription>
+                    Monitor folders to automatically queue new content for uploading.
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <Table :columns="4">

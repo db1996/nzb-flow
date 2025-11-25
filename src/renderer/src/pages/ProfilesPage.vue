@@ -11,6 +11,7 @@ import { ProfileSettings } from '@main/types/settings/ProfileSettings'
 import ProfileEditDialog from './editPartials/ProfileEdit.vue'
 import { Plus } from 'lucide-vue-next'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 
 const settingsStore = useSettingsStore()
 
@@ -52,10 +53,13 @@ async function setDefaultProfile(id: string, isDefault: boolean) {
                         target="_blank"
                         href="https://github.com/db1996/nzb-flow/blob/main/docs/profiles.md"
                         variant="link"
-                        class="inline m-0 p-0"
+                        class="inline m-0 p-0 h-[0px]"
                         >Check the profiles docs here</Button
                     >
                 </div>
+                <CardDescription>
+                    Manage your posting profiles used for uploading NZB files.
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <Table :columns="4">

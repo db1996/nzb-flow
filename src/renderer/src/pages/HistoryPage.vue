@@ -9,17 +9,22 @@ import TableCell from '@renderer/components/ui/table/TableCell.vue'
 import TableCellHidden from '@renderer/components/table/TableCellHidden.vue'
 import { CheckCircle, Logs, OctagonX, Trash2 } from 'lucide-vue-next'
 import { Button } from '@components/ui/button'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import TaskLog from './editPartials/TaskLog.vue'
 import TableCellOpenFile from '@renderer/components/table/TableCellOpenFile.vue'
 import { timestampToLocale } from '@renderer/lib/utils'
 import Checkbox from '@renderer/components/ui/checkbox/Checkbox.vue'
 import { CommandStep } from '@main/enums/CommandStep'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 
 const tasksStore = useTasksStore()
 
 onMounted(async () => {
     tasksStore.loadHistoryTasks()
+})
+
+onBeforeUnmount(() => {
+    tasksStore.activeTaskLog = null
 })
 
 const selectedTasks = ref<string[]>([])
@@ -67,10 +72,13 @@ function handleChange(taskId: string, isChecked: boolean) {
         <Card v-if="tasksStore.activeTaskLog === null">
             <CardHeader>
                 <CardTitle>Upload history</CardTitle>
+                <CardDescription>
+                    Here you can see the history of your completed and failed upload tasks.
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button
-                    class="mr-1 text-red-600 hover:text-red-600"
+                    class="mr-1 text-red-600 hover:text-red-600 mb-2"
                     size="sm"
                     :variant="selectedTasks.length === 0 ? 'outline' : 'outline_destructive'"
                     @click="tasksStore.deleteHistoryTasks(selectedTasks)"

@@ -125,7 +125,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                             label="File name"
                             :disabled="disabled"
                             class="mb-4"
-                            help="'{jobname}' is the name of the nzb, rar files, par files and post name if you do not obfuscate. <br>{fname} is the name of the first file or folder in the post"
+                            help="{jobname} is the name of the nzb, rar files, par files and post name if you do not obfuscate. <br>{fname} is the name of the first file or folder in the post"
                         />
 
                         <TextInput

@@ -17,6 +17,7 @@ import { timestampToLocale } from '@renderer/lib/utils'
 import TableCellTaskStatus from '@renderer/components/table/TableCellTaskStatus.vue'
 import TaskEditQueue from './editPartials/TaskEditQueue.vue'
 import { CommandStep } from '@main/enums/CommandStep'
+import { onBeforeUnmount } from 'vue'
 
 const tasksStore = useTasksStore()
 
@@ -24,6 +25,10 @@ const setEditTask = (task: any) => {
     tasksStore.activeTaskConfig = task
     tasksStore.activeTaskConfigIsEdit = true
 }
+
+onBeforeUnmount(() => {
+    tasksStore.activeTaskLog = null
+})
 </script>
 
 <template>
