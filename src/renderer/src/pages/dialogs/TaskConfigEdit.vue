@@ -5,7 +5,6 @@ import RarSettings from '../_partials/RarSettings.vue'
 import ParSettings from '../_partials/ParSettings.vue'
 import NyuuSettings from '../_partials/NyuuSettings.vue'
 import TextareaInput from '@renderer/components/form/TextareaInput.vue'
-import { Dialog, DialogContent, DialogHeader } from '@components/ui/dialog'
 import { PropType } from 'vue'
 import { TaskConfig } from '@main/types/settings/commands/taskSettings'
 import CommandData from '@main/types/settings/commands/commandData'
@@ -13,11 +12,14 @@ import SelectInput from '@renderer/components/form/SelectInput.vue'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
 import Button from '@renderer/components/ui/button/Button.vue'
 import CopyExplorerInput from '@renderer/components/form/CopyExplorerInput.vue'
-import DialogDescription from '@renderer/components/ui/dialog/DialogDescription.vue'
 import { Copy, Save } from 'lucide-vue-next'
 import { copyToClipboard } from '@renderer/lib/utils'
 import { ContentTemplateData } from '@main/types/settings/ContentTemplateData'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
+import CardHeader from '@renderer/components/ui/card/CardHeader.vue'
+import Card from '@renderer/components/ui/card/Card.vue'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
+import CardContent from '@renderer/components/ui/card/CardContent.vue'
 
 const settingsStore = useSettingsStore()
 
@@ -58,7 +60,7 @@ function addFolders() {
     })
 }
 
-const copyUtil = copyToClipboard()
+const copyUtils = copyToClipboard()
 
 function saveToFile(content: ContentTemplateData) {
     window.api.saveFile(content.fileName, content.content).then(() => {
@@ -69,26 +71,28 @@ function saveToFile(content: ContentTemplateData) {
 </script>
 
 <template>
-    <Dialog :open="form !== null" class="overflow-auto" @update:open="emits('close')">
-        <DialogContent
-            class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col"
-            v-if="form !== null"
-        >
-            <DialogHeader>
+    <Card v-if="form !== null">
+        <CardHeader>
+            <div class="flex gap-2 justify-between">
                 <slot name="header"></slot>
-                <DialogDescription
-                    >Task ID: {{ form.id }}
-                    <Copy
-                        @click="copyUtil.copy(form.id)"
-                        :class="{
-                            'text-green-500':
-                                copyUtil.flashCopied.value && copyUtil.copiedSuccess.value
-                        }"
-                        class="cursor-pointer inline-block"
-                        :size="12"
-                    />
-                </DialogDescription>
-            </DialogHeader>
+            </div>
+            <CardDescription>
+                ID:
+                <code class="mx-1 mt-0 text-xs text-gray-500 italic">{{ form.id }} </code>
+                <Copy
+                    class="inline cursor-pointer"
+                    :class="{
+                        'text-green-500':
+                            copyUtils.flashCopied.value && copyUtils.copiedSuccess.value,
+                        'text-red-500':
+                            copyUtils.flashCopied.value && !copyUtils.copiedSuccess.value
+                    }"
+                    :size="14"
+                    @click="copyUtils.copy(form.id)"
+                />
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
             <SelectInput
                 :disabled="disabled"
                 v-model="form.used_profile"
@@ -101,7 +105,7 @@ function saveToFile(content: ContentTemplateData) {
                 :disable-clear="true"
                 @update:model-value="updateModelValue($event)"
             />
-            <Tabs default-value="posting" class="flex flex-col gap-4">
+            <Tabs default-value="posting" class="flex flex-col gap-4 mt-4">
                 <TabsList class="grid w-full grid-cols-7 grid-rows-2 h-18">
                     <slot name="tablist-before"></slot>
                     <TabsTrigger value="posting">Posting</TabsTrigger>
@@ -276,13 +280,13 @@ function saveToFile(content: ContentTemplateData) {
                             <div class="flex flex-col gap-2 justify-start">
                                 <Button
                                     :variant="
-                                        copyUtil.flashCopied.value
-                                            ? copyUtil.copiedSuccess.value
+                                        copyUtils.flashCopied.value
+                                            ? copyUtils.copiedSuccess.value
                                                 ? 'outline_success'
                                                 : 'outline_destructive'
                                             : 'secondary'
                                     "
-                                    @click="copyUtil.copy(contentTemplateData.content)"
+                                    @click="copyUtils.copy(contentTemplateData.content)"
                                 >
                                     <Copy /> Copy content
                                 </Button>
@@ -297,6 +301,29 @@ function saveToFile(content: ContentTemplateData) {
                     </div>
                 </TabsContent>
             </Tabs>
+        </CardContent>
+    </Card>
+    <!-- <Dialog :open="form !== null" class="overflow-auto" @update:open="emits('close')">
+        <DialogContent
+            class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col"
+            v-if="form !== null"
+        >
+            <DialogHeader>
+                <slot name="header"></slot>
+                <DialogDescription
+                    >Task ID: {{ form.id }}
+                    <Copy
+                        @click="copyUtils.copy(form.id)"
+                        :class="{
+                            'text-green-500':
+                                copyUtils.flashCopied.value && copyUtils.copiedSuccess.value
+                        }"
+                        class="cursor-pointer inline-block"
+                        :size="12"
+                    />
+                </DialogDescription>
+            </DialogHeader>
+
         </DialogContent>
-    </Dialog>
+    </Dialog> -->
 </template>

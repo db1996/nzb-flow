@@ -22,15 +22,15 @@ withDefaults(defineProps<Props>(), {
 })
 
 const appearanceStore = useAppearance()
-const taskStore = useTasksStore()
+const tasksStore = useTasksStore()
 const slots = useSlots()
 
 onMounted(() => {
     const updateStore = useUpdateStore()
     updateStore.checkUpdateOnStartup()
 
-    taskStore.loadApprovalTasks()
-    taskStore.loadQueueStatus()
+    tasksStore.loadApprovalTasks()
+    tasksStore.loadQueueStatus()
 })
 </script>
 
@@ -47,17 +47,22 @@ onMounted(() => {
                     <slot name="actions" />
                 </div>
             </div>
+            <UploadNewDialog />
 
-            <slot />
+            <slot
+                v-if="
+                    tasksStore.activeTaskConfig === null ||
+                    (tasksStore.activeTaskConfig !== null && tasksStore.activeTaskConfigIsEdit)
+                "
+            />
         </div>
     </AppSidebarLayout>
     <Toaster :theme="(appearanceStore.appearance.value as Theme)" />
-    <UploadNewDialog />
     <ConfirmDialog />
     <ReleasenotesDialog />
 
     <div
-        v-if="taskStore.isDraggingOver"
+        v-if="tasksStore.isDraggingOver"
         class="fixed inset-0 z-500000 bg-black opacity-70 flex items-center justify-center pointer-events-none"
     >
         <PlusCircle :size="120" class="text-white animate-bounce pointer-events-none" />

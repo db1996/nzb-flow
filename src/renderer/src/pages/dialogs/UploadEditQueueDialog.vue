@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { useTasksStore } from '@renderer/composables/useTasksStore'
-import { DialogTitle } from '@components/ui/dialog'
 import Button from '@renderer/components/ui/button/Button.vue'
 import TaskConfigEdit from './TaskConfigEdit.vue'
+import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
+import { X } from 'lucide-vue-next'
 
 const tasksStore = useTasksStore()
 
@@ -32,13 +33,14 @@ async function generateNewWithProfile(profileId: string) {
         :disabled="false"
     >
         <template #header>
-            <div class="flex justify-between mr-8">
-                <DialogTitle>Edit Upload task</DialogTitle>
-                <div class="flex gap-4 align-items-center">
-                    <Button variant="default" @click="tasksStore.queueActiveTask()">
-                        Save changes and close
-                    </Button>
-                </div>
+            <CardTitle>Edit upload settings</CardTitle>
+            <div class="flex gap-2 align-items-center">
+                <Button variant="default" @click="tasksStore.queueActiveTask()">
+                    Save changes</Button
+                >
+                <Button variant="secondary" @click="tasksStore.activeTaskConfig = null">
+                    <X />
+                </Button>
             </div>
         </template>
     </TaskConfigEdit>

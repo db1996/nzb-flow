@@ -186,7 +186,10 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     async function generateNewTask(files: string[], profileId?: string) {
-        const task = await window.api.generateEmptyTask(profileId, files)
+        const task = await window.api.generateEmptyTask(
+            profileId,
+            JSON.parse(JSON.stringify(files))
+        )
         console.log('Generated task', task)
 
         return task

@@ -30,216 +30,220 @@ const setEditTask = (task: any) => {
     <AppLayout>
         <TaskSettingsLogDialog />
         <UploadEditQueueDialog />
-
-        <Card>
-            <CardHeader>
-                <div class="flex gap-2 justify-between">
-                    <CardTitle>In-Progress Tasks</CardTitle>
-                    <Button
-                        as="a"
-                        target="_blank"
-                        href="https://github.com/db1996/nzb-flow/blob/main/docs/Queues.md"
-                        variant="link"
-                        class="inline m-0 p-0"
-                        >Check the queue docs here</Button
-                    >
-                </div>
-            </CardHeader>
-            <CardContent>
-                <Table :columns="4">
-                    <template #head>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Password</TableHead>
-                        <TableHead class="min-w-[100px]">Status</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Report</TableHead>
-                    </template>
-                    <template #body>
-                        <TableRow v-for="(task, index) in tasksStore.uploadRunning" :key="index">
-                            <TableCell>{{ task.name }}</TableCell>
-                            <TableCellHidden :value="task.password" />
-                            <TableCellTaskStatus :task="task" />
-                            <TableCell>
-                                {{ timestampToLocale(task.created_at || 0) }}
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    @click="tasksStore.activeTaskLog = task"
-                                >
-                                    <Logs />
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow
-                            v-for="(task, index) in tasksStore.compressionRunning"
-                            :key="index"
+        <template v-if="tasksStore.activeTaskConfig === null && tasksStore.activeTaskLog === null">
+            <Card>
+                <CardHeader>
+                    <div class="flex gap-2 justify-between">
+                        <CardTitle>In-Progress Tasks</CardTitle>
+                        <Button
+                            as="a"
+                            target="_blank"
+                            href="https://github.com/db1996/nzb-flow/blob/main/docs/Queues.md"
+                            variant="link"
+                            class="inline m-0 p-0"
+                            >Check the queue docs here</Button
                         >
-                            <TableCell>{{ task.name }}</TableCell>
-                            <TableCellHidden :value="task.password" />
-                            <TableCellTaskStatus :task="task" />
-                            <TableCell>
-                                {{ timestampToLocale(task.created_at || 0) }}
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    @click="tasksStore.activeTaskLog = task"
-                                >
-                                    <Logs />
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    </template>
-                </Table>
-            </CardContent>
-        </Card>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <Table :columns="4">
+                        <template #head>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Password</TableHead>
+                            <TableHead class="min-w-[100px]">Status</TableHead>
+                            <TableHead>Created</TableHead>
+                            <TableHead>Report</TableHead>
+                        </template>
+                        <template #body>
+                            <TableRow
+                                v-for="(task, index) in tasksStore.uploadRunning"
+                                :key="index"
+                            >
+                                <TableCell>{{ task.name }}</TableCell>
+                                <TableCellHidden :value="task.password" />
+                                <TableCellTaskStatus :task="task" />
+                                <TableCell>
+                                    {{ timestampToLocale(task.created_at || 0) }}
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        @click="tasksStore.activeTaskLog = task"
+                                    >
+                                        <Logs />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow
+                                v-for="(task, index) in tasksStore.compressionRunning"
+                                :key="index"
+                            >
+                                <TableCell>{{ task.name }}</TableCell>
+                                <TableCellHidden :value="task.password" />
+                                <TableCellTaskStatus :task="task" />
+                                <TableCell>
+                                    {{ timestampToLocale(task.created_at || 0) }}
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        @click="tasksStore.activeTaskLog = task"
+                                    >
+                                        <Logs />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        </template>
+                    </Table>
+                </CardContent>
+            </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Queued Tasks</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Table :columns="3">
-                    <template #head>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Password</TableHead>
-                        <TableHead class="min-w-[100px]">Status</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>#</TableHead>
-                    </template>
-                    <template #body>
-                        <TableRow v-for="(task, index) in tasksStore.uploadQueued" :key="index">
-                            <TableCell>{{ task.name }}</TableCell>
-                            <TableCellHidden :value="task.password" />
-                            <TableCell>Waiting to upload</TableCell>
-                            <TableCell>
-                                {{ timestampToLocale(task.created_at || 0) }}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow
-                            v-for="(task, index) in tasksStore.compressionQueued"
-                            :key="index"
-                        >
-                            <TableCell>{{ task.name }}</TableCell>
-                            <TableCellHidden :value="task.password" />
-                            <TableCell>Waiting to compress/par</TableCell>
-                            <TableCell>
-                                {{ timestampToLocale(task.created_at || 0) }}
-                            </TableCell>
-                            <TableCell>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger as-child>
-                                            <Button
-                                                class="mr-1"
-                                                size="sm"
-                                                variant="outline_info"
-                                                @click="setEditTask(task)"
-                                            >
-                                                <Pencil />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Edit settings</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger as-child>
-                                            <Button
-                                                class="mr-1"
-                                                size="sm"
-                                                variant="outline_destructive"
-                                                @click="tasksStore.unQueueTaskId(task.id)"
-                                            >
-                                                <Trash2 />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Remove from queue</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </TableCell>
-                        </TableRow>
-                    </template>
-                </Table>
-            </CardContent>
-        </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Queued Tasks</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table :columns="3">
+                        <template #head>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Password</TableHead>
+                            <TableHead class="min-w-[100px]">Status</TableHead>
+                            <TableHead>Created</TableHead>
+                            <TableHead>#</TableHead>
+                        </template>
+                        <template #body>
+                            <TableRow v-for="(task, index) in tasksStore.uploadQueued" :key="index">
+                                <TableCell>{{ task.name }}</TableCell>
+                                <TableCellHidden :value="task.password" />
+                                <TableCell>Waiting to upload</TableCell>
+                                <TableCell>
+                                    {{ timestampToLocale(task.created_at || 0) }}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow
+                                v-for="(task, index) in tasksStore.compressionQueued"
+                                :key="index"
+                            >
+                                <TableCell>{{ task.name }}</TableCell>
+                                <TableCellHidden :value="task.password" />
+                                <TableCell>Waiting to compress/par</TableCell>
+                                <TableCell>
+                                    {{ timestampToLocale(task.created_at || 0) }}
+                                </TableCell>
+                                <TableCell>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger as-child>
+                                                <Button
+                                                    class="mr-1"
+                                                    size="sm"
+                                                    variant="outline_info"
+                                                    @click="setEditTask(task)"
+                                                >
+                                                    <Pencil />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Edit settings</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger as-child>
+                                                <Button
+                                                    class="mr-1"
+                                                    size="sm"
+                                                    variant="outline_destructive"
+                                                    @click="tasksStore.unQueueTaskId(task.id)"
+                                                >
+                                                    <Trash2 />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Remove from queue</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </TableCell>
+                            </TableRow>
+                        </template>
+                    </Table>
+                </CardContent>
+            </Card>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Recently finished Tasks</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Table :columns="7">
-                    <template #head>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Password</TableHead>
-                        <TableHead class="min-w-[100px]">Status</TableHead>
-                        <TableHead>NZB file</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Report</TableHead>
-                        <TableHead>#</TableHead>
-                    </template>
-                    <template #body>
-                        <TableRow
-                            v-for="(task, index) in tasksStore.finishedTasks"
-                            :key="index + '_finished'"
-                        >
-                            <TableCellCopy :value="task.name">
-                                {{ task.name }}
-                            </TableCellCopy>
-                            <TableCellHidden :value="task.password" />
-                            <TableCell>
-                                <CheckCircle
-                                    v-if="task.currentStep === CommandStep.FINISH"
-                                    class="text-green-600"
-                                />
-                                <OctagonX
-                                    v-else-if="task.currentStep === CommandStep.ERROR"
-                                    class="text-destructive"
-                                />
-                            </TableCell>
-                            <TableCellOpenFile :full_path="task.nzbFile" />
-                            <TableCell>
-                                {{ timestampToLocale(task.created_at || 0) }}
-                            </TableCell>
-                            <TableCell>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    @click="tasksStore.activeTaskLog = task"
-                                >
-                                    <Logs />
-                                </Button>
-                            </TableCell>
-                            <TableCell>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger as-child>
-                                            <Button
-                                                variant="outline_destructive"
-                                                @click="tasksStore.removeTask(task.id)"
-                                            >
-                                                <Trash2 />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>
-                                                Remove Task from this list. It will be available in
-                                                the history tab
-                                            </p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </TableCell>
-                        </TableRow>
-                    </template>
-                </Table>
-            </CardContent>
-        </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Recently finished Tasks</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table :columns="7">
+                        <template #head>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Password</TableHead>
+                            <TableHead class="min-w-[100px]">Status</TableHead>
+                            <TableHead>NZB file</TableHead>
+                            <TableHead>Created</TableHead>
+                            <TableHead>Report</TableHead>
+                            <TableHead>#</TableHead>
+                        </template>
+                        <template #body>
+                            <TableRow
+                                v-for="(task, index) in tasksStore.finishedTasks"
+                                :key="index + '_finished'"
+                            >
+                                <TableCellCopy :value="task.name">
+                                    {{ task.name }}
+                                </TableCellCopy>
+                                <TableCellHidden :value="task.password" />
+                                <TableCell>
+                                    <CheckCircle
+                                        v-if="task.currentStep === CommandStep.FINISH"
+                                        class="text-green-600"
+                                    />
+                                    <OctagonX
+                                        v-else-if="task.currentStep === CommandStep.ERROR"
+                                        class="text-destructive"
+                                    />
+                                </TableCell>
+                                <TableCellOpenFile :full_path="task.nzbFile" />
+                                <TableCell>
+                                    {{ timestampToLocale(task.created_at || 0) }}
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        @click="tasksStore.activeTaskLog = task"
+                                    >
+                                        <Logs />
+                                    </Button>
+                                </TableCell>
+                                <TableCell>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger as-child>
+                                                <Button
+                                                    variant="outline_destructive"
+                                                    @click="tasksStore.removeTask(task.id)"
+                                                >
+                                                    <Trash2 />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>
+                                                    Remove Task from this list. It will be available
+                                                    in the history tab
+                                                </p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </TableCell>
+                            </TableRow>
+                        </template>
+                    </Table>
+                </CardContent>
+            </Card>
+        </template>
     </AppLayout>
 </template>

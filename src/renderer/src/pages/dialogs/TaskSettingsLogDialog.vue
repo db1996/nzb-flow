@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { useTasksStore } from '@renderer/composables/useTasksStore'
 import TaskConfigEdit from './TaskConfigEdit.vue'
-import DialogTitle from '@renderer/components/ui/dialog/DialogTitle.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
-import { FolderOpen } from 'lucide-vue-next'
-import DialogDescription from '@renderer/components/ui/dialog/DialogDescription.vue'
+import { X } from 'lucide-vue-next'
+import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
 
 const tasksStore = useTasksStore()
 
@@ -22,21 +21,17 @@ const openFile = (path: string) => {
         :disabled="true"
     >
         <template #header>
-            <div class="flex justify-between mr-8">
-                <DialogTitle>Full upload log</DialogTitle>
-                <div class="flex gap-4 align-items-center">
-                    <Button
-                        v-if="tasksStore.activeTaskLog.log_file"
-                        variant="default"
-                        @click="openFile(tasksStore.activeTaskLog.log_file)"
-                    >
-                        <FolderOpen /> Open log file in explorer
-                    </Button>
-                </div>
+            <CardTitle>Full upload log</CardTitle>
+            <div class="flex gap-2 align-items-center">
+                <Button
+                    :variant="tasksStore.activeTaskLog.log_file ? 'default' : 'outline'"
+                    @click="openFile(tasksStore.activeTaskLog.log_file)"
+                    >Open log file in explorer
+                </Button>
+                <Button variant="secondary" @click="tasksStore.activeTaskLog = null">
+                    <X />
+                </Button>
             </div>
-            <DialogDescription>
-                Check the rar, par and nyuu command outputs for full command logs
-            </DialogDescription>
         </template>
     </TaskConfigEdit>
 </template>

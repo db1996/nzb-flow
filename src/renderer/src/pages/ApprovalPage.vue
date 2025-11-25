@@ -10,7 +10,6 @@ import TableCellHidden from '@renderer/components/table/TableCellHidden.vue'
 import { CheckCheck, Pencil, Trash2 } from 'lucide-vue-next'
 import { Button } from '@components/ui/button'
 import { onMounted } from 'vue'
-import TaskSettingsLogDialog from './dialogs/TaskSettingsLogDialog.vue'
 import { timestampToLocale } from '@renderer/lib/utils'
 import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import Checkbox from '@renderer/components/ui/checkbox/Checkbox.vue'
@@ -74,10 +73,9 @@ function getAddedBy(task: TaskConfig): string {
 <template>
     <AppLayout>
         <UploadEditApprovalDialog />
-        <TaskSettingsLogDialog />
 
         <TooltipProvider>
-            <Card>
+            <Card v-if="tasksStore.activeTaskApprovalSettings == null">
                 <CardHeader>
                     <CardTitle>Approve uploads</CardTitle>
                     <CardDescription>

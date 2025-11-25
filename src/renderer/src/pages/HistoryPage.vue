@@ -64,7 +64,7 @@ function handleChange(taskId: string, isChecked: boolean) {
     <AppLayout>
         <TaskSettingsLogDialog />
 
-        <Card>
+        <Card v-if="tasksStore.activeTaskLog === null">
             <CardHeader>
                 <CardTitle>Upload history</CardTitle>
             </CardHeader>
