@@ -43,7 +43,7 @@ async function setDefaultProfile(id: string, isDefault: boolean) {
     <AppLayout>
         <ProfileEditDialog @close="settingsStore.activeProfileEdit = null" />
 
-        <Card>
+        <Card v-if="settingsStore.activeProfileEdit === null">
             <CardHeader>
                 <div class="flex gap-2 justify-between">
                     <CardTitle>Posting profiles</CardTitle>

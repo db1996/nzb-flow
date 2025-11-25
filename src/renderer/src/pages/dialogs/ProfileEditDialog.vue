@@ -4,13 +4,18 @@ import PostingSettings from '../_partials/PostingSettings.vue'
 import RarSettings from '../_partials/RarSettings.vue'
 import ParSettings from '../_partials/ParSettings.vue'
 import NyuuSettings from '../_partials/NyuuSettings.vue'
-import { Dialog, DialogContent, DialogHeader } from '@components/ui/dialog'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
-import DialogTitle from '@renderer/components/ui/dialog/DialogTitle.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import SelectInput from '@renderer/components/form/SelectInput.vue'
 import SwitchInput from '@renderer/components/form/SwitchInput.vue'
+import Card from '@renderer/components/ui/card/Card.vue'
+import CardHeader from '@renderer/components/ui/card/CardHeader.vue'
+import CardTitle from '@renderer/components/ui/card/CardTitle.vue'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
+import CardContent from '@renderer/components/ui/card/CardContent.vue'
+import { Copy, X } from 'lucide-vue-next'
+import { copyToClipboard } from '@renderer/lib/utils'
 
 const props = defineProps({
     disabled: {
@@ -29,26 +34,38 @@ const save = () => {
     settingsStore.saveProfile(settingsStore.activeProfileEdit)
     emits('close')
 }
+const copyUtils = copyToClipboard()
 </script>
 
 <template>
-    <Dialog
-        :open="settingsStore.activeProfileEdit !== null"
-        class="overflow-auto"
-        @update:open="emits('close')"
-    >
-        <DialogContent
-            class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col"
-            v-if="settingsStore.activeProfileEdit !== null"
-        >
-            <DialogHeader>
-                <div class="flex justify-between mr-8">
-                    <DialogTitle>Profile settings</DialogTitle>
-                    <div class="flex gap-4 align-items-center">
-                        <Button variant="default" @click="save"> Save profile </Button>
-                    </div>
+    <Card v-if="settingsStore.activeProfileEdit">
+        <CardHeader>
+            <div class="flex gap-2 justify-between">
+                <CardTitle>Profile Settings - {{ settingsStore.activeProfileEdit.name }}</CardTitle>
+                <div class="flex gap-2 align-items-center">
+                    <Button variant="default" @click="save"> Save profile </Button>
+                    <Button variant="secondary" @click="emits('close')"> <X /> </Button>
                 </div>
-            </DialogHeader>
+            </div>
+            <CardDescription>
+                ID:
+                <code class="mx-1 mt-0 text-xs text-gray-500 italic"
+                    >{{ settingsStore.activeProfileEdit.id }}
+                </code>
+                <Copy
+                    class="inline cursor-pointer"
+                    :class="{
+                        'text-green-500':
+                            copyUtils.flashCopied.value && copyUtils.copiedSuccess.value,
+                        'text-red-500':
+                            copyUtils.flashCopied.value && !copyUtils.copiedSuccess.value
+                    }"
+                    :size="14"
+                    @click="copyUtils.copy(settingsStore.activeProfileEdit.id)"
+                />
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
             <TextInput
                 v-model="settingsStore.activeProfileEdit.name"
                 label="Profile name"
@@ -137,6 +154,6 @@ const save = () => {
                     </div>
                 </TabsContent>
             </Tabs>
-        </DialogContent>
-    </Dialog>
+        </CardContent>
+    </Card>
 </template>
