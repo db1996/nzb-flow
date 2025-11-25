@@ -85,7 +85,7 @@ export function copyToClipboard() {
         flashCopied.value = true
         setTimeout(() => {
             flashCopied.value = false
-        }, 1500)
+        }, 700)
     }
 
     return { flashCopied: flashCopied, copiedSuccess, copy }

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import TableCell from '../ui/table/TableCell.vue'
 import { Copy } from 'lucide-vue-next'
 import TableButton from './TableButton.vue'
+import { copyToClipboard } from '@renderer/lib/utils'
 
 interface Props {
     value: string
@@ -11,28 +12,13 @@ const props = withDefaults(defineProps<Props>(), {
     value: ''
 })
 
-const flashCopied = ref(false)
-const copiedSuccess = ref(false)
-
-async function copyToClipboard() {
-    const str = props.value.toString() || ''
-    const res = await window.api.copy(str)
-    if (res) {
-        copiedSuccess.value = true
-    } else {
-        copiedSuccess.value = false
-    }
-    flashCopied.value = true
-    setTimeout(() => {
-        flashCopied.value = false
-    }, 1500)
-}
+const copyUtils = copyToClipboard()
 
 const textClass = computed(() => {
-    if (flashCopied.value && copiedSuccess.value) {
-        return 'text-green-600 border-green-600 border-1'
-    } else if (flashCopied.value && !copiedSuccess.value) {
-        return 'text-red-600 border-red-600 border-1 '
+    if (copyUtils.flashCopied.value && copyUtils.copiedSuccess.value) {
+        return 'text-green-600'
+    } else if (copyUtils.flashCopied.value && !copyUtils.copiedSuccess.value) {
+        return 'text-red-600'
     }
     return ''
 })
@@ -40,7 +26,7 @@ const textClass = computed(() => {
 <template>
     <TableCell class="pl-0">
         <div class="flex items-center">
-            <TableButton @click="copyToClipboard()" :class="textClass">
+            <TableButton @click="copyUtils.copy(props.value)" :class="textClass">
                 <Copy />
             </TableButton>
             <slot></slot>

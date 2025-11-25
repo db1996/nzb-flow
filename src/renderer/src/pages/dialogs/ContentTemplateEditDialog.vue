@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Dialog, DialogContent, DialogHeader } from '@components/ui/dialog'
 import { useSettingsStore } from '@renderer/composables/settingsStore'
-import DialogTitle from '@renderer/components/ui/dialog/DialogTitle.vue'
 import Button from '@renderer/components/ui/button/Button.vue'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import FileSelectInput from '@renderer/components/form/FileSelectInput.vue'
@@ -14,6 +12,10 @@ import CodeMirrorComponent from '@renderer/components/codemirror/CodeMirrorCompo
 import { ref } from 'vue'
 import { CODEMIRROR_VARIABLES } from '@main/types/settings/commands/TaskVariables'
 import Label from '@renderer/components/ui/label/Label.vue'
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/card'
+import { Copy, X } from 'lucide-vue-next'
+import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
+import { copyToClipboard } from '@renderer/lib/utils'
 
 const props = defineProps({
     disabled: {
@@ -22,6 +24,8 @@ const props = defineProps({
         default: false
     }
 })
+
+const copyUtils = copyToClipboard()
 
 const settingsStore = useSettingsStore()
 const emits = defineEmits(['close'])
@@ -37,24 +41,37 @@ const variables = ref(CODEMIRROR_VARIABLES)
 </script>
 
 <template>
-    <Dialog
-        :open="settingsStore.activeContentTemplateEdit !== null"
-        class="overflow-auto"
-        aria-describedby="Content template edit dialog"
-        @update:open="emits('close')"
-    >
-        <DialogContent
-            class="max-w-xxl sm:max-w-xxl overflow-auto flex flex-col"
-            v-if="settingsStore.activeContentTemplateEdit !== null"
-        >
-            <DialogHeader>
-                <div class="flex justify-between mr-8">
-                    <DialogTitle>Content template settings</DialogTitle>
-                    <div class="flex gap-4 align-items-center">
-                        <Button variant="default" @click="save"> Save content template </Button>
-                    </div>
+    <Card v-if="settingsStore.activeContentTemplateEdit">
+        <CardHeader>
+            <div class="flex gap-2 justify-between">
+                <CardTitle
+                    >Content template -
+                    {{ settingsStore.activeContentTemplateEdit?.name }}</CardTitle
+                >
+                <div class="flex gap-2 align-items-center">
+                    <Button variant="default" @click="save"> Save content template </Button>
+                    <Button variant="secondary" @click="emits('close')"> <X /> </Button>
                 </div>
-            </DialogHeader>
+            </div>
+            <CardDescription>
+                ID:
+                <code class="mx-1 mt-0 text-xs text-gray-500 italic"
+                    >{{ settingsStore.activeContentTemplateEdit?.id }}
+                </code>
+                <Copy
+                    class="inline cursor-pointer"
+                    :class="{
+                        'text-green-500':
+                            copyUtils.flashCopied.value && copyUtils.copiedSuccess.value,
+                        'text-red-500':
+                            copyUtils.flashCopied.value && !copyUtils.copiedSuccess.value
+                    }"
+                    :size="14"
+                    @click="copyUtils.copy(settingsStore.activeContentTemplateEdit?.id)"
+                />
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
             <Tabs default-value="general" class="flex flex-col gap-4">
                 <TabsList class="grid w-full grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr]">
                     <TabsTrigger value="general">General</TabsTrigger>
@@ -141,6 +158,6 @@ const variables = ref(CODEMIRROR_VARIABLES)
                     />
                 </TabsContent>
             </Tabs>
-        </DialogContent>
-    </Dialog>
+        </CardContent>
+    </Card>
 </template>

@@ -21,9 +21,12 @@ const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
 
 <template>
     <AppLayout>
-        <ContentTemplateEditDialog @close="settingsStore.activeContentTemplateEdit = null" />
+        <ContentTemplateEditDialog
+            v-if="settingsStore.activeContentTemplateEdit"
+            @close="settingsStore.activeContentTemplateEdit = null"
+        />
 
-        <Card>
+        <Card v-else>
             <CardHeader>
                 <div class="flex gap-2 justify-between">
                     <CardTitle>Content templates</CardTitle>
