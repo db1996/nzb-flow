@@ -327,7 +327,6 @@ export default class AppState {
         })
 
         ipcMain.handle('check-for-updates', async () => {
-            console.log('Check for update icp')
             try {
                 return await autoUpdater.checkForUpdatesAndNotify()
             } catch (error) {
@@ -416,8 +415,6 @@ export default class AppState {
         ipcMain.handle(
             'save-content-template',
             async (_event, template: ContentTemplateSettings) => {
-                console.log('saving content template ipc', template)
-
                 Settings.saveContentTemplate(template)
                 return
             }

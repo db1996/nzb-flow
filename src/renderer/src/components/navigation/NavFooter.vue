@@ -56,7 +56,6 @@ watch(
 
 function setSettingsBadge() {
     let count = 0
-    console.log('settingsStore settings changed, updating badge', settingsStore.settings)
 
     if (settingsStore.settings?.servers.length === 0) {
         count++

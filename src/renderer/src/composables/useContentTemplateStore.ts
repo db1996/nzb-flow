@@ -46,8 +46,6 @@ export const useContentTemplateStore = defineStore('contentTemplateStore', () =>
                             key: varKey,
                             value: ''
                         })
-
-                        console.log('added ' + varKey)
                     }
                 }
 
@@ -59,12 +57,10 @@ export const useContentTemplateStore = defineStore('contentTemplateStore', () =>
                     const existingVar = activeContentTemplateEdit.value.customVariables[i]
                     if (!customVars.includes(existingVar.key)) {
                         activeContentTemplateEdit.value.customVariables.splice(i, 1)
-                        console.log('removed ' + existingVar.key)
                     }
                 }
             }
             isChangingTemplateContent.value = false
-            console.log(activeContentTemplateEdit.value?.customVariables)
         },
         { deep: true }
     )

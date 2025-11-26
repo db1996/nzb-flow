@@ -38,7 +38,6 @@ const emits = defineEmits(['close'])
 
 const save = () => {
     if (contentTemplateStore.activeContentTemplateEdit === null) return
-    console.log('saving content template', contentTemplateStore.activeContentTemplateEdit)
 
     contentTemplateStore.saveContentTemplate(contentTemplateStore.activeContentTemplateEdit)
     emits('close')

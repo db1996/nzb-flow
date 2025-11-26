@@ -103,13 +103,9 @@ export const useTasksStore = defineStore('tasks', () => {
     const init = () => {
         window.api.onCommandFinish((data) => {
             finishedTasks.value.push(data)
-
-            console.log('Command finish:', data)
         })
 
         window.api.onApprovalQueueUpdated((data) => {
-            console.log('approval queue updated')
-
             approvalTasks.value = data
         })
 
@@ -190,8 +186,6 @@ export const useTasksStore = defineStore('tasks', () => {
             profileId,
             JSON.parse(JSON.stringify(files))
         )
-        console.log('Generated task', task)
-
         return task
     }
 
@@ -201,8 +195,6 @@ export const useTasksStore = defineStore('tasks', () => {
 
     async function queueActiveTask() {
         if (activeTaskConfig.value) {
-            console.log('queueing active task config', activeTaskConfig.value)
-
             await queueTask(activeTaskConfig.value)
             activeTaskConfig.value = null
         }
@@ -380,7 +372,6 @@ export const useTasksStore = defineStore('tasks', () => {
             const success = await window.api.pauseQueue()
             if (success) {
                 queueActive.value = false
-                console.log('Queue paused')
             }
             return success
         } catch (error) {
@@ -394,7 +385,6 @@ export const useTasksStore = defineStore('tasks', () => {
             const success = await window.api.resumeQueue()
             if (success) {
                 queueActive.value = true
-                console.log('Queue resumed')
             }
             return success
         } catch (error) {

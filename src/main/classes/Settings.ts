@@ -120,7 +120,6 @@ export default class Settings {
 
     static async loadMainSettings(): Promise<AllSettings> {
         if (fs.existsSync(Settings.allSettingsPath)) {
-            console.log('Loading main settings file:', Settings.allSettingsPath)
             const settings = fs.readFileSync(Settings.allSettingsPath, 'utf-8')
             try {
                 const parsedSettings = JSON.parse(settings) as Partial<AllSettings>
@@ -160,7 +159,6 @@ export default class Settings {
             if (file.endsWith('.json')) {
                 const filePath = path.join(Settings.profileSettingsPath, file)
                 const data = fs.readFileSync(filePath, 'utf-8')
-                console.log('Loading profile file:', filePath)
 
                 try {
                     const parsedProfile = JSON.parse(data) as ProfileSettings
@@ -365,7 +363,6 @@ export default class Settings {
                 if (file.endsWith('.json')) {
                     const filePath = path.join(Settings.taskHistoryPath, file)
                     const data = fs.readFileSync(filePath, 'utf-8')
-                    console.log('Loading history task file:', filePath)
 
                     try {
                         const parsedTask = JSON.parse(data) as TaskConfig
