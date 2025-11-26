@@ -39,6 +39,7 @@ You will have a default profile for posting settings with sensible defaults. You
 - Automatically update application (can be turned on)
 - Optional API server for remote control
 - Optional Websocket server for live updates
+- Automatic file generation per post (.txt, .nfo etc)
 
 ## Docs
 
@@ -80,14 +81,9 @@ But performance is something I need to test thoroughly. This application is writ
 ### features I'm working on/thinking about
 
 - Backup server per profile so if it fails uploading it should retry with the backup server
-- more extensive logging (with settings). Right now each command has its own log output. But I would like to introduce more extensive log levels
-- Ability to manage the history (you can manually delete log files right now to make them go away)
-  - Including automatic management (x days/weeks/whatever)
-- Ability to create jobs using a cli
 - a bit better visuals, I am not quite happy with all the tables yet, the screen needs to be quite wide to make it all fit.
 
 If you can think of any missing features please open an issue!
-
 
 ## Build yourself
 

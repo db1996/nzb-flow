@@ -142,6 +142,7 @@ If a variable is null, it will be replaced by an empty string. This will only ha
 
 | Variable     | Type             | Description                                                                                                             |
 | ------------ | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `jobname`    | `string \| null` | The name of the post.                                                                                                   |
 | `fname`      | `string \| null` | The name of the selected file or folder used as the base for the post.                                                  |
 | `raw_size`   | `number \| null` | Total size (in bytes) of the selected files/folders **before** RAR compression.                                         |
 | `rar_size`   | `number \| null` | Total size (in bytes) of all generated RAR files.                                                                       |

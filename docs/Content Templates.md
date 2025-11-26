@@ -10,7 +10,7 @@ The file contents can be found in the task logs, and saved as a file there.
 
 ## How to use
 
-For docs on each variables, the helpers you can use, and examples. [Check these docs](<Content Templates Variables.md>)
+For docs on each variables and the helpers you can use. [Check these docs](<Content Templates Variables.md>)
 
 ## General Settings
 
