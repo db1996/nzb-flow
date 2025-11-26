@@ -1,9 +1,6 @@
 # Content templates Variables
 
-You can use built-in variables from the completed post to fill in your content template.
-<!-- You can also define custom variables. If your template contains custom variables, the app will ask you to provide their values after the post completes.
-
-Note: Custom variables cannot be used inside file lists (each blocks). They can only be simple scalars (strings/numbers), not arrays or objects. -->
+You can use built-in variables from the completed post to fill in your content template. Or you can use custom variables
 
 - [Content templates Variables](#content-templates-variables)
   - [Handlebars Templates](#handlebars-templates)
