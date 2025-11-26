@@ -14,6 +14,7 @@ Note: Custom variables cannot be used inside file lists (each blocks). They can 
       - [Modular Helpers (HH/MM/SS)](#modular-helpers-hhmmss)
       - [Total Helpers](#total-helpers)
   - [List of variables](#list-of-variables)
+    - [Custom variables](#custom-variables)
     - [Single value variables](#single-value-variables)
     - [File list variables](#file-list-variables)
 
@@ -129,6 +130,15 @@ If `total_time` = 90 minutes + 10 seconds + 456 ms, this renders as:
 90 minutes, 5410456 ms
 
 ## List of variables
+
+### Custom variables
+
+You can create custom variables easily by using this in the template: `{{somevariable}}`.
+
+If the variable does not exist in the default variables below, it will be parsed as a custom one.
+Defaults can be filled in with the content template settings, and the values can be edited per upload (in the task logs, after uploading is complete).
+
+Block variables like `#each` will not work, and they will be ignored (empty) by handlebars.
 
 ### Single value variables
 
