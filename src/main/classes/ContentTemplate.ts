@@ -15,7 +15,7 @@ export class ContentTemplate {
         return TemplateRenderer.render(
             this.contentTemplateSettings.templateContent,
             taskVariables,
-            {}
+            this.contentTemplateSettings.customVariables
         )
     }
 }

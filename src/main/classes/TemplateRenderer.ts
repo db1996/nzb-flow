@@ -1,15 +1,22 @@
 import Handlebars from 'handlebars'
 import { BUILT_IN_VARIABLES_KEYS, TaskVariables } from '../types/settings/commands/TaskVariables'
+import { ContentTemplateSettingsVariable } from '../types/settings/ContentTemplateSettings'
 
 export class TemplateRenderer {
     /** Render the template string using task variables */
     static render(
         template: string,
         variables: TaskVariables,
-        customVariables: Record<string, any>
+        customVariables: ContentTemplateSettingsVariable[]
     ): string {
         const compiled = Handlebars.compile(template)
-        return compiled({ ...variables, ...customVariables })
+
+        const customVariablesObj: Record<string, string> = {}
+        customVariables.forEach((variable) => {
+            customVariablesObj[variable.key] = variable.value
+        })
+
+        return compiled({ ...variables, ...customVariablesObj })
     }
 
     static getCustomVariables(template: string): string[] {

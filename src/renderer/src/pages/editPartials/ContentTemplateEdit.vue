@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useSettingsStore } from '@renderer/composables/settingsStore'
 import Button from '@renderer/components/ui/button/Button.vue'
 import TextInput from '@renderer/components/form/TextInput.vue'
 import FileSelectInput from '@renderer/components/form/FileSelectInput.vue'
@@ -16,6 +15,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/card'
 import { Copy, X } from 'lucide-vue-next'
 import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import { copyToClipboard } from '@renderer/lib/utils'
+import { useContentTemplateStore } from '@renderer/composables/useContentTemplateStore'
 
 const props = defineProps({
     disabled: {
@@ -27,13 +27,14 @@ const props = defineProps({
 
 const copyUtils = copyToClipboard()
 
-const settingsStore = useSettingsStore()
+const contentTemplateStore = useContentTemplateStore()
+
 const emits = defineEmits(['close'])
 
 const save = () => {
-    if (settingsStore.activeContentTemplateEdit === null) return
+    if (contentTemplateStore.activeContentTemplateEdit === null) return
 
-    settingsStore.saveContentTemplate(settingsStore.activeContentTemplateEdit)
+    contentTemplateStore.saveContentTemplate(contentTemplateStore.activeContentTemplateEdit)
     emits('close')
 }
 
@@ -41,12 +42,12 @@ const variables = ref(CODEMIRROR_VARIABLES)
 </script>
 
 <template>
-    <Card v-if="settingsStore.activeContentTemplateEdit">
+    <Card v-if="contentTemplateStore.activeContentTemplateEdit">
         <CardHeader>
             <div class="flex gap-2 justify-between">
                 <CardTitle
                     >Content template -
-                    {{ settingsStore.activeContentTemplateEdit?.name }}</CardTitle
+                    {{ contentTemplateStore.activeContentTemplateEdit?.name }}</CardTitle
                 >
                 <div class="flex gap-2 align-items-center">
                     <Button variant="default" @click="save"> Save content template </Button>
@@ -56,7 +57,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
             <CardDescription>
                 ID:
                 <code class="mx-1 mt-0 text-xs text-gray-500 italic"
-                    >{{ settingsStore.activeContentTemplateEdit?.id }}
+                    >{{ contentTemplateStore.activeContentTemplateEdit?.id }}
                 </code>
                 <Copy
                     class="inline cursor-pointer"
@@ -67,7 +68,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                             copyUtils.flashCopied.value && !copyUtils.copiedSuccess.value
                     }"
                     :size="14"
-                    @click="copyUtils.copy(settingsStore.activeContentTemplateEdit?.id)"
+                    @click="copyUtils.copy(contentTemplateStore.activeContentTemplateEdit?.id)"
                 />
             </CardDescription>
         </CardHeader>
@@ -79,7 +80,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                 </TabsList>
                 <TabsContent value="general">
                     <TextInput
-                        v-model="settingsStore.activeContentTemplateEdit.name"
+                        v-model="contentTemplateStore.activeContentTemplateEdit.name"
                         label="Content template name (UI)"
                         :disabled="disabled"
                         class="mb-4"
@@ -97,7 +98,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                         <SwitchInput
                             :disabled="disabled"
                             label="Save with NZB file after posting"
-                            v-model="settingsStore.activeContentTemplateEdit.saveWithNzb"
+                            v-model="contentTemplateStore.activeContentTemplateEdit.saveWithNzb"
                             helpt="The generated file will be saved alongside the NZB file after posting."
                         />
 
@@ -105,12 +106,12 @@ const variables = ref(CODEMIRROR_VARIABLES)
                             :disabled="disabled"
                             label="Include in the post archive"
                             help="Include the generated file in the post archive uploaded to the news server. Some variables can not be used when this is enabled."
-                            v-model="settingsStore.activeContentTemplateEdit.includeInPost"
+                            v-model="contentTemplateStore.activeContentTemplateEdit.includeInPost"
                         /> -->
                     </div>
 
                     <FileSelectInput
-                        v-model="settingsStore.activeContentTemplateEdit.customLocation"
+                        v-model="contentTemplateStore.activeContentTemplateEdit.customLocation"
                         label="Custom save location"
                         help="Keep empty to not use it"
                         :disabled="disabled"
@@ -121,7 +122,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                 <TabsContent value="file">
                     <div class="grid grid-cols-2 gap-2">
                         <TextInput
-                            v-model="settingsStore.activeContentTemplateEdit.fileName"
+                            v-model="contentTemplateStore.activeContentTemplateEdit.fileName"
                             label="File name"
                             :disabled="disabled"
                             class="mb-4"
@@ -129,7 +130,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                         />
 
                         <TextInput
-                            v-model="settingsStore.activeContentTemplateEdit.fileType"
+                            v-model="contentTemplateStore.activeContentTemplateEdit.fileType"
                             label="File extension"
                             :disabled="disabled"
                             placeholder=".txt, .nfo, .json"
@@ -151,7 +152,7 @@ const variables = ref(CODEMIRROR_VARIABLES)
                         >Check the docs here</Button
                     >
                     <CodeMirrorComponent
-                        v-model="settingsStore.activeContentTemplateEdit.templateContent"
+                        v-model="contentTemplateStore.activeContentTemplateEdit.templateContent"
                         :variables="variables"
                         :disabled="disabled"
                         :show-language="false"

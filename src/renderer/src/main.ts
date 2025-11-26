@@ -9,12 +9,16 @@ import { useTasksStore } from './composables/useTasksStore'
 import { useUpdateStore } from './composables/useUpdateStore'
 import { createTheme, Theme } from './components/codemirror/useTheme'
 import VueCodeMirror from 'vue-codemirror'
+import { useContentTemplateStore } from './composables/useContentTemplateStore'
 
 const app = createApp(App)
 app.use(createPinia())
 
 const settingsStore = useSettingsStore()
-settingsStore.init()
+await settingsStore.init()
+
+const contentTemplateStore = useContentTemplateStore()
+contentTemplateStore.init()
 
 const tasksStore = useTasksStore()
 tasksStore.init()

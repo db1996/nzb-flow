@@ -6,24 +6,24 @@ import TableHead from '@renderer/components/ui/table/TableHead.vue'
 import TableRow from '@renderer/components/ui/table/TableRow.vue'
 import TableCell from '@renderer/components/ui/table/TableCell.vue'
 import { Button } from '@components/ui/button'
-import { useSettingsStore } from '@renderer/composables/settingsStore'
 import { Plus } from 'lucide-vue-next'
 import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import { ContentTemplateSettings } from '@main/types/settings/ContentTemplateSettings'
 import ContentTemplateEditDialog from './editPartials/ContentTemplateEdit.vue'
+import { useContentTemplateStore } from '@renderer/composables/useContentTemplateStore'
 
-const settingsStore = useSettingsStore()
+const contentTemplateStore = useContentTemplateStore()
 
 const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
-    settingsStore.activeContentTemplateEdit = JSON.parse(JSON.stringify(contentTemplate))
+    contentTemplateStore.activeContentTemplateEdit = JSON.parse(JSON.stringify(contentTemplate))
 }
 </script>
 
 <template>
     <AppLayout>
         <ContentTemplateEditDialog
-            v-if="settingsStore.activeContentTemplateEdit"
-            @close="settingsStore.activeContentTemplateEdit = null"
+            v-if="contentTemplateStore.activeContentTemplateEdit"
+            @close="contentTemplateStore.activeContentTemplateEdit = null"
         />
 
         <Card v-else>
@@ -51,13 +51,15 @@ const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
                         <TableHead>File Type</TableHead>
                         <TableHead class="w-[150px]"
                             >#
-                            <Button class="w-8" @click="settingsStore.newContentTemplate">
+                            <Button class="w-8" @click="contentTemplateStore.newContentTemplate">
                                 <Plus /> </Button
                         ></TableHead>
                     </template>
                     <template #body>
                         <TableRow
-                            v-for="(contentTemplate, index) in settingsStore.contentTemplates"
+                            v-for="(
+                                contentTemplate, index
+                            ) in contentTemplateStore.contentTemplates"
                             :key="index"
                         >
                             <TableCell>{{ contentTemplate.name }}</TableCell>
@@ -71,7 +73,11 @@ const setContentTemplate = (contentTemplate: ContentTemplateSettings) => {
                                 >
                                 <Button
                                     size="sm"
-                                    @click="settingsStore.deleteContentTemplate(contentTemplate.id)"
+                                    @click="
+                                        contentTemplateStore.deleteContentTemplate(
+                                            contentTemplate.id
+                                        )
+                                    "
                                     variant="outline_destructive"
                                     class="me-2"
                                     >Delete</Button

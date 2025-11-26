@@ -497,21 +497,19 @@ export default class Task {
             const profile = Settings.profiles.find((p) => p.id === this.taskConfig?.used_profile)
 
             if (profile) {
-                for (const [templateId, enabled] of Object.entries(
-                    this.taskConfig.taskSettings.contentTemplates
-                )) {
+                for (const ctVariable of this.taskConfig.taskSettings.contentTemplates) {
                     const contentTemplateSettings = Settings.contentTemplates.find(
-                        (ct) => ct.id === templateId
+                        (ct) => ct.id === ctVariable.id
                     )
                     if (contentTemplateSettings) {
                         const contentTemplate = new ContentTemplate(contentTemplateSettings)
                         const result = contentTemplate.getResult(this.taskConfig.taskVariables)
 
                         this.taskConfig.contentTemplateData.push({
-                            active: enabled,
-                            contentTemplateId: templateId,
+                            active: ctVariable.enabled,
+                            contentTemplateId: contentTemplateSettings.id,
                             content: result,
-                            custom_variables: {},
+                            customVariables: contentTemplateSettings.customVariables,
                             fileName:
                                 contentTemplateSettings.fileName + contentTemplateSettings.fileType
                         })
