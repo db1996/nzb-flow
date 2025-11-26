@@ -10,6 +10,7 @@ import SelectInput, { Option } from '../form/SelectInput.vue'
 import { EditorView } from '@codemirror/view'
 import SidebarContainer from './SidebarContainer.vue'
 import Label from '../ui/label/Label.vue'
+import { ContentTemplateSettingsVariable } from '@main/types/settings/ContentTemplateSettings'
 
 const props = defineProps({
     modelValue: {
@@ -34,6 +35,11 @@ const props = defineProps({
     variables: {
         type: Array as PropType<CodeMirrorVariable[]>,
         required: false
+    },
+    customVariables: {
+        type: Array as PropType<ContentTemplateSettingsVariable[]>,
+        required: false,
+        default: () => []
     },
     showLanguage: {
         type: Boolean,

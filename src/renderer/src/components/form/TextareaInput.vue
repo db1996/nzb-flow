@@ -2,6 +2,7 @@
 import { Textarea } from '@ui/textarea'
 import { computed, ref, useId } from 'vue'
 import Label from '../ui/label/Label.vue'
+import { LoaderCircle } from 'lucide-vue-next'
 
 const props = defineProps({
     modelValue: {
@@ -38,6 +39,11 @@ const props = defineProps({
     maxlength: {
         type: Number,
         required: false
+    },
+    loading: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
@@ -66,6 +72,12 @@ function updateValue(string) {
 
 <template>
     <div class="relative grid gap-2">
+        <div
+            v-if="loading"
+            class="absolute inset-0 z-500000 bg-black opacity-70 flex items-start justify-center pointer-events-none p-50"
+        >
+            <LoaderCircle class="animate-spin" />
+        </div>
         <Label v-if="label" :for="proxyId">
             {{ label }}
             <span v-if="required" class="text-destructive">*</span>

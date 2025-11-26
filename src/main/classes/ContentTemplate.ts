@@ -10,8 +10,6 @@ export class ContentTemplate {
     }
 
     public getResult(taskVariables: TaskVariables): string {
-        TemplateRenderer.registerHelpers()
-
         return TemplateRenderer.render(
             this.contentTemplateSettings.templateContent,
             taskVariables,

@@ -66,6 +66,9 @@ const api = {
         electronAPI.ipcRenderer.invoke('save-content-template', template),
     deleteContentTemplate: (id: string) =>
         electronAPI.ipcRenderer.invoke('delete-content-template', id),
+    saveTaskLog: (task: TaskConfig) => electronAPI.ipcRenderer.invoke('save-task-log', task),
+    regenerateContentTemplates: (task: TaskConfig) =>
+        electronAPI.ipcRenderer.invoke('regenerate-content-templates', task),
 
     // Approval task management APIs
     getApprovalTasks: () => electronAPI.ipcRenderer.invoke('get-approval-tasks'),

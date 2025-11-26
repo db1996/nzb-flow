@@ -5,7 +5,7 @@ import RarSettings from '../_partials/RarSettings.vue'
 import ParSettings from '../_partials/ParSettings.vue'
 import NyuuSettings from '../_partials/NyuuSettings.vue'
 import TextareaInput from '@renderer/components/form/TextareaInput.vue'
-import { PropType } from 'vue'
+import { computed, PropType, ref } from 'vue'
 import { TaskConfig } from '@main/types/settings/commands/taskSettings'
 import CommandData from '@main/types/settings/commands/commandData'
 import SelectInput from '@renderer/components/form/SelectInput.vue'
@@ -20,12 +20,20 @@ import CardHeader from '@renderer/components/ui/card/CardHeader.vue'
 import Card from '@renderer/components/ui/card/Card.vue'
 import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import CardContent from '@renderer/components/ui/card/CardContent.vue'
+import { useContentTemplateStore } from '@renderer/composables/useContentTemplateStore'
+import { ContentTemplateSettingsVariable } from '@main/types/settings/ContentTemplateSettings'
+import Dialog from '@components/ui/dialog/Dialog.vue'
+import DialogContent from '@components/ui/dialog/DialogContent.vue'
+import DialogHeader from '@components/ui/dialog/DialogHeader.vue'
+import DialogTitle from '@components/ui/dialog/DialogTitle.vue'
+import { toast } from 'vue-sonner'
 
 const settingsStore = useSettingsStore()
+const contentTemplateStore = useContentTemplateStore()
 
 const props = defineProps({
     form: {
-        type: Object as PropType<TaskConfig>,
+        type: Object as PropType<TaskConfig | null>,
         required: true
     },
     disabled: {
@@ -38,12 +46,14 @@ const props = defineProps({
 const emits = defineEmits(['close', 'profile-change'])
 
 function updateModelValue(value: any) {
+    if (!props.form) return
     props.form.used_profile = value
     emits('profile-change', value)
 }
 
 function addFiles() {
     window.api.chooseFiles().then((filePaths: string[]) => {
+        if (!props.form) return
         if (filePaths.length === 0) {
             return
         }
@@ -53,6 +63,7 @@ function addFiles() {
 
 function addFolders() {
     window.api.chooseFolders().then((folderPaths: string[]) => {
+        if (!props.form) return
         if (folderPaths.length === 0) {
             return
         }
@@ -67,6 +78,48 @@ function saveToFile(content: ContentTemplateData) {
         // Saved
         console.log('saved')
     })
+}
+
+const switches = computed(() => {
+    if (!props.form) return {}
+    if (!props.form.taskSettings.contentTemplates) return {}
+
+    let ret: Record<string, boolean> = {}
+    for (const ct of props.form.taskSettings.contentTemplates) {
+        ret[ct.id] = ct.enabled
+    }
+    return ret
+})
+
+function updateSwitch(contentTemplateId: string, value: boolean) {
+    if (!props.form) return
+    if (!props.form.taskSettings.contentTemplates) return
+
+    if (props.form.taskSettings.contentTemplates === null) return
+
+    const template = props.form.taskSettings.contentTemplates.find(
+        ct => ct.id === contentTemplateId
+    )
+    if (template) {
+        template.enabled = value
+    }
+}
+
+const editCustomVariables = ref<ContentTemplateSettingsVariable[] | null>(null)
+
+async function regenerateAndSave() {
+    editCustomVariables.value = null
+
+    if (!props.form) return
+    const newTask = await contentTemplateStore.regenerateAndSave(props.form)
+
+    if (!newTask) {
+        toast.error('Failed to regenerate content templates')
+        return
+    }
+
+    toast.success('Content templates regenerated and saved', { duration: 1500 })
+    props.form.contentTemplateData = newTask.contentTemplateData
 }
 </script>
 
@@ -249,58 +302,117 @@ function saveToFile(content: ContentTemplateData) {
                 <TabsContent value="templates">
                     <div class="flex flex-col gap-4" v-if="!disabled">
                         <SwitchInput
-                            v-for="contentTemplate in settingsStore.contentTemplates"
+                            v-for="contentTemplate in contentTemplateStore.contentTemplates"
                             :key="contentTemplate.id"
-                            v-model="form.taskSettings.contentTemplates[contentTemplate.id]"
+                            @update:model-value="updateSwitch(contentTemplate.id, $event)"
+                            v-model="switches[contentTemplate.id]"
                             :label="contentTemplate.name"
                             help="Enable content templates for this profile"
                             :disabled="disabled"
                         />
                     </div>
-                    <div
-                        v-else
-                        v-for="contentTemplateData in form.contentTemplateData"
-                        :key="contentTemplateData.contentTemplateId"
-                        class="mb-4"
-                    >
-                        <h3 class="text-md font-medium mb-2">
-                            {{
-                                settingsStore.contentTemplates.find(
-                                    ct => ct.id === contentTemplateData.contentTemplateId
-                                )?.name || contentTemplateData.contentTemplateId
-                            }}
-                        </h3>
+                    <div v-else class="mb-4">
+                        <Tabs
+                            :default-value="form.contentTemplateData[0]?.contentTemplateId"
+                            class="flex flex-col gap-4"
+                        >
+                            <TabsList class="grid w-full grid-cols-[1fr_1fr]">
+                                <TabsTrigger
+                                    v-for="contentTemplateData in form.contentTemplateData"
+                                    :key="contentTemplateData.contentTemplateId"
+                                    :value="contentTemplateData.contentTemplateId"
+                                >
+                                    {{
+                                        contentTemplateStore.contentTemplates.find(
+                                            ct => ct.id === contentTemplateData.contentTemplateId
+                                        )?.name || contentTemplateData.contentTemplateId
+                                    }}
+                                </TabsTrigger>
+                            </TabsList>
 
-                        <div class="grid grid-cols-[1fr_200px] gap-4">
-                            <TextareaInput
-                                :model-value="contentTemplateData.content"
-                                :rows="10"
-                                :disabled="true"
-                            />
-                            <div class="flex flex-col gap-2 justify-start">
-                                <Button
-                                    :variant="
-                                        copyUtils.flashCopied.value
-                                            ? copyUtils.copiedSuccess.value
-                                                ? 'outline_success'
-                                                : 'outline_destructive'
-                                            : 'secondary'
-                                    "
-                                    @click="copyUtils.copy(contentTemplateData.content)"
-                                >
-                                    <Copy /> Copy content
-                                </Button>
-                                <Button
-                                    variant="secondary"
-                                    @click="saveToFile(contentTemplateData)"
-                                >
-                                    <Save /> Save to file
-                                </Button>
-                            </div>
-                        </div>
+                            <TabsContent
+                                v-for="contentTemplateData in form.contentTemplateData"
+                                :value="contentTemplateData.contentTemplateId"
+                                :key="contentTemplateData.contentTemplateId"
+                            >
+                                <div class="grid grid-cols-[1fr_200px] gap-4">
+                                    <TextareaInput
+                                        :model-value="contentTemplateData.content"
+                                        :rows="10"
+                                        :loading="contentTemplateStore.isRegenerating"
+                                        :disabled="true"
+                                    />
+                                    <div class="flex flex-col gap-2 justify-start">
+                                        <Button
+                                            :variant="
+                                                contentTemplateData.customVariables?.length > 0
+                                                    ? 'default'
+                                                    : 'secondary'
+                                            "
+                                            class="w-full"
+                                            :disabled="
+                                                contentTemplateData.customVariables?.length === 0
+                                            "
+                                            @click="
+                                                editCustomVariables =
+                                                    contentTemplateData.customVariables
+                                            "
+                                            >Edit Custom Variables</Button
+                                        >
+                                        <Button
+                                            :variant="
+                                                copyUtils.flashCopied.value
+                                                    ? copyUtils.copiedSuccess.value
+                                                        ? 'outline_success'
+                                                        : 'outline_destructive'
+                                                    : 'secondary'
+                                            "
+                                            @click="copyUtils.copy(contentTemplateData.content)"
+                                        >
+                                            <Copy /> Copy content
+                                        </Button>
+                                        <Button
+                                            variant="secondary"
+                                            @click="saveToFile(contentTemplateData)"
+                                        >
+                                            <Save /> Save to file
+                                        </Button>
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </div>
                 </TabsContent>
             </Tabs>
         </CardContent>
     </Card>
+
+    <Dialog
+        :open="editCustomVariables !== null"
+        class="overflow-auto"
+        @update:open="editCustomVariables = null"
+    >
+        <DialogContent class="max-h-[80vh] max-w-xxl sm:max-w-xxl overflow-auto flex flex-col">
+            <DialogHeader>
+                <div class="flex justify-between mr-8">
+                    <DialogTitle>Edit custom variable defaults</DialogTitle>
+                    <div class="flex gap-4 align-items-center">
+                        <Button v-if="form" variant="default" @click="regenerateAndSave()">
+                            <Save /> Save and regenerate
+                        </Button>
+                    </div>
+                </div>
+            </DialogHeader>
+
+            <TextareaInput
+                v-if="editCustomVariables !== null"
+                v-for="variable in editCustomVariables"
+                :key="variable.key"
+                v-model="variable.value"
+                :label="`{{${variable.key}}} default value`"
+                class="mb-4"
+                :rows="20"
+            />
+        </DialogContent>
+    </Dialog>
 </template>

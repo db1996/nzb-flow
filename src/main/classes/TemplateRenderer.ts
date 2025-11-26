@@ -14,22 +14,39 @@ export class TemplateRenderer {
         const customVariablesObj: Record<string, string> = {}
         customVariables.forEach((variable) => {
             customVariablesObj[variable.key] = variable.value
+            if (variable.value === undefined || variable.value === null || variable.value === '') {
+                customVariablesObj[variable.key] = `{{${variable.key}}}`
+            }
         })
 
         return compiled({ ...variables, ...customVariablesObj })
     }
 
     static getCustomVariables(template: string): string[] {
-        // Match all handlebars variables (simplest: {{varName}} or {{varName ...}})
-        const regex = /{{\s*([a-zA-Z0-9_]+)(?:\s+[^}]*)?}}/g
+        const regex = /{{\s*([a-zA-Z0-9_.\/]+)\s*}}/g
+
         const foundVars = new Set<string>()
         let match
 
         while ((match = regex.exec(template)) !== null) {
-            const varName = match[1]
-            if (!BUILT_IN_VARIABLES_KEYS.has(varName)) {
-                foundVars.add(varName)
-            }
+            const full = match[1]
+
+            // Skip helpers (anything with spaces inside the braces)
+            if (/\s/.test(full)) continue
+
+            // Skip block helpers {{#each foo}}, {{/each}}
+            if (full.startsWith('#') || full.startsWith('/')) continue
+
+            // Extract root variable (before first dot or slash)
+            const root = full.split(/[./]/)[0]
+
+            // Skip "this"
+            if (root === 'this') continue
+
+            // Skip built-in variables
+            if (BUILT_IN_VARIABLES_KEYS.has(root)) continue
+
+            foundVars.add(root)
         }
 
         return Array.from(foundVars)

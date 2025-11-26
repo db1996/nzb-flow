@@ -439,15 +439,20 @@ export default class Settings {
 
     static saveTask(task: TaskConfig): string {
         const saveFolder = Settings.taskHistoryPath
-        // utc timestamp
-        const timestamp = Date.now()
-        let fileName = `${timestamp} - ${task.name}.json`
-        // sanitize file name
-        fileName = fileName.replace(/[/\\?%*:|"<>]/g, '-')
+        let filePath = ''
+        if (task.log_file !== '') {
+            filePath = task.log_file
+        } else {
+            // utc timestamp
+            const timestamp = Date.now()
+            let fileName = `${timestamp} - ${task.name}.json`
+            // sanitize file name
+            fileName = fileName.replace(/[/\\?%*:|"<>]/g, '-')
 
-        const filePath = path.join(saveFolder, fileName)
+            filePath = path.join(saveFolder, fileName)
 
-        task.log_file = filePath
+            task.log_file = filePath
+        }
 
         if (!fs.existsSync(saveFolder)) {
             fs.mkdirSync(saveFolder, { recursive: true })

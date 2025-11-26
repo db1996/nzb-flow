@@ -16,6 +16,8 @@ import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import CardContent from '@renderer/components/ui/card/CardContent.vue'
 import { Copy, X } from 'lucide-vue-next'
 import { copyToClipboard } from '@renderer/lib/utils'
+import { useContentTemplateStore } from '@renderer/composables/useContentTemplateStore'
+import { computed } from 'vue'
 
 const props = defineProps({
     disabled: {
@@ -26,6 +28,7 @@ const props = defineProps({
 })
 
 const settingsStore = useSettingsStore()
+const contentTemplateStore = useContentTemplateStore()
 const emits = defineEmits(['close'])
 
 const save = () => {
@@ -33,6 +36,29 @@ const save = () => {
 
     settingsStore.saveProfile(settingsStore.activeProfileEdit)
     emits('close')
+}
+
+const switches = computed(() => {
+    if (!settingsStore.activeProfileEdit) return {}
+
+    let ret: Record<string, boolean> = {}
+    for (const ct of settingsStore.activeProfileEdit.taskSettings.contentTemplates) {
+        ret[ct.id] = ct.enabled
+    }
+    return ret
+})
+
+function updateSwitch(contentTemplateId: string, value: boolean) {
+    if (!settingsStore.activeProfileEdit) return
+
+    if (settingsStore.activeProfileEdit === null) return
+
+    const template = settingsStore.activeProfileEdit.taskSettings.contentTemplates.find(
+        ct => ct.id === contentTemplateId
+    )
+    if (template) {
+        template.enabled = value
+    }
 }
 const copyUtils = copyToClipboard()
 </script>
@@ -140,13 +166,10 @@ const copyUtils = copyToClipboard()
                 <TabsContent value="content-templates">
                     <div class="flex flex-col gap-4">
                         <SwitchInput
-                            v-for="contentTemplate in settingsStore.contentTemplates"
+                            v-for="contentTemplate in contentTemplateStore.contentTemplates"
+                            @update:model-value="updateSwitch(contentTemplate.id, $event)"
                             :key="contentTemplate.id"
-                            v-model="
-                                settingsStore.activeProfileEdit.taskSettings.contentTemplates[
-                                    contentTemplate.id
-                                ]
-                            "
+                            v-model="switches[contentTemplate.id]"
                             :label="contentTemplate.name"
                             help="Enable content templates for this profile"
                             :disabled="disabled"

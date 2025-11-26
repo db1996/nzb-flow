@@ -5,19 +5,66 @@ import {
     ContentTemplateSettingsYupSchema
 } from '@main/types/settings/ContentTemplateSettings'
 import { contentTemplateExamples } from '@main/classes/ContentTemplate'
+import { TemplateRenderer } from '@main/classes/TemplateRenderer'
+import { TaskConfig } from '@main/types/settings/commands/taskSettings'
 
 export const useContentTemplateStore = defineStore('contentTemplateStore', () => {
     const contentTemplates = ref<ContentTemplateSettings[]>([])
     const activeContentTemplateEdit = ref<ContentTemplateSettings | null>(null)
 
+    const isRegenerating = ref(false)
+
     async function init() {
         getContentTemplates()
     }
 
+    const isChangingTemplateContent = ref(false)
+
     watch(
         activeContentTemplateEdit,
         () => {
-            console.log('Active Content Template Edit changed:', activeContentTemplateEdit.value)
+            if (isChangingTemplateContent.value) {
+                return
+            }
+
+            isChangingTemplateContent.value = true
+            if (
+                activeContentTemplateEdit.value &&
+                activeContentTemplateEdit.value.templateContent !== ''
+            ) {
+                const customVars = TemplateRenderer.getCustomVariables(
+                    activeContentTemplateEdit.value.templateContent
+                )
+
+                for (const varKey of customVars) {
+                    if (
+                        !activeContentTemplateEdit.value.customVariables.find(
+                            (v) => v.key === varKey
+                        )
+                    ) {
+                        activeContentTemplateEdit.value.customVariables.push({
+                            key: varKey,
+                            value: ''
+                        })
+
+                        console.log('added ' + varKey)
+                    }
+                }
+
+                for (
+                    let i = activeContentTemplateEdit.value.customVariables.length - 1;
+                    i >= 0;
+                    i--
+                ) {
+                    const existingVar = activeContentTemplateEdit.value.customVariables[i]
+                    if (!customVars.includes(existingVar.key)) {
+                        activeContentTemplateEdit.value.customVariables.splice(i, 1)
+                        console.log('removed ' + existingVar.key)
+                    }
+                }
+            }
+            isChangingTemplateContent.value = false
+            console.log(activeContentTemplateEdit.value?.customVariables)
         },
         { deep: true }
     )
@@ -55,6 +102,19 @@ export const useContentTemplateStore = defineStore('contentTemplateStore', () =>
         return contentTemplates.value
     }
 
+    async function regenerateAndSave(task: TaskConfig): Promise<TaskConfig | null> {
+        if (window.api) {
+            isRegenerating.value = true
+            const newTask = await window.api.regenerateContentTemplates(
+                JSON.parse(JSON.stringify(task))
+            )
+            isRegenerating.value = false
+            return newTask
+        }
+
+        return null
+    }
+
     return {
         init,
         contentTemplates,
@@ -62,7 +122,9 @@ export const useContentTemplateStore = defineStore('contentTemplateStore', () =>
         getContentTemplates,
         saveContentTemplate,
         deleteContentTemplate,
-        newContentTemplate
+        newContentTemplate,
+        regenerateAndSave,
+        isRegenerating
     }
 })
 

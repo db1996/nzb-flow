@@ -6,7 +6,7 @@ export type ContentTemplateSettingsVariable = {
 
 export const ContentTemplateSettingsVariableYupSchema = yup.object({
     key: yup.string().required(),
-    value: yup.string().required()
+    value: yup.string().default('')
 }) as yup.Schema<ContentTemplateSettingsVariable>
 
 export type ContentTemplateSettings = {

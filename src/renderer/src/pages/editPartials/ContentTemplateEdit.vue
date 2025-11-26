@@ -12,10 +12,15 @@ import { ref } from 'vue'
 import { CODEMIRROR_VARIABLES } from '@main/types/settings/commands/TaskVariables'
 import Label from '@renderer/components/ui/label/Label.vue'
 import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/card'
-import { Copy, X } from 'lucide-vue-next'
+import { Copy, Save, X } from 'lucide-vue-next'
 import CardDescription from '@renderer/components/ui/card/CardDescription.vue'
 import { copyToClipboard } from '@renderer/lib/utils'
 import { useContentTemplateStore } from '@renderer/composables/useContentTemplateStore'
+import Dialog from '@components/ui/dialog/Dialog.vue'
+import DialogContent from '@components/ui/dialog/DialogContent.vue'
+import DialogHeader from '@components/ui/dialog/DialogHeader.vue'
+import DialogTitle from '@components/ui/dialog/DialogTitle.vue'
+import TextareaInput from '@components/form/TextareaInput.vue'
 
 const props = defineProps({
     disabled: {
@@ -33,12 +38,14 @@ const emits = defineEmits(['close'])
 
 const save = () => {
     if (contentTemplateStore.activeContentTemplateEdit === null) return
+    console.log('saving content template', contentTemplateStore.activeContentTemplateEdit)
 
     contentTemplateStore.saveContentTemplate(contentTemplateStore.activeContentTemplateEdit)
     emits('close')
 }
 
 const variables = ref(CODEMIRROR_VARIABLES)
+const editCustomVariables = ref(false)
 </script>
 
 <template>
@@ -137,23 +144,40 @@ const variables = ref(CODEMIRROR_VARIABLES)
                             class="mb-4"
                         />
                     </div>
-                    <Label class="mb-2">Content</Label>
-                    <!-- <span class="ms-1 mt-0 text-xs text-gray-500 italic mb-2"
-                        >You can use custom variables like <code v-html="'{{thisVariable}}'" />. You
-                        will be asked to fill these in manually per post
-                    </span> -->
                     <br />
-                    <Button
-                        as="a"
-                        target="_blank"
-                        href="https://github.com/db1996/nzb-flow/blob/main/docs/Content%20Templates%20Variables.md"
-                        variant="link"
-                        class="inline m-0 p-0"
-                        >Check the docs here</Button
-                    >
+                    <div class="flex justify-between items-center mb-4">
+                        <Button
+                            as="a"
+                            target="_blank"
+                            href="https://github.com/db1996/nzb-flow/blob/main/docs/Content%20Templates%20Variables.md"
+                            variant="link"
+                            class="inline m-0 p-0"
+                            >Check the docs here</Button
+                        >
+
+                        <Button
+                            :variant="
+                                contentTemplateStore.activeContentTemplateEdit.customVariables
+                                    ?.length > 0
+                                    ? 'default'
+                                    : 'secondary'
+                            "
+                            :disabled="
+                                disabled ||
+                                contentTemplateStore.activeContentTemplateEdit.customVariables
+                                    ?.length === 0
+                            "
+                            @click="editCustomVariables = true"
+                            >Edit Custom Variables</Button
+                        >
+                    </div>
+                    <Label class="mb-2">Content</Label>
                     <CodeMirrorComponent
                         v-model="contentTemplateStore.activeContentTemplateEdit.templateContent"
                         :variables="variables"
+                        :custom-variables="
+                            contentTemplateStore.activeContentTemplateEdit.customVariables
+                        "
                         :disabled="disabled"
                         :show-language="false"
                     />
@@ -161,4 +185,34 @@ const variables = ref(CODEMIRROR_VARIABLES)
             </Tabs>
         </CardContent>
     </Card>
+
+    <Dialog
+        :open="editCustomVariables"
+        class="overflow-auto"
+        @update:open="editCustomVariables = false"
+    >
+        <DialogContent class="max-h-[80vh] max-w-xxl sm:max-w-xxl overflow-auto flex flex-col">
+            <DialogHeader>
+                <div class="flex justify-between mr-8">
+                    <DialogTitle>Edit custom variable defaults</DialogTitle>
+                    <div class="flex gap-4 align-items-center">
+                        <Button variant="default" @click="editCustomVariables = false">
+                            <Save
+                        /></Button>
+                    </div>
+                </div>
+            </DialogHeader>
+
+            <TextareaInput
+                v-if="contentTemplateStore.activeContentTemplateEdit"
+                v-for="variable in contentTemplateStore.activeContentTemplateEdit.customVariables"
+                :key="variable.key"
+                v-model="variable.value"
+                :label="`{{${variable.key}}} default value`"
+                :disabled="disabled"
+                class="mb-4"
+                :rows="20"
+            />
+        </DialogContent>
+    </Dialog>
 </template>

@@ -36,6 +36,8 @@ declare global {
             getContentTemplates: () => Promise<ContentTemplateSettings[]>
             saveContentTemplate: (template: ContentTemplateSettings) => Promise<void>
             deleteContentTemplate: (id: string) => Promise<void>
+            saveTaskLog(task: TaskConfig): Promise<void>
+            regenerateContentTemplates(task: TaskConfig): Promise<TaskConfig>
 
             getHistoryTasks: () => Promise<TaskConfig[]>
             clearHistoryTasks: () => Promise<void>

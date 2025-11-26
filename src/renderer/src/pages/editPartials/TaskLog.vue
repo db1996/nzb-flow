@@ -15,7 +15,6 @@ const openFile = (path: string) => {
 <template>
     <TaskConfigBase
         v-if="tasksStore.activeTaskLog !== null"
-        :open="tasksStore.activeTaskLog !== null"
         :form="tasksStore.activeTaskLog"
         @close="tasksStore.activeTaskLog = null"
         :disabled="true"

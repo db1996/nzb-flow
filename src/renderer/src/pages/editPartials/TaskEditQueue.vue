@@ -26,7 +26,6 @@ async function generateNewWithProfile(profileId: string) {
 <template>
     <TaskConfigBase
         v-if="tasksStore.activeTaskConfig !== null && tasksStore.activeTaskConfigIsEdit"
-        :open="tasksStore.activeTaskConfig !== null && tasksStore.activeTaskConfigIsEdit"
         :form="tasksStore.activeTaskConfig"
         @close="tasksStore.activeTaskConfig = null"
         @profile-change="generateNewWithProfile($event)"

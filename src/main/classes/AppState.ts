@@ -18,6 +18,8 @@ import { ApiServer } from '../api/ApiServer'
 import { randomUUID } from 'crypto'
 import { WebSocketApiServer } from '../api/WebSocketApiServer'
 import fs from 'fs'
+import { TemplateRenderer } from './TemplateRenderer'
+import { ContentTemplateSettings } from '../types/settings/ContentTemplateSettings'
 
 export default class AppState {
     public taskManager: TaskManager
@@ -38,6 +40,7 @@ export default class AppState {
 
     public async init() {
         this.registerIpcHandlers()
+        TemplateRenderer.registerHelpers()
         await Settings.load(false, this.taskManager)
 
         if (Settings.allSettings.theme.showTrayIcon && !this.tray) {
@@ -410,13 +413,41 @@ export default class AppState {
             return
         })
 
-        ipcMain.handle('save-content-template', async (_event, template: any) => {
-            Settings.saveContentTemplate(template)
-            return
-        })
+        ipcMain.handle(
+            'save-content-template',
+            async (_event, template: ContentTemplateSettings) => {
+                console.log('saving content template ipc', template)
+
+                Settings.saveContentTemplate(template)
+                return
+            }
+        )
 
         ipcMain.handle('get-content-templates', async () => {
             return await Settings.loadContentTemplates()
+        })
+
+        ipcMain.handle('regenerate-content-templates', async (_event, task: TaskConfig) => {
+            task.contentTemplateData.map((templateData) => {
+                const contentTemplate = Settings.contentTemplates.find(
+                    (ct) => ct.id === templateData.contentTemplateId
+                )
+                if (contentTemplate) {
+                    templateData.content = TemplateRenderer.render(
+                        contentTemplate.templateContent,
+                        task.taskVariables,
+                        templateData.customVariables
+                    )
+                }
+            })
+
+            Settings.saveTask(task)
+
+            return JSON.parse(JSON.stringify(task))
+        })
+
+        ipcMain.handle('save-task-log', async (_event, task: TaskConfig) => {
+            Settings.saveTask(task)
         })
 
         ipcMain.handle('start-http-server', async () => {
