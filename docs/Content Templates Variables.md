@@ -12,129 +12,133 @@ parent: Content Templates
 Comprehensive reference for all built-in variables, custom helpers, and template syntax available in NZB Flow content templates.
 {: .lead }
 
-- [Content templates Variables](#content-templates-variables)
-  - [Handlebars Templates](#handlebars-templates)
-  - [File Lists](#file-lists)
-  - [Custom helpers](#custom-helpers)
-    - [Size helpers](#size-helpers)
-    - [Time Helpers](#time-helpers)
-      - [Modular Helpers (HH/MM/SS)](#modular-helpers-hhmmss)
-      - [Total Helpers](#total-helpers)
-  - [List of variables](#list-of-variables)
-    - [Custom variables](#custom-variables)
-    - [Single value variables](#single-value-variables)
-    - [File list variables](#file-list-variables)
+## Table of Contents
+{: .no_toc .text-delta }
 
+1. TOC
+{:toc}
 
-## Handlebars Templates
+---
 
-Content templates use the Handlebars template language (also known as “mustache”).
+## Handlebars Template Engine
+{: .mb-5 }
 
-This means you can use:
+Content templates use the **Handlebars** template language (also known as "mustache") for dynamic content generation.
 
-simple variables `{{variable}}`
+### Basic Syntax
+{: .mb-3 }
 
-helpers `{{helper value}}`
+| Syntax | Purpose | Example |
+|--------|---------|---------|
+| `{{variable}}` | Insert variable value | `{{jobname}}` |
+| `{{helper value}}` | Apply helper function | `{{sizeHuman raw_size}}` |
+| `{{#if condition}}` | Conditional blocks | `{{#if rar_files}}...{{/if}}` |
+| `{{#each array}}` | Loop over arrays | `{{#each raw_files}}...{{/each}}` |
+{: .table }
 
-conditionals `{{#if}}`
+### Built-in Handlebars Helpers
+{: .mb-3 }
 
-loops `{{#each}}` ... `{{/each}}`
+All standard Handlebars helpers are available for advanced templating:
 
-You can also use any other built-in Handlebars helper:
+📚 [**Complete Handlebars Documentation**](https://handlebarsjs.com/guide/builtin-helpers.html)
 
-👉 https://handlebarsjs.com/guide/builtin-helpers.html
+---
 
-## File Lists
+## File List Variables
+{: .mb-5 }
 
-Some built-in variables contain lists of files.
-You can loop over these using Handlebars’ each block:
+Several variables contain arrays of file objects that you can iterate over using `{{#each}}`.
 
-```
+### File Object Structure
+Each file object contains these properties:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `name` | `string` | Filename with extension |
+| `relativePath` | `string` | Path relative to upload root folder |
+| `absolutePath` | `string` | Complete system path |
+| `size` | `number` | File size in bytes |
+{: .table }
+
+### Example Usage
+```handlebars
 {{#each raw_files}}
-  {{this.relativePath}} - {{sizeHuman this.size}}
+📁 {{this.relativePath}} — {{sizeHuman this.size}}
 {{/each}}
 ```
 
-Every file object contains:
+---
 
-- `name` – filename with extension
-- `relativePath` – the path relative to the uploaded root folder
-- `absolutePath` – full absolute path (e.g., C:/Users/Me/Desktop/test.txt)
-- `size` – size in bytes
+## Custom Helper Functions
+{: .mb-5 }
 
-These structures are provided by the app and cannot be modified.
+NZB Flow provides specialized helpers for formatting sizes and durations.
 
-## Custom helpers
+### Size Formatting Helpers
+{: .mb-4 }
 
-I have made a couple custom helpers to make some properties human readable.
+Transform byte values into human-readable formats.
 
-### Size helpers
+#### Automatic Unit Selection
+```handlebars
+{{sizeHuman raw_size}}
+```
 
-For any of the sizes of files/sections of the post. You can use a couple helpers to display the size in a specific way or an automatic way.
+**Auto-selection rules:**
+- ≥ 1 TB → TB format
+- ≥ 1 GB → GB format  
+- ≥ 1 MB → MB format
+- ≥ 1 KB → KB format
+- < 1 KB → bytes
 
-If you do not use a helper the size in bytes is shown.
+#### Fixed Unit Helpers
+```handlebars
+{{sizeTB raw_size}}    <!-- Always shows TB -->
+{{sizeGB raw_size}}    <!-- Always shows GB -->
+{{sizeMB raw_size}}    <!-- Always shows MB -->
+{{sizeKB raw_size}}    <!-- Always shows KB -->
+```
 
-For this example I will be using raw_size as an example.
+### Time Formatting Helpers
+{: .mb-4 }
 
-`{{sizeHuman raw_size}}`: Will use KB/MB/GB/TB based on how large the files are.
+Convert millisecond values into readable time formats.
 
-It determines like this (in order of priority)
+> **Input Format**: All time variables represent duration in milliseconds
+{: .alert .alert-info }
 
-- ≥ 1 TB → TB
-- ≥ 1 GB → GB
-- ≥ 1 MB → MB
-- ≥ 1 KB → KB
-- Otherwise → bytes
+#### Component Helpers (Modular)
+Extract specific time components for custom formatting:
 
-Fixed-unit helpers:
+```handlebars
+{{timeH total_time}}   <!-- Hours (0-∞) -->
+{{timeM total_time}}   <!-- Minutes within hour (0-59) -->
+{{timeS total_time}}   <!-- Seconds within minute (0-59) -->
+{{timeMS total_time}}  <!-- Remaining milliseconds (0-999) -->
+```
 
-- {{sizeTB raw_size}}
-- {{sizeGB raw_size}}
-- {{sizeMB raw_size}}
-- {{sizeKB raw_size}}
-
-### Time Helpers
-
-Some variables contain the **number of milliseconds** a task took, such as the duration of each step or the total time of an upload job.
-
-If you do not use a helper, the raw value in milliseconds is shown.
-
-For this example, we will use `total_time`.
-
-#### Modular Helpers (HH/MM/SS)
-
-These helpers return hours, minutes, seconds, or leftover milliseconds **modularly**, so you can build your own custom formats:
-
-- `{{timeH total_time}}` – Hours (floor of total hours)
-- `{{timeM total_time}}` – Minutes **within the current hour** (0–59)
-- `{{timeS total_time}}` – Seconds **within the current minute** (0–59)
-- `{{timeMS total_time}}` – Milliseconds **left over after calculating HH:MM:SS** (0–999)
-
-Example:
-
-`{{timeH total_time}}:{{timeM total_time}}:{{timeS total_time}}.{{timeMS total_time}}`
-
-If `total_time` = 90 minutes + 10 seconds + 456 ms, this renders as:
-
-`1:30:10.456`
-
+**Custom Format Example:**
+```handlebars
+Duration: {{timeH total_time}}:{{timeM total_time}}:{{timeS total_time}}.{{timeMS total_time}}
+```
+*Input: 5410456 ms → Output: "Duration: 1:30:10.456"*
 
 #### Total Helpers
+Get complete duration in a single unit:
 
-These helpers return the **total value** of the task in a single unit:
+```handlebars
+{{totalS total_time}}  <!-- Total seconds -->
+{{totalM total_time}}  <!-- Total minutes -->
+{{totalH total_time}}  <!-- Total hours -->
+{{totalMS total_time}} <!-- Total milliseconds -->
+```
 
-- `{{totalS total_time}}` – Total seconds (rounded down)
-- `{{totalM total_time}}` – Total minutes (rounded down)
-- `{{totalH total_time}}` – Total hours (rounded down)
-- `{{totalMS total_time}}` – Total milliseconds
-
-Example:
-
-`{{totalM total_time}} minutes, {{timeMS total_time}} ms`
-
-If `total_time` = 90 minutes + 10 seconds + 456 ms, this renders as:
-
-90 minutes, 5410456 ms
+**Usage Example:**
+```handlebars
+Completed in {{totalM total_time}} minutes
+```
+*Input: 5410456 ms → Output: "Completed in 90 minutes"*
 
 ## Complete Variable Reference
 {: .mb-5 }
