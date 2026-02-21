@@ -1,11 +1,26 @@
-# Profile settings docs
+---
+layout: default
+title: Profile Settings
+description: Comprehensive guide to posting profiles and configuration options
+nav_order: 2
+---
 
-Profile settings are used to generate a post, this can mean anything from random generating names, obfuscation, more advanced CLI parameters and linking servers.
+# Profile Settings Guide
+{: .mb-6 }
 
-Once you generate a task, either automatically by using folder monitoring or manually by choosing/dropping files in, a post with full details is generated.
-In the pop-up you see, the settings can then be altered before actually posting. Or you can regenerate the task with the same files but with another profile. All details will be overwritten.
+Profile settings define how your posts are generated and processed. From random name generation and obfuscation to advanced CLI parameters and server linking, profiles give you complete control over the posting workflow.
+{: .lead }
 
-Here I will go through each setting individually and explain in more technical detail what it does and what it affects in the final result.
+## How Profiles Work
+{: .mb-4 }
+
+Profiles generate tasks either automatically (via folder monitoring) or manually (drag & drop). Once a task is created, you can:
+- ✏️ **Edit settings** in the popup before posting
+- 🔄 **Regenerate** the task with different profile settings
+- ⚙️ **Override** any setting for one-time changes
+
+> **Note**: Regenerating a task with a different profile will overwrite all existing details.
+{: .alert .alert-info }
 
 - [Profile settings docs](#profile-settings-docs)
   - [Posting settings](#posting-settings)

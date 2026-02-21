@@ -1,29 +1,85 @@
-# Queues in NZB flow
+---
+layout: default
+title: Queue System
+description: Understanding NZB Flow's dual-queue architecture and configuration
+nav_order: 3
+---
 
-In NZB flow there are 2 queues running simultaniously.
+# Queue System Architecture
+{: .mb-6 }
 
-## General behaviour
+NZB Flow uses a sophisticated dual-queue system that allows compression/par2 creation and uploading to run simultaneously, maximizing efficiency and system resource utilization.
+{: .lead }
 
-- Pausing/Resuming the queue from the UI/API will pause both of these queues.
-- If a command is currently running (rar, parpar, nyuu), the command will finish before it is paused.
-- If a command is paused inbetween steps, it will pause and continue after you've resumed
+## Architecture Overview
+{: .mb-5 }
 
-## Upload queue
+```mermaid
+graph TD
+    A[Files Added] --> B[Compression Queue]
+    B --> C[RAR Creation]
+    C --> D[PAR2 Creation]
+    D --> E[Upload Queue]
+    E --> F[Nyuu Posting]
+    F --> G[Complete]
+```
 
-The upload queue processing posting jobs with the nyuu CLI after all files have been prepared.
+### General Queue Behavior
+{: .mb-4 }
 
-- In the settings -> queues you can set `max upload workers`.
-  - If you set this to more than 1, if the same server is involved, the amount of connections will be: (server connections + post check connections) x amount of workers
-- In the settings -> queues you can set `Max uploads in queue before pausing compression`
-  - If set to 1 or higher, it will auto pause the compression queue when the upload queue has this amount. It will auto resume when enough uploads have been processed
-  - If set to 0, compression queue will never be auto paused
+- **Pause/Resume**: Controls both queues simultaneously via UI or API
+- **Command Completion**: Running commands (rar, parpar, nyuu) finish before pausing
+- **Step-by-Step Control**: Queues can pause between processing steps
 
-NOTE:
-It can sometimes happen that an extra compression job is ran before it's paused properly if you have more than 1 compression worker if the timings are precise
+---
 
-## Compression queue
+## Upload Queue
+{: .mb-4 }
 
-The compression queue runs both the RAR and parpar commands. And has it's own `max compression workers` setting.
+Handles posting prepared files using the Nyuu CLI.
+
+### Configuration
+{: .mb-3 }
+
+| Setting                | Description                          | Impact                                        |
+| ---------------------- | ------------------------------------ | --------------------------------------------- |
+| **Max Upload Workers** | Concurrent upload processes          | More workers = higher server connection usage |
+| **Max Queue Size**     | Auto-pause threshold for compression | Prevents upload queue backlog                 |
+{: .table }
+
+### Connection Calculation
+```
+Total Connections = (Server Connections + Post Check Connections) × Workers
+```
+
+> **Example**: 2 workers with 10 server connections + 2 post check connections = 24 total connections
+{: .alert .alert-info }
+
+### Auto-Pause Feature
+{: .mb-3 }
+
+When **Max uploads in queue** is set (≥1):
+- ⏸️ **Pauses compression** when upload queue reaches the limit
+- ▶️ **Resumes compression** when uploads are processed
+- 🚫 **Disabled** when set to 0
+
+> **Note**: With multiple compression workers, timing may allow one extra job before pause activates
+{: .alert .alert-warning }
+
+---
+
+## Compression Queue
+{: .mb-4 }
+
+Handles both RAR compression and ParPar operations with configurable worker processes.
+
+### Configuration
+{: .mb-3 }
+
+| Setting                     | Default | Description                      |
+| --------------------------- | ------- | -------------------------------- |
+| **Max Compression Workers** | 1       | Concurrent compression processes |
+{: .table }
 
 
 

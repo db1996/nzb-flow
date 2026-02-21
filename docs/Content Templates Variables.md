@@ -1,6 +1,16 @@
-# Content templates Variables
+---
+layout: default
+title: Template Variables
+description: Complete reference for content template variables and helpers
+nav_order: 7
+parent: Content Templates
+---
 
-You can use built-in variables from the completed post to fill in your content template. Or you can use custom variables
+# Content Template Variables & Helpers
+{: .mb-6 }
+
+Comprehensive reference for all built-in variables, custom helpers, and template syntax available in NZB Flow content templates.
+{: .lead }
 
 - [Content templates Variables](#content-templates-variables)
   - [Handlebars Templates](#handlebars-templates)
@@ -126,49 +136,58 @@ If `total_time` = 90 minutes + 10 seconds + 456 ms, this renders as:
 
 90 minutes, 5410456 ms
 
-## List of variables
+## Complete Variable Reference
+{: .mb-5 }
 
-### Custom variables
+### Custom Variables
+{: .mb-4 }
 
-You can create custom variables easily by using this in the template: `{{somevariable}}`.
+Create dynamic, user-editable fields by referencing undefined variables:
 
-If the variable does not exist in the default variables below, it will be parsed as a custom one.
-Defaults can be filled in with the content template settings, and the values can be edited per upload (in the task logs, after uploading is complete).
+```handlebars
+Quality: {{video_quality}}
+Source: {{content_source}}
+Notes: {{release_notes}}
+```
 
-Block variables like `#each` will not work, and they will be ignored (empty) by handlebars.
+These become editable fields in task logs after upload completion.
 
-### Single value variables
+> **Note**: Block helpers like `{{#each}}` won't work with custom variables and will render as empty.
+{: .alert .alert-warning }
 
-These variables represent single values (strings, numbers)
+### Built-in Variables
+{: .mb-4 }
 
-If a variable is null, it will be replaced by an empty string. This will only happen if you are using variables that are not generated. For example:
+These variables represent single values from the posting process:
 
-- Using variables that are only known after doing certain steps while setting the content template to include the file in the post.
-- Using rar related variables if you don't generate RARS
-- Using par related variables if you don't generate par2 files
+> **Null Handling**: Variables return empty strings when data isn't available (e.g., RAR variables when compression is disabled).
+{: .alert .alert-info }
 
-| Variable     | Type             | Description                                                                                                             |
-| ------------ | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `jobname`    | `string \| null` | The name of the post.                                                                                                   |
-| `fname`      | `string \| null` | The name of the selected file or folder used as the base for the post.                                                  |
-| `raw_size`   | `number \| null` | Total size (in bytes) of the selected files/folders **before** RAR compression.                                         |
-| `rar_size`   | `number \| null` | Total size (in bytes) of all generated RAR files.                                                                       |
-| `rar_count`  | `number \| null` | Number of RAR files generated.                                                                                          |
-| `rar_time`   | `number \| null` | Time (in milliseconds) taken to create the RAR files.                                                                   |
-| `par_size`   | `number \| null` | Total size (in bytes) of all generated PAR files.                                                                       |
-| `par_count`  | `number \| null` | Number of PAR files generated.                                                                                          |
-| `par_time`   | `number \| null` | Time (in milliseconds) taken to create the PAR files.                                                                   |
-| `nyuu_size`  | `number \| null` | Total size (in bytes) of the combined upload set (rar_size + par_size, if you don't use RAR, it's raw_size + par_size). |
-| `nyuu_time`  | `number \| null` | Time (in milliseconds) taken for the Usenet upload (Nyuu).                                                              |
-| `total_time` | `number \| null` | Total processing time for the entire job, including queue delays.                                                       |
+| Variable     | Type             | Description                                                               |
+| ------------ | ---------------- | ------------------------------------------------------------------------- |
+| `jobname`    | `string \| null` | Post name/title                                                           |
+| `fname`      | `string \| null` | Original file/folder name used as base                                    |
+| `raw_size`   | `number \| null` | Original file size before compression (bytes)                             |
+| `rar_size`   | `number \| null` | Total RAR file size (bytes)                                               |
+| `rar_count`  | `number \| null` | Number of RAR files created                                               |
+| `rar_time`   | `number \| null` | RAR creation time (milliseconds)                                          |
+| `par_size`   | `number \| null` | Total PAR2 file size (bytes)                                              |
+| `par_count`  | `number \| null` | Number of PAR2 files created                                              |
+| `par_time`   | `number \| null` | PAR2 creation time (milliseconds)                                         |
+| `nyuu_size`  | `number \| null` | Total upload size: rar_size + par_size (or raw_size + par_size if no RAR) |
+| `nyuu_time`  | `number \| null` | Upload duration (milliseconds)                                            |
+| `total_time` | `number \| null` | Complete job duration including queue time (milliseconds)                 |
+{: .table }
 
-### File list variables
+### File List Variables
+{: .mb-4 }
 
-These variables contain a list of file objects, which you can iterate over with `{{#each}}`.
+Arrays of file objects for iteration with `{{#each}}`:
 
-| Variable     | Type                 | Description                                                                |
-| ------------ | -------------------- | -------------------------------------------------------------------------- |
-| `raw_files`  | `TaskVariableFile[]` | List of the original uncompressed files selected for posting (recursive).  |
-| `rar_files`  | `TaskVariableFile[]` | List of generated RAR files.                                               |
-| `par_files`  | `TaskVariableFile[]` | List of generated PAR recovery files.                                      |
-| `nyuu_files` | `TaskVariableFile[]` | List of all files uploaded to Usenet (rar_files or raw_files + par_files). |
+| Variable     | Type                 | Description                                                       |
+| ------------ | -------------------- | ----------------------------------------------------------------- |
+| `raw_files`  | `TaskVariableFile[]` | Original files selected for posting (recursive)                   |
+| `rar_files`  | `TaskVariableFile[]` | Generated RAR archive files                                       |
+| `par_files`  | `TaskVariableFile[]` | Generated PAR2 recovery files                                     |
+| `nyuu_files` | `TaskVariableFile[]` | All files uploaded to usenet (rar_files or raw_files + par_files) |
+{: .table }

@@ -1,115 +1,176 @@
+---
+layout: default
+title: NZB Flow
+description: A GUI application to automate usenet posting using external CLI tools
+permalink: /
+nav_order: 1
+---
+
 # NZB Flow
-![alt text](docs/images/logo-dark.svg)
+{: .mb-6 }
 
-A GUI application to automate usenet posting. It uses external cli tools for the whole process: rar for compression (others coming soon), parpar for par2 creation and nyuu for posting.
+![NZB Flow Logo](images/logo-dark.svg){: .mx-auto .d-block .mb-6 }
 
-## quick start
+A powerful GUI application to automate usenet posting. Built with modern web technologies, it orchestrates external CLI tools for the complete posting workflow: rar for compression, parpar for par2 creation, and nyuu for posting.
+{: .lead }
 
-[Go to releases](https://github.com/db1996/nzb-flow/releases/latest) to download the latest installer.
+## Quick Start
+{: .mb-4 }
 
-The application requires access to all 3 external cli commands. It will automatically detect WinRAR installation on windows. And It has a built in option to install parpar and nyuu through nodejs.
+### Download
+[📥 Download Latest Release](https://github.com/db1996/nzb-flow/releases/latest){: .btn .btn-primary .btn-lg .mr-2 }
+[📖 View Documentation](profiles.html){: .btn .btn-outline }
 
-Change your usenet server settings in the main settings screen. Multiple servers are supported and are linked in profiles.
+### Prerequisites
 
-You will have a default profile for posting settings with sensible defaults. You can start drag and dropping files to open the upload screen.
+The application requires access to three external CLI commands:
+- **RAR**: Automatically detects WinRAR installation on Windows
+- **ParPar & Nyuu**: Built-in installation option through Node.js
 
-[Check out the profile settings docs](docs/profiles.md) for detailed and advanced settings for posting.
+### Setup
+
+1. **Configure Servers**: Set up your usenet server settings in the main settings screen
+2. **Multiple Servers**: Full support with profile linking
+3. **Default Profile**: Comes with sensible defaults for posting
+4. **Start Posting**: Simply drag and drop files to begin
+
+📚 [Check out the profile settings docs](profiles.html) for detailed and advanced posting settings.
 
 ## Features
+{: .mb-5 }
 
-- Easy drag and drop
-- Full obfuscation capabilities
-  - random file names
-  - random archive password with encrypted headers
-  - subject obfuscation
-  - yenc name obfuscation
-  - filename metadata obfuscation
-  - ability to fully customize nyuu templates for all of these
-- All relevant CLI flags can be changed in the GUI.
-- Profiles for post settings
-- Folder monitoring, assign a profile for easy management
-- double queue system. One for compression and par2 creation, and another for uploading so they can work simultaneously. Settings for their behaviour
-- approval system for upload tasks (if you want to)
-- preserve folder structure (with rar)
-- More advanced rar options like volume sizes, solid archive, exclude patterns
-- ability to turn rar off completely
-- more advanced parpar options for redundancy and slices
-- fully customizable nyuu command options like post checks, retry attempts and a lot more
-- custom arguments for all CLIs
-- Automatically update application (can be turned on)
-- Optional API server for remote control
-- Optional Websocket server for live updates
-- Automatic file generation per post (.txt, .nfo etc)
+### 🎯 Core Functionality
+- **Easy drag and drop interface**
+- **Smart queue system**: Separate queues for compression/par2 creation and uploading
+- **Profile-based settings** for different posting scenarios
+- **Folder monitoring** with profile assignment
+- **Approval system** for upload tasks (optional)
 
-## Docs
+### 🔐 Security & Obfuscation
+- **Complete obfuscation capabilities**:
+  - Random file names
+  - Random archive passwords with encrypted headers
+  - Subject obfuscation
+  - YENC name obfuscation
+  - Filename metadata obfuscation
+  - Fully customizable nyuu templates
 
-- [profile settings](docs/profiles.md): Details about what every option affects under the hood. These are the settings that generate the info you see in the pop-up when you drop in files
-- [Queues docs](docs/Queues.md): Details about how the queue system works. And how the settings affect them.
-- [API Server docs](docs/API%20server.md): Has a link to the postman collection and some general notes
-- [Websocket server docs](docs/Websocket%20server.md): Details about received events
+### ⚙️ Advanced Options
+- **RAR Configuration**:
+  - Preserve folder structure
+  - Custom volume sizes
+  - Solid archive support
+  - File exclusion patterns
+  - Option to disable RAR completely
+- **ParPar Options**: Advanced redundancy and slice settings
+- **Nyuu Customization**: Post checks, retry attempts, and comprehensive CLI options
+- **Custom CLI Arguments** for all external tools
 
-### Replace existing files
+### 🌐 Automation & Integration
+- **Optional API server** for remote control
+- **WebSocket server** for real-time updates
+- **Automatic updates** (configurable)
+- **Automatic file generation** (.txt, .nfo, etc.) per post
 
-under general settings, there is a setting "Replace existing files"
+## Documentation
+{: .mb-5 }
 
-When a job starts it now checks if the rar/par folder already exists, and if the nzb exists.
+| Topic                                           | Description                                                       |
+| ----------------------------------------------- | ----------------------------------------------------------------- |
+| [📁 Profile Settings](profiles.html)             | Comprehensive guide to posting profiles and all available options |
+| [📅 Queue System](Queues.html)                   | Details about the dual-queue architecture and settings            |
+| [🌐 API Server](API%20server.html)               | Remote control API with Postman collection                        |
+| [🔌 WebSocket Server](Websocket%20server.html)   | Real-time event system documentation                              |
+| [📝 Content Templates](Content%20Templates.html) | File generation and templating system                             |
+{: .table .table-hover }
 
-If this setting is on, it will delete these files before starting the job
-If this is turned off, it will rename the task to "{name-of-post} - 1" etc until it finds a new name. This will also alter the name of the post of course
+## Configuration
+{: .mb-4 }
 
-### Links
+### Replace Existing Files
+{: .mb-3 }
 
-[Rar cli help](https://gist.github.com/YenForYang/5953ad8355cf32188aa75c0139cc9261)
+Under **General Settings**, the "Replace existing files" option controls conflict resolution:
 
-[ParPar cli help](https://github.com/animetosho/ParPar/blob/master/help-full.txt)
+- **✅ Enabled**: Deletes existing files (rar/par folders, NZB files) before starting new jobs
+- **❌ Disabled**: Automatically renames tasks (e.g., "post-name-1", "post-name-2") to avoid conflicts
 
-[Nyuu cli help](https://github.com/animetosho/Nyuu/blob/master/help-full.txt)
+> ⚠️ **Note**: Disabling this option will also alter the post name to match the renamed task.
+{: .alert .alert-warning }
+
+## External Tool Documentation
+{: .mb-4 }
+
+| Tool           | Documentation Link                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| **RAR CLI**    | [Complete Command Reference](https://gist.github.com/YenForYang/5953ad8355cf32188aa75c0139cc9261) |
+| **ParPar CLI** | [Full Help Documentation](https://github.com/animetosho/ParPar/blob/master/help-full.txt)         |
+| **Nyuu CLI**   | [Complete Usage Guide](https://github.com/animetosho/Nyuu/blob/master/help-full.txt)              |
+{: .table }
 
 
-## Causes of errors
+## Troubleshooting
+{: .mb-4 }
 
-### Special characters in the post name
+### Common Issues
 
-Please do not use any special characters in the post name (rar/par/nzb file names). This results in errors in the process due to files not being made.
+#### Special Characters in Post Names
+{: .text-red-200 }
 
-## still a work in progress
+> ⚠️ **Important**: Avoid special characters in post names as they can cause file creation errors.
+{: .alert .alert-danger }
 
-This is a little passion project of mine, so it's never really done.
+Use only alphanumeric characters, spaces, hyphens, and underscores for reliable operation.
 
-But performance is something I need to test thoroughly. This application is written in electron which is not the most optimized framework. But that's really just for visuals and familiarity. Under the hood the clis are directly ran through their executables. Would love some help testing this.
+---
 
-### features I'm working on/thinking about
+## Development
+{: .mb-5 }
 
-- Backup server per profile so if it fails uploading it should retry with the backup server
-- a bit better visuals, I am not quite happy with all the tables yet, the screen needs to be quite wide to make it all fit.
+### Project Status
 
-If you can think of any missing features please open an issue!
+NZB Flow is an active passion project focused on providing a robust usenet posting solution. While built on Electron (for UI familiarity), all core operations use native CLI executables for optimal performance.
 
-## Build yourself
+**Current Focus Areas:**
+- Performance testing and optimization
+- UI/UX improvements for better table layouts
+- Enhanced mobile responsiveness
 
-Make sure you have nodejs and pnpm installed
+**Planned Features:**
+- 🔄 **Backup server support** per profile with automatic failover
+- 🎨 **Visual improvements** for better wide-screen layouts
+- 📦 More compression format support
 
-### Install dependencies
+💬 [**Suggest Features**](https://github.com/db1996/nzb-flow/issues): Have ideas? Open an issue on GitHub!
 
+### Build From Source
+{: .mb-4 }
+
+**Prerequisites:** Node.js and pnpm
+
+#### Install Dependencies
 ```bash
-$ pnpm install
+pnpm install
 ```
 
-### Build
-
+#### Build for Production
 ```bash
-# For windows
-$ pnpm build:win
+# Windows
+pnpm build:win
 
-# For macOS
-$ pnpm build:mac
+# macOS
+pnpm build:mac
 
-# For Linux
-$ pnpm build:linux
+# Linux
+pnpm build:linux
 ```
 
-### Development
-
+#### Development Mode
 ```bash
-$ pnpm dev
+pnpm dev
 ```
+
+---
+
+**Repository:** [github.com/db1996/nzb-flow](https://github.com/db1996/nzb-flow)
+**License:** [View License](https://github.com/db1996/nzb-flow/blob/main/LICENSE)

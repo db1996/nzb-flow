@@ -1,0 +1,61 @@
+# NZB Flow Documentation Site Configuration
+
+title: NZB Flow Documentation
+description: Complete guide for NZB Flow - the automated usenet posting application
+url: "https://db1996.github.io"
+baseurl: "/nzb-flow"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: just-the-docs
+
+# Just the Docs theme configuration
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+
+# Navigation structure
+nav_sort: order
+nav_fold: false
+
+# Footer
+footer_content: "Copyright &copy; 2024 NZB Flow. Distributed under MIT License."
+
+# Plugin configuration
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - node_modules/
+  - vendor/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+
+# Collections configuration
+collections:
+  examples:
+    output: true
+    permalink: /:collection/:name/
+
+# Default layouts
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: "examples"
+      type: "examples"
+    values:
+      layout: "default"
+      parent: "Content Templates"
