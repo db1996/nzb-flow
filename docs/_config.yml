@@ -8,7 +8,8 @@ baseurl: "/nzb-flow"
 # Build settings
 markdown: kramdown
 highlighter: rouge
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs
+color_scheme: nil
 
 # Just the Docs theme configuration
 search_enabled: true
@@ -29,6 +30,7 @@ footer_content: "Copyright &copy; 2024 NZB Flow. Distributed under MIT License."
 
 # Plugin configuration
 plugins:
+  - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
 
