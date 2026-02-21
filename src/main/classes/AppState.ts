@@ -1,5 +1,4 @@
-import { app, dialog, ipcMain, Menu, shell, Tray } from 'electron'
-import trayIcon from '../../../resources/icon.png?asset'
+import { app, dialog, ipcMain, shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import TaskManager from '../commands/manager/TaskManager'
 import path from 'path'
@@ -20,17 +19,18 @@ import { WebSocketApiServer } from '../api/WebSocketApiServer'
 import fs from 'fs'
 import { TemplateRenderer } from './TemplateRenderer'
 import { ContentTemplateSettings } from '../types/settings/ContentTemplateSettings'
+import WindowTrayManager from './WindowTrayManager'
 
 export default class AppState {
     public taskManager: TaskManager
-
-    public tray: Tray | null = null
+    public windowTrayManager: WindowTrayManager
     public updaterInstance: Updater | null = null
     public apiServer: ApiServer
     public websocketService: WebSocketApiServer
 
     constructor() {
         this.taskManager = new TaskManager()
+        this.windowTrayManager = new WindowTrayManager(this)
         this.updaterInstance = new Updater()
         this.updaterInstance.setupAutoUpdater()
 
@@ -43,36 +43,15 @@ export default class AppState {
         TemplateRenderer.registerHelpers()
         await Settings.load(false, this.taskManager)
 
-        if (Settings.allSettings.theme.showTrayIcon && !this.tray) {
-            this.createTray()
-        }
+        this.windowTrayManager.updateTrayBasedOnSettings()
 
         if (Settings.allSettings.httpServerEnabled) this.apiServer.start()
         if (Settings.allSettings.wsServerEnabled) this.websocketService.start()
     }
 
     public registerWindowHandlers() {
-        if (!Settings.mainWindow) return
-        Settings.mainWindow.on('ready-to-show', () => {
-            Settings.mainWindow?.show()
-
-            if (Settings.allSettings.theme.showTrayIcon && !this.tray) {
-                this.createTray()
-            }
-        })
-
-        Settings.mainWindow.on('close', (event) => {
-            if (
-                Settings.allSettings.theme.showTrayIcon &&
-                Settings.allSettings.theme.minimizeToTray
-            ) {
-                event.preventDefault()
-                Settings.mainWindow?.hide()
-                if (!this.tray) {
-                    this.createTray()
-                }
-            }
-        })
+        // Window handlers are now managed by WindowTrayManager
+        // This method is kept for IPC setup that might depend on it
     }
 
     private registerIpcHandlers() {
@@ -81,13 +60,7 @@ export default class AppState {
 
             Settings.saveAllSettings(allSettings)
 
-            if (allSettings.theme.showTrayIcon) {
-                if (!this.tray) {
-                    this.createTray()
-                }
-            } else {
-                this.destroyTray()
-            }
+            this.windowTrayManager.updateTrayBasedOnSettings()
 
             this.websocketService.stop()
             this.apiServer.stop()
@@ -454,62 +427,56 @@ export default class AppState {
         ipcMain.handle('stop-http-server', async () => {
             this.apiServer.stop()
         })
-    }
 
-    public createTray(): void {
-        if (this.tray) return // Tray already exists
+        // Window and Tray management IPC handlers
+        ipcMain.handle('window-minimize-to-tray', () => {
+            this.windowTrayManager.minimizeToTray()
+            return true
+        })
 
-        this.tray = new Tray(trayIcon)
+        ipcMain.handle('window-restore-from-tray', () => {
+            this.windowTrayManager.restoreFromTray()
+            return true
+        })
 
-        const contextMenu = Menu.buildFromTemplate([
-            {
-                label: 'Show',
-                click: () => {
-                    if (Settings.mainWindow) {
-                        Settings.mainWindow.show()
-                        Settings.mainWindow.focus()
-                    }
-                }
-            },
-            {
-                label: 'Hide',
-                click: () => {
-                    if (Settings.mainWindow) {
-                        Settings.mainWindow.hide()
-                    }
-                }
-            },
-            { type: 'separator' },
-            {
-                label: 'Quit',
-                click: () => {
-                    if (this.tray) {
-                        this.tray.destroy()
-                    }
-                    app.quit()
-                }
-            }
-        ])
+        ipcMain.handle('window-toggle', () => {
+            this.windowTrayManager.toggleWindow()
+            return true
+        })
 
-        this.tray.setContextMenu(contextMenu)
-        this.tray.setToolTip('NZB Flow')
+        ipcMain.handle('window-show', () => {
+            this.windowTrayManager.showWindow()
+            return true
+        })
 
-        this.tray.on('double-click', () => {
-            if (Settings.mainWindow) {
-                if (Settings.mainWindow.isVisible()) {
-                    Settings.mainWindow.hide()
-                } else {
-                    Settings.mainWindow.show()
-                    Settings.mainWindow.focus()
-                }
+        ipcMain.handle('window-hide', () => {
+            this.windowTrayManager.hideWindow()
+            return true
+        })
+
+        ipcMain.handle('get-window-state', () => {
+            return {
+                hasWindow: this.windowTrayManager.hasWindow(),
+                hasTray: this.windowTrayManager.hasTray(),
+                isRunningInTray: this.windowTrayManager.isRunningInTray(),
+                isVisible:
+                    this.windowTrayManager.hasWindow() &&
+                    this.windowTrayManager.getWindow()!.isVisible()
             }
         })
     }
 
-    public destroyTray(): void {
-        if (this.tray) {
-            this.tray.destroy()
-            this.tray = null
-        }
+    /**
+     * Get the window tray manager instance
+     */
+    public getWindowTrayManager(): WindowTrayManager {
+        return this.windowTrayManager
+    }
+
+    /**
+     * Cleanup all resources
+     */
+    public cleanup(): void {
+        this.windowTrayManager.cleanup()
     }
 }

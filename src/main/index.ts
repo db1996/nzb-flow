@@ -1,45 +1,10 @@
 import { app, shell, BrowserWindow } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 import Settings from './classes/Settings'
 import fs from 'fs'
 import AppState from './classes/AppState'
 
 let appState: AppState | null = null
-
-function createWindow(): void {
-    // Create the browser window.
-    Settings.mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 670,
-        show: false,
-        autoHideMenuBar: true,
-        title: 'NZB Flow',
-        icon: icon, // Set icon for all platforms including Windows
-        webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            sandbox: false
-        }
-    })
-
-    Settings.mainWindow.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url)
-        return {
-            action: 'deny'
-        }
-    })
-
-    appState!.registerWindowHandlers()
-
-    // HMR for renderer base on electron-vite cli.
-    // Load the remote URL for development or the local html file for production.
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        Settings.mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-        Settings.mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-    }
-}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -60,7 +25,9 @@ app.whenReady().then(() => {
 
     appState = new AppState()
     appState.init()
-    createWindow()
+
+    // Create the main window
+    appState.getWindowTrayManager().createWindow()
 
     fs.watchFile(Settings.allSettingsPath, async () => {
         await Settings.loadMainSettings()
@@ -71,10 +38,9 @@ app.whenReady().then(() => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
-            Settings.load()
             if (appState) {
-                appState.registerWindowHandlers()
+                appState.getWindowTrayManager().createWindow()
+                Settings.load()
             }
         }
     })
@@ -87,17 +53,11 @@ app.on('window-all-closed', () => {
     console.log(
         'window close called',
         Settings.allSettings.theme.showTrayIcon,
-        appState?.tray,
         Settings.allSettings.theme.minimizeToTray
     )
 
-    // Don't quit if showTrayIcon is enabled (app should stay in tray)
-    if (
-        Settings.allSettings.theme.showTrayIcon &&
-        Settings.allSettings.theme.minimizeToTray &&
-        appState &&
-        appState.tray
-    ) {
+    // Check if app should quit based on tray settings
+    if (appState && !appState.getWindowTrayManager().shouldQuitApp()) {
         return
     }
 
@@ -107,7 +67,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('before-quit', () => {
-    appState?.destroyTray()
+    appState?.cleanup()
 })
 
 // In this file you can include the rest of your app's specific main process
