@@ -7,9 +7,8 @@ nav_order: 1
 ---
 
 # NZB Flow
-{: .mb-6 }
 
-![NZB Flow Logo](images/logo-dark.svg){: .mx-auto .d-block .mb-6 }
+![NZB Flow Logo](images/logo-dark.svg){: .mx-auto .d-inline .mb-6 }
 
 A powerful GUI application to automate usenet posting. Built with modern web technologies, it orchestrates external CLI tools for the complete posting workflow: rar for compression, parpar for par2 creation, and nyuu for posting.
 {: .lead }
@@ -19,7 +18,6 @@ A powerful GUI application to automate usenet posting. Built with modern web tec
 
 ### Download
 [📥 Download Latest Release](https://github.com/db1996/nzb-flow/releases/latest){: .btn .btn-primary .btn-lg .mr-2 }
-[📖 View Documentation](profiles.html){: .btn .btn-outline }
 
 ### Prerequisites
 
