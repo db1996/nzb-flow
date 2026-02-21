@@ -28,12 +28,12 @@ Content templates use the **Handlebars** template language (also known as "musta
 ### Basic Syntax
 {: .mb-3 }
 
-| Syntax | Purpose | Example |
-|--------|---------|---------|
-| `{{variable}}` | Insert variable value | `{{jobname}}` |
-| `{{helper value}}` | Apply helper function | `{{sizeHuman raw_size}}` |
-| `{{#if condition}}` | Conditional blocks | `{{#if rar_files}}...{{/if}}` |
-| `{{#each array}}` | Loop over arrays | `{{#each raw_files}}...{{/each}}` |
+| Syntax              | Purpose               | Example                           |
+| ------------------- | --------------------- | --------------------------------- |
+| `{{variable}}`      | Insert variable value | `{{jobname}}`                     |
+| `{{helper value}}`  | Apply helper function | `{{sizeHuman raw_size}}`          |
+| `{{#if condition}}` | Conditional blocks    | `{{#if rar_files}}...{{/if}}`     |
+| `{{#each array}}`   | Loop over arrays      | `{{#each raw_files}}...{{/each}}` |
 {: .table }
 
 ### Built-in Handlebars Helpers
@@ -53,12 +53,12 @@ Several variables contain arrays of file objects that you can iterate over using
 ### File Object Structure
 Each file object contains these properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `name` | `string` | Filename with extension |
+| Property       | Type     | Description                         |
+| -------------- | -------- | ----------------------------------- |
+| `name`         | `string` | Filename with extension             |
 | `relativePath` | `string` | Path relative to upload root folder |
-| `absolutePath` | `string` | Complete system path |
-| `size` | `number` | File size in bytes |
+| `absolutePath` | `string` | Complete system path                |
+| `size`         | `number` | File size in bytes                  |
 {: .table }
 
 ### Example Usage
